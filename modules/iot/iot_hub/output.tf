@@ -6,6 +6,10 @@ output "hostname" {
   value = azurerm_iothub.iothub.hostname
 }
 
+output "name" {
+  value = azurecaf_name.ioth.result
+}
+
 output "event_hub_events_endpoint" {
   value = azurerm_iothub.iothub.event_hub_events_endpoint
 }

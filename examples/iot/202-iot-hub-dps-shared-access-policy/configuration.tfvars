@@ -9,7 +9,7 @@ resource_groups = {
   ioth_region1 = {
     name   = "iothub-rg1"
     region = "region1"
-  }  
+  }
 }
 
 iot_hub_dps = {
@@ -26,11 +26,13 @@ iot_hub_dps = {
 
 iot_dps_shared_access_policy = {
   iotdpssharedaccesspolicy1 = {
-    name                = "iot_dps_shared_access_policy_1"
-    iot_dps_key         = "iotdps1" 
-    resource_group_key  = "ioth_region1"
-    enrollment_write    = true
-    enrollment_read     = true
+    name               = "iot_dps_shared_access_policy_1"
+    iot_hub_dps_key    = "iotdps1"
+    resource_group_key = "ioth_region1"
+    enrollment_write   = true
+    enrollment_read    = true
+    registration_read  = true
+    registration_write = true
   }
 }
   

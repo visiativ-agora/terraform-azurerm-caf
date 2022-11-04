@@ -14,10 +14,10 @@
 resource "azurerm_iothub_shared_access_policy" "access_policy" {
   name                = var.settings.name
   resource_group_name = var.resource_group_name
-  iothub_name         = var.iot_hub_name
-  
-  registry_read       = try(var.settings.registry_read, null)
-  registry_write      = try(var.settings.registry_write, null) 
-  service_connect     = try(var.settings.service_connect, null) 
-  device_connect      = try(var.settings.device_connect, null) 
+  iothub_name         = var.iothub_name
+
+  registry_read   = try(var.settings.registry_read, null)
+  registry_write  = try(var.settings.registry_write, null)
+  service_connect = try(var.settings.service_connect, null)
+  device_connect  = try(var.settings.device_connect, null)
 }
