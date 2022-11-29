@@ -25,6 +25,7 @@ module "example" {
   storage_accounts                      = var.storage_accounts
   subscription_billing_role_assignments = var.subscription_billing_role_assignments
   resource_provider_registration        = var.resource_provider_registration
+  var_folder_path                       = var.var_folder_path
   tags                                  = local.tags
 
   azuread = {
@@ -293,13 +294,14 @@ module "example" {
 
   }
   webapp = {
-    azurerm_application_insights = var.azurerm_application_insights
-    app_service_environments     = var.app_service_environments
-    app_service_environments_v3  = var.app_service_environments_v3
-    app_service_plans            = var.app_service_plans
-    app_services                 = var.app_services
-    function_apps                = var.function_apps
-    static_sites                 = var.static_sites
+    azurerm_application_insights          = var.azurerm_application_insights
+    azurerm_application_insights_web_test = var.azurerm_application_insights_web_test
+    app_service_environments              = var.app_service_environments
+    app_service_environments_v3           = var.app_service_environments_v3
+    app_service_plans                     = var.app_service_plans
+    app_services                          = var.app_services
+    function_apps                         = var.function_apps
+    static_sites                          = var.static_sites
   }
   data_factory = {
     data_factory                                 = var.data_factory
@@ -339,6 +341,7 @@ module "example" {
     logic_app_trigger_http_request = var.logic_app_trigger_http_request
     logic_app_trigger_recurrence   = var.logic_app_trigger_recurrence
     logic_app_workflow             = var.logic_app_workflow
+    logic_app_standard             = var.logic_app_standard
   }
   identity = {
     active_directory_domain_service             = var.active_directory_domain_service
@@ -373,10 +376,10 @@ module "example" {
     digital_twins_endpoint_eventhubs    = var.digital_twins_endpoint_eventhubs
     digital_twins_endpoint_eventgrids   = var.digital_twins_endpoint_eventgrids
     digital_twins_endpoint_servicebuses = var.digital_twins_endpoint_servicebuses
-    iot_hub                             = var.iot_hub 
-    iot_hub_consumer_groups             = var.iot_hub_consumer_groups 
-    iot_hub_certificate                 = var.iot_hub_certificate 
-    iot_hub_shared_access_policy        = var.iot_hub_shared_access_policy 
+    iot_hub                             = var.iot_hub
+    iot_hub_consumer_groups             = var.iot_hub_consumer_groups
+    iot_hub_certificate                 = var.iot_hub_certificate
+    iot_hub_shared_access_policy        = var.iot_hub_shared_access_policy
     iot_hub_dps                         = var.iot_hub_dps
     iot_dps_certificate                 = var.iot_dps_certificate
     iot_dps_shared_access_policy        = var.iot_dps_shared_access_policy

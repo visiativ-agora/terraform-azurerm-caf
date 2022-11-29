@@ -309,6 +309,9 @@ variable "synapse_workspaces" {
 variable "azurerm_application_insights" {
   default = {}
 }
+variable "azurerm_application_insights_web_test" {
+  default = {}
+}
 variable "role_mapping" {
   default = {}
 }
@@ -388,6 +391,9 @@ variable "log_analytics" {
   default = {}
 }
 variable "logic_app_workflow" {
+  default = {}
+}
+variable "logic_app_standard" {
   default = {}
 }
 variable "logic_app_integration_account" {
@@ -1035,8 +1041,7 @@ variable "iot_dps_shared_access_policy" {
 }
 variable "iot_hub_consumer_groups" {
   default = {}
-} 
+}
 variable "iot_hub_certificate" {
   default = {}
-} 
- 
+}
