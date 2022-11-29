@@ -1,6 +1,6 @@
 # Terraform azurerm resource: https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/iothub_dps_certificate
 
-resource "azurecaf_name" "iothub_dps_certificate" {
+data "azurecaf_name" "iothub_dps_certificate" {
   name          = var.settings.name
   resource_type = "azurerm_iothub_dps_certificate"
   prefixes      = var.global_settings.prefixes
@@ -11,8 +11,8 @@ resource "azurecaf_name" "iothub_dps_certificate" {
 }
 
 resource "azurerm_iothub_dps_certificate" "certificate" {
-  name                = azurecaf_name.iothub_dps_certificate.result
+  name                = data.azurecaf_name.iothub_dps_certificate.result
   resource_group_name = var.resource_group_name
   iot_dps_name        = var.iot_dps_name
-  certificate_content = filebase64( var.settings.certificate_content )
+  certificate_content = filebase64(var.settings.certificate_content)
 }

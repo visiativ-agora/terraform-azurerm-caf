@@ -15,5 +15,5 @@ output "service_operations_host_name" {
 }
 
 output "name" {
-  value = azurecaf_name.iothdps.result
+  value = data.azurecaf_name.iothdps.result
 }

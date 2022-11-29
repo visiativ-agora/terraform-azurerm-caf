@@ -1,7 +1,7 @@
 # Terraform azurerm resource: https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/iothub_dps_shared_access_policy
 
 # not supported
-# resource "azurecaf_name" "iothub_dps_shared_access_policy" {
+# data "azurecaf_name" "iothub_dps_shared_access_policy" {
 #   name          = var.settings.name
 #   resource_type = "azurerm_iothub_dps_shared_access_policy"
 #   prefixes      = var.global_settings.prefixes
@@ -15,10 +15,10 @@ resource "azurerm_iothub_dps_shared_access_policy" "access_policy" {
   name                = var.settings.name
   resource_group_name = var.resource_group_name
   iothub_dps_name     = var.iot_dps_name
-  
-  enrollment_write    = try(var.settings.enrollment_write, null)
-  enrollment_read     = try(var.settings.enrollment_read, null)
-  registration_read   = try(var.settings.registration_read, null)
-  registration_write  = try(var.settings.registration_write, null)
-  service_config      = try(var.settings.service_config, null)
+
+  enrollment_write   = try(var.settings.enrollment_write, null)
+  enrollment_read    = try(var.settings.enrollment_read, null)
+  registration_read  = try(var.settings.registration_read, null)
+  registration_write = try(var.settings.registration_write, null)
+  service_config     = try(var.settings.service_config, null)
 }

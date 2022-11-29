@@ -7,7 +7,7 @@ output "hostname" {
 }
 
 output "name" {
-  value = azurecaf_name.ioth.result
+  value = data.azurecaf_name.ioth.result
 }
 
 output "event_hub_events_endpoint" {

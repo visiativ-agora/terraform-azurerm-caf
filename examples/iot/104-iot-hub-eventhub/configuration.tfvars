@@ -9,7 +9,7 @@ resource_groups = {
   ioth_region1 = {
     name   = "iothub-rg1"
     region = "region1"
-  } 
+  }
   evh_examples = {
     name = "evh_examples"
   }
@@ -50,16 +50,16 @@ event_hub_auth_rules = {
 
 storage_accounts = {
   sa1 = {
-    name = "sa1dev"
-    resource_group_key = "ioth_region1" 
-    account_kind = "BlobStorage"
-    account_tier = "Standard"
+    name                     = "sa1dev"
+    resource_group_key       = "ioth_region1"
+    account_kind             = "BlobStorage"
+    account_tier             = "Standard"
     account_replication_type = "LRS"
     containers = {
       sa1 = {
         name = "random"
       }
-    } 
+    }
   }
 }
 
@@ -69,7 +69,7 @@ iot_hub = {
     region             = "region1"
     resource_group_key = "ioth_region1"
     identity = {
-      type = "SystemAssigned"
+      type         = "SystemAssigned"
       identity_ids = ["1234"]
     }
     sku = {
@@ -78,8 +78,8 @@ iot_hub = {
     }
     endpoints = {
       eventhub = {
-        type = "AzureIotHub.EventHub"
-        event_hub_auth_rules_key = "rule1"
+        type                    = "AzureIotHub.EventHub"
+        event_hub_auth_rule_key = "rule1"
       }
       sa_endpoint = {
         type                       = "AzureIotHub.StorageContainer"
@@ -95,21 +95,21 @@ iot_hub = {
       export = {
         source         = "DeviceMessages"
         condition      = "true"
-        endpoint_names = ["export"]
+        endpoint_names = ["eventhub"]
         enabled        = true
       }
       export2 = {
         source         = "DeviceMessages"
         condition      = "true"
-        endpoint_names = ["export2"]
+        endpoint_names = ["sa_endpoint"]
         enabled        = true
       }
     }
-    enrichment = {
-      key            = "tenant"
-      value          = "$twin.tags.Tenant"
-      endpoint_names = ["export", "export2"]
-    }
+    # enrichment = {
+    #   key            = "tenant"
+    #   value          = "$twin.tags.Tenant"
+    #   endpoint_names = ["export", "export2"]
+    # }
     tags = {
       purpose = "testing"
     }

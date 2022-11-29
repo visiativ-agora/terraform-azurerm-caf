@@ -1,6 +1,6 @@
 # Terraform azurerm resource: https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/iothub
 
-resource "azurecaf_name" "ioth" {
+data "azurecaf_name" "ioth" {
   name          = var.settings.name
   resource_type = "azurerm_iothub"
   prefixes      = var.global_settings.prefixes
@@ -11,7 +11,7 @@ resource "azurecaf_name" "ioth" {
 }
 
 resource "azurerm_iothub" "iothub" {
-  name                        = azurecaf_name.ioth.result
+  name                        = data.azurecaf_name.ioth.result
   resource_group_name         = var.resource_group_name
   location                    = var.location
   event_hub_partition_count   = try(var.settings.event_hub_partition_count, null)
@@ -34,6 +34,7 @@ resource "azurerm_iothub" "iothub" {
       file_name_format           = try(endpoint.value.file_name_format, "{iothub}/{partition}/{YYYY}/{MM}/{DD}/{HH}/{mm}")
       container_name = try(
         var.remote_objects.storage_containers[var.client_config.landingzone_key][endpoint.value.container_name_key].name,
+        var.remote_objects.storage_accounts[var.client_config.landingzone_key][endpoint.value.storage_account_key].containers[endpoint.value.container_name_key].name,
         endpoint.value.container_name,
         null
       )
@@ -49,7 +50,7 @@ resource "azurerm_iothub" "iothub" {
       # endpoint_uri = endpoint.value.authentication_type == "identityBased" ? try(
       #   endpoint.value.endpoint_uri,
       #   null
-      # ) : null 
+      # ) : null
       # entity_path                = try(endpoint.value.entity_path, null)
     }
   }
@@ -106,11 +107,11 @@ resource "azurerm_iothub" "iothub" {
 
   # requires azurerm provider >= 2.91
 
-  # dynamic "identity" { 
+  # dynamic "identity" {
   #   for_each = lookup(var.settings, "identity", {}) == {} ? [] : [1]
   #   content {
-  #     type                      = try(var.settings.identity.type, null) 
-  #     user_assigned_identity_id = try(var.settings.identity.identity_ids, null) 
+  #     type                      = try(var.settings.identity.type, null)
+  #     user_assigned_identity_id = try(var.settings.identity.identity_ids, null)
   #   }
   # }
 
@@ -132,15 +133,15 @@ resource "azurerm_iothub" "iothub" {
 
   # dynamic "network_rule_set" {
   #   for_each = lookup(var.settings, "network_rule_set", {}) == {} ? [] : [1]
-  #   content { 
-  #     default_action                      = try(var.settings.network_rule_set.default_action, null) 
-  #     apply_to_builtin_eventhub_endpoint  = try(var.settings.network_rule_set.apply_to_builtin_eventhub_endpoint, null) 
+  #   content {
+  #     default_action                      = try(var.settings.network_rule_set.default_action, null)
+  #     apply_to_builtin_eventhub_endpoint  = try(var.settings.network_rule_set.apply_to_builtin_eventhub_endpoint, null)
   #     dynamic "ip_rule" {
   #       for_each = try(var.settings.network_rule_set.ip_rule, null) == null ? [] : [1]
   #       content {
-  #         name      = var.settings.network_rule_set.ip_rule.name 
-  #         ip_mask   = var.settings.network_rule_set.ip_rule.name 
-  #         action    = try(var.settings.network_rule_set.ip_rule.action, null)  
+  #         name      = var.settings.network_rule_set.ip_rule.name
+  #         ip_mask   = var.settings.network_rule_set.ip_rule.name
+  #         action    = try(var.settings.network_rule_set.ip_rule.action, null)
   #       }
   #     }
   #   }

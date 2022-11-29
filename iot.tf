@@ -75,9 +75,6 @@ module "iot_dps_certificate" {
   iot_dps_name        = can(each.value.iot_hub_dps_name) ? each.value.iot_hub_dps_name : local.combined_objects_iot_hub_dps[try(each.value.iot_hub_dps.lz_key, local.client_config.landingzone_key)][try(each.value.iot_hub_dps.key, each.value.iot_hub_dps_key)].name
   resource_group_name = can(each.value.resource_group.name) || can(each.value.resource_group_name) ? try(each.value.resource_group.name, each.value.resource_group_name) : local.combined_objects_resource_groups[try(each.value.resource_group.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group_key, each.value.resource_group.key)].name
 
-  depends_on = [
-    module.iot_hub_dps
-  ]
 }
 
 output "iot_dps_certificate" {
@@ -93,9 +90,6 @@ module "iot_dps_shared_access_policy" {
   iot_dps_name        = can(each.value.iot_hub_dps_name) ? each.value.iot_hub_dps_name : local.combined_objects_iot_hub_dps[try(each.value.iot_hub_dps.lz_key, local.client_config.landingzone_key)][try(each.value.iot_hub_dps.key, each.value.iot_hub_dps_key)].name
   resource_group_name = can(each.value.resource_group.name) || can(each.value.resource_group_name) ? try(each.value.resource_group.name, each.value.resource_group_name) : local.combined_objects_resource_groups[try(each.value.resource_group.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group_key, each.value.resource_group.key)].name
 
-  depends_on = [
-    module.iot_hub_dps
-  ]
 }
 
 output "iot_dps_shared_access_policy" {
@@ -139,7 +133,7 @@ module "iot_security_solution" {
   iothub_ids = try(
     each.value.iothub_ids,
     [
-      for iothub_id in try(each.value.iothub_keys, {}) : module.iot_hub[iothub_id].id
+      for iot_hub in try(each.value.iothubs, {}) : local.combined_objects_iot_hub[try(each.value.iot_hub.lz_key, local.client_config.landingzone_key)][iot_hub.key].id
     ]
   )
   location            = can(local.global_settings.regions[each.value.region]) ? local.global_settings.regions[each.value.region] : local.combined_objects_resource_groups[try(each.value.resource_group.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group.key, each.value.resource_group_key)].location
@@ -157,8 +151,18 @@ module "iot_security_device_group" {
   global_settings = local.global_settings
   settings        = each.value
   iothub_id       = can(each.value.iothub_id) ? each.value.iothub_id : local.combined_objects_iot_hub[try(each.value.iot_hub.lz_key, local.client_config.landingzone_key)][try(each.value.iot_hub.key, each.value.iot_hub_key)].id
+  depends_on = [
+    time_sleep.delay_create
+  ]
 }
 
 output "iot_security_device_group" {
   value = module.iot_security_device_group
+}
+
+resource "time_sleep" "delay_create" {
+  count      = can(local.iot.iot_security_device_group) ? 1 : 0
+  depends_on = [module.iot_hub]
+
+  create_duration = "5s"
 }
