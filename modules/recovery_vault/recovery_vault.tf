@@ -1,4 +1,4 @@
-# Tested with :  AzureRM version 2.61.0
+# Tested with :  AzureRM version 2.99.0
 # Ref : https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/recovery_services_vault
 
 resource "azurecaf_name" "asr_rg_vault" {
@@ -13,10 +13,10 @@ resource "azurecaf_name" "asr_rg_vault" {
 
 resource "azurerm_recovery_services_vault" "asr" {
   name                = azurecaf_name.asr_rg_vault.result
-  location            = var.location
-  resource_group_name = var.resource_group_name
+  location            = local.location
+  resource_group_name = local.resource_group_name
   sku                 = "Standard"
-  tags                = local.tags
+  tags                = merge(local.tags, try(var.settings.tags, null))
   soft_delete_enabled = try(var.settings.soft_delete_enabled, true)
   storage_mode_type   = try(var.settings.storage_mode_type, "GeoRedundant")
 
@@ -24,4 +24,13 @@ resource "azurerm_recovery_services_vault" "asr" {
     type = "SystemAssigned"
   }
 
+  dynamic "encryption" {
+    for_each = can(var.settings.encryption) ? [1] : []
+
+    content {
+      key_id                            = var.settings.encryption.key_id
+      infrastructure_encryption_enabled = try(var.settings.encryption.infrastructure_encryption_enabled, true)
+      use_system_assigned_identity      = true # only value possible in AzureRM provider 2.99.0
+    }
+  }
 }
