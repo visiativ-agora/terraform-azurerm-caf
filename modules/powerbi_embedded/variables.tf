@@ -1,21 +1,14 @@
 variable "global_settings" {
   description = "Global settings object (see module README.md)"
 }
-
 variable "client_config" {
   description = "Client configuration object (see module README.md)."
-}
-variable "landingzone" {}
-variable "rover_version" {
-  default = null
 }
 variable "tags" {
   description = "Tags to be used for this resource deployment."
   type        = map(any)
   default     = {}
 }
-
-# PowerBi_Embedded
 variable "name" {
   description = "(Required) The name of the PowerBI Embedded. Changing this forces a new resource to be created."
   type        = string
