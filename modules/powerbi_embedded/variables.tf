@@ -46,7 +46,7 @@ variable "mode" {
 }
 
 variable "resource_group_name" {
-  description = "(Required) The name of the Resource Group where the PowerBI Embedded should be created. Changing this forces a new resource to be created."
+  description = "Resource group object"
 }
 
 variable "settings" {}

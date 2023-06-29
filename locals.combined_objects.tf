@@ -109,7 +109,7 @@ locals {
   combined_objects_networking                                     = merge(tomap({ (local.client_config.landingzone_key) = module.networking }), try(var.remote_objects.vnets, {}))
   combined_objects_postgresql_flexible_servers                    = merge(tomap({ (local.client_config.landingzone_key) = module.postgresql_flexible_servers }), try(var.remote_objects.postgresql_flexible_servers, {}))
   combined_objects_postgresql_servers                             = merge(tomap({ (local.client_config.landingzone_key) = module.postgresql_servers }), try(var.remote_objects.postgresql_servers, {}))
-  combined_objects_powerbi                                        = merge(tomap({ (local.client_config.landingzone_key) = module.azurerm_powerbi_embedded }), try(var.remote_objects.azurerm_powerbi_embedded, {}))
+  combined_objects_powerbi                                        = merge(tomap({ (local.client_config.landingzone_key) = module.powerbi_embedded }), try(var.remote_objects.powerbi_embedded, {}))
   combined_objects_private_dns                                    = merge(tomap({ (local.client_config.landingzone_key) = module.private_dns }), try(var.remote_objects.private_dns, {}))
   combined_objects_private_endpoints                              = merge(tomap({ (local.client_config.landingzone_key) = module.private_endpoints }), try(var.remote_objects.private_endpoints, {}))
   combined_objects_proximity_placement_groups                     = merge(tomap({ (local.client_config.landingzone_key) = module.proximity_placement_groups }), try(var.remote_objects.proximity_placement_groups, {}))
