@@ -12,7 +12,7 @@ module "powerbi_embedded" {
   administrators      = each.value.administrators
   sku_name            = each.value.sku_name
   mode                = try(each.value.mode, "Gen1")
-  base_tags           = try(local.global_settings.inherit_tags, false) ? try(local.combined_objects_resource_groups[try(each.value.resource_group.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group.key, each.value.resource_group_key)].tags, {}) : {}
+  tags                = try(local.global_settings.inherit_tags, false) ? try(local.combined_objects_resource_groups[try(each.value.resource_group.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group.key, each.value.resource_group_key)].tags, {}) : {}
 }
 
 output "powerbi_embedded" {
