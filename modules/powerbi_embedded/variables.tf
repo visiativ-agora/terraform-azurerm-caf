@@ -9,6 +9,12 @@ variable "tags" {
   type        = map(any)
   default     = {}
 }
+
+variable "base_tags" {
+  description = "Base tags for the resource to be inherited from the resource group."
+  type        = map(any)
+  default     = {}
+}
 variable "name" {
   description = "(Required) The name of the PowerBI Embedded. Changing this forces a new resource to be created."
   type        = string
