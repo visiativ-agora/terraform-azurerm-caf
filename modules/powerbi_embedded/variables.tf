@@ -31,7 +31,7 @@ variable "sku_name" {
 
   validation {
     condition     = contains(["A1", "A2", "A3", "A4", "A5", "A6"], var.sku_name)
-    error_message = "Provide an authorized value."
+    error_message = "Allowed values are A1, A2, A3, A4, A5 or A6."
   }
 }
 
