@@ -18,7 +18,7 @@ azurerm_powerbi_embedded = {
     region             = "region1"
     resource_group_key = "rg1"
     sku_name           = "A1" # Possible values include: A1, A2, A3, A4, A5, A6.
-    administrators     = ["kevin.delmont@visiativ.com"]
+    administrators     = ["foo@example.com"]
     # mode               = "Gen1" # Gen1 | Gen2 (Defaults to Gen1)
     # tags               = {} # optional
   }
