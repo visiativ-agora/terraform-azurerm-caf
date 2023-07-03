@@ -370,7 +370,9 @@ module "example" {
   purview = {
     purview_accounts = var.purview_accounts
   }
-
+  powerbi_embedded = {
+    azurerm_powerbi_embedded = var.azurerm_powerbi_embedded
+  }
   iot = {
     digital_twins_instances             = var.digital_twins_instances
     digital_twins_endpoint_eventhubs    = var.digital_twins_endpoint_eventhubs
