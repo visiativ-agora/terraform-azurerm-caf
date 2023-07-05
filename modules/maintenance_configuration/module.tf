@@ -33,22 +33,22 @@ resource "azurerm_maintenance_configuration" "maintenance_configuration" {
       dynamic "linux" {
         for_each = try(var.install_patches.linux, null) != null ? [var.install_patches.linux] : []
         content {
-          classifications_to_include    = lookup(linux.value.classifications_to_include, null)
-          package_names_mask_to_exclude = lookup(linux.value.package_names_mask_to_exclude, null)
-          package_names_mask_to_include = lookup(linux.value.package_names_mask_to_include, null)
+          classifications_to_include    = lookup(linux.value.classifications_to_include, [])
+          package_names_mask_to_exclude = lookup(linux.value.package_names_mask_to_exclude, [])
+          package_names_mask_to_include = lookup(linux.value.package_names_mask_to_include, [])
         }
       }
 
       dynamic "windows" {
         for_each = try(var.install_patches.windows, null) != null ? [var.install_patches.windows] : []
         content {
-          classifications_to_include = lookup(windows.value.classifications_to_include, null)
-          kb_numbers_to_exclude      = lookup(windows.value.kb_numbers_to_exclude, null)
-          kb_numbers_to_include      = lookup(windows.value.kb_numbers_to_include, null)
+          classifications_to_include = lookup(windows.value.classifications_to_include, [])
+          kb_numbers_to_exclude      = lookup(windows.value.kb_numbers_to_exclude, [])
+          kb_numbers_to_include      = lookup(windows.value.kb_numbers_to_include, [])
         }
       }
 
-      reboot = lookup(var.install_patches.reboot, null)
+      reboot = var.install_patches.reboot
     }
   }
 
