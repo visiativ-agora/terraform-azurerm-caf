@@ -26,7 +26,7 @@ resource "azurerm_maintenance_configuration" "maintenance_configuration" {
       recur_every          = lookup(window.value.recur_every, null)
     }
   }
-  
+
   dynamic "install_patches" {
     for_each = var.scope == "InGuestPatch" ? [1] : []
     content {
@@ -51,5 +51,6 @@ resource "azurerm_maintenance_configuration" "maintenance_configuration" {
       reboot = lookup(var.install_patches.reboot, null)
     }
 
-  tags = var.tags
+    tags = var.tags
+  }
 }
