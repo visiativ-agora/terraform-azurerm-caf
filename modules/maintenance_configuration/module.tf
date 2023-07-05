@@ -42,9 +42,10 @@ resource "azurerm_maintenance_configuration" "maintenance_configuration" {
       dynamic "windows" {
         for_each = try(var.install_patches.windows, null) != null ? [var.install_patches.windows] : []
         content {
-          classifications_to_include = lookup(windows.value.classifications_to_include, [])
-          kb_numbers_to_exclude      = lookup(windows.value.kb_numbers_to_exclude, [])
-          kb_numbers_to_include      = lookup(windows.value.kb_numbers_to_include, [])
+          classifications_to_include = lookup(windows.value["classifications_to_include"], [])
+          kb_numbers_to_exclude      = lookup(windows.value["kb_numbers_to_exclude"], [])
+          kb_numbers_to_include      = lookup(windows.value["kb_numbers_to_include"], [])
+
         }
       }
 
