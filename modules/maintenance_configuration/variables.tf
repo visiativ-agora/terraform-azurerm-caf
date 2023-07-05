@@ -32,10 +32,8 @@ variable "scope" {
   description = "(Required) The scope of the Maintenance Configuration. Possible values are Extension, Host, InGuestPatch, OSImage, SQLDB or SQLManagedInstance."
   type        = string
   validation {
-    # condition     = contains(["Extension", "Host", "InGuestPatch", "OSImage", "SQLDB", "SQLManagedInstance"], var.scope) Terraform > 2.99
-    condition     = contains(["All", "Extension", "Host", "InGuestPatch", "OSImage", "SQLDB", "SQLManagedInstance"], var.scope)
-    # error_message = "Invalid value for scope. Possible values are Extension, Host, InGuestPatch, OSImage, SQLDB or SQLManagedInstance."
-    error_message = "Invalid value for scope. Possible values are All, Extension, Host, InGuestPatch, OSImage, SQLDB or SQLManagedInstance."
+    condition     = contains(["Extension", "Host", "InGuestPatch", "OSImage", "SQLDB", "SQLManagedInstance"], var.scope)
+    error_message = "Invalid value for scope. Possible values are Extension, Host, InGuestPatch, OSImage, SQLDB or SQLManagedInstance."
   }
 }
 
@@ -79,7 +77,6 @@ variable "resource_group_name" {
   description = "Resource group object"
 }
 
-variable "window" {
-
-}
+variable "window" {}
+variable "install_patches" {}
 variable "settings" {}
