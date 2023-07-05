@@ -50,7 +50,7 @@ resource "azurerm_maintenance_configuration" "maintenance_configuration" {
 
       reboot = lookup(var.install_patches.reboot, null)
     }
-
-    tags = var.tags
   }
+
+  tags = var.tags
 }
