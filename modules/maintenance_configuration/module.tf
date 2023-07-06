@@ -41,7 +41,7 @@ resource "azurerm_maintenance_configuration" "maintenance_configuration" {
       }
 
       dynamic "windows" {
-        for_each = try(var.maintenance_configuration.install_patches.windows, null) != null ? [var.install_patches.windows] : []
+        for_each = try(var.settings.install_patches.windows, null) != null ? [var.install_patches.windows] : []
         content {
           classifications_to_include = toset(try(windows.value.classifications_to_include, []))
           kb_numbers_to_exclude      = toset(try(windows.value.kb_numbers_to_exclude, []))
@@ -50,7 +50,7 @@ resource "azurerm_maintenance_configuration" "maintenance_configuration" {
         }
       }
 
-      reboot = try(var.maintenance_configuration.install_patches.reboot, null)
+      reboot = try(var.settings.install_patches.reboot, null)
     }
   }
 
