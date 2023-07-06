@@ -17,13 +17,15 @@ resource "azurerm_maintenance_configuration" "maintenance_configuration" {
   properties          = try(var.properties, {})
 
   dynamic "window" {
-    for_each = try(var.window, null) != null ? [1] : []
+    #for_each = try(var.window, null) != null ? [1] : []
+    #for_each = var.window == "InGuestPatch" ? [1] : []
+    for_each = var.window != null ? [var.window] : []
     content {
-      start_date_time      = lookup(window.value.start_date_time, null)
-      expiration_date_time = lookup(window.value.expiration_date_time, null)
-      duration             = lookup(window.value.duration, null)
-      time_zone            = lookup(window.value.time_zone, null)
-      recur_every          = lookup(window.value.recur_every, null)
+      start_date_time      = window.value.start_date_time
+      expiration_date_time = try(window.value.expiration_date_time, null)
+      duration             = try(window.value.duration, null)
+      time_zone            = window.value.time_zone
+      recur_every          = try(window.value.recur_every, null)
     }
   }
 
