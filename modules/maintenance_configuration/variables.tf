@@ -49,36 +49,34 @@ variable "properties" {
   default     = {}
 }
 
-variable "linux_package_names_mask_to_include" {
-  description = "List of package names to be included for patching (Linux)."
-  type        = list(string)
-  default     = null
-}
-
-variable "windows_classifications_to_include" {
-  description = "List of Classification category of patches to be patched (Windows)."
-  type        = list(string)
-  default     = null
-}
-
-variable "windows_kb_numbers_to_exclude" {
-  description = "List of KB numbers to be excluded from patching (Windows)."
-  type        = list(string)
-  default     = null
-}
-
-variable "windows_kb_numbers_to_include" {
-  description = "List of KB numbers to be included for patching (Windows)."
-  type        = list(string)
-  default     = null
-}
-
 variable "resource_group_name" {
   description = "Resource group object"
 }
 
 variable "window" {}
-variable "install_patches" {}
+
+#variable "install_patches" {}
+
+variable "install_patches" {
+  description = "Install patches configuration."
+  type        = map(any)
+  default     = null
+  validation {
+    condition = (
+      var.scope == "InGuestPatch" &&
+      can(var.install_patches.linux) &&
+      can(var.install_patches.windows) &&
+      can(var.install_patches.reboot) &&
+      contains(["Always", "IfRequired", "Never"], var.install_patches.reboot) &&
+      can(var.install_patches.windows.classifications_to_include) &&
+      contains(["Critical", "Security", "UpdateRollup", "FeaturePack", "ServicePack", "Definition", "Tools", "Updates"], var.install_patches.windows.classifications_to_include) &&
+      can(var.install_patches.linux.classifications_to_include) &&
+      contains(["Critical", "Security", "Other"], var.install_patches.windows.classifications_to_include)
+    )
+    error_message = "The 'install_patches' must be specified when 'scope' is set to 'InGuestPatch' and it should include valid configuration."
+  }
+}
+
 variable "settings" {}
 
 variable "in_guest_user_patch_mode" {
