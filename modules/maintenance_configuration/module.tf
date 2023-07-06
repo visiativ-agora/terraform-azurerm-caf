@@ -14,9 +14,7 @@ resource "azurerm_maintenance_configuration" "maintenance_configuration" {
   location                 = var.location
   scope                    = var.scope
   visibility               = try(var.visibility, null)
-  properties               = try(var.properties, {})
-  #in_guest_user_patch_mode = try(var.in_guest_user_patch_mode, null)
-  # in_guest_user_patch_mode is required if scope = "InGuestPatch"
+  properties               = try(var.properties, {})  
   in_guest_user_patch_mode = var.settings.scope == "InGuestPatch" ? var.in_guest_user_patch_mode : try(var.in_guest_user_patch_mode, null)
 
   
