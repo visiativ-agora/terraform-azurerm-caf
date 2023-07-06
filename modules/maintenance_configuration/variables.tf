@@ -63,7 +63,6 @@ variable "install_patches" {
   default     = null
   validation {
     condition = (
-      var.scope == "InGuestPatch" &&
       can(var.install_patches.linux) &&
       can(var.install_patches.windows) &&
       can(var.install_patches.reboot) &&
