@@ -15,7 +15,10 @@ resource "azurerm_maintenance_configuration" "maintenance_configuration" {
   scope                    = var.scope
   visibility               = try(var.visibility, null)
   properties               = try(var.properties, {})
-  in_guest_user_patch_mode = try(var.in_guest_user_patch_mode, null)
+  #in_guest_user_patch_mode = try(var.in_guest_user_patch_mode, null)
+  # in_guest_user_patch_mode is required if scope = "InGuestPatch"
+  in_guest_user_patch_mode = var.settings.scope == "InGuestPatch" ? var.in_guest_user_patch_mode : try(var.in_guest_user_patch_mode, null)
+
   
   dynamic "window" {
     for_each = var.settings.window != null ? [var.settings.window] : []
@@ -28,29 +31,30 @@ resource "azurerm_maintenance_configuration" "maintenance_configuration" {
     }
   }
 
-  dynamic "install_patches" {   
-    for_each = var.settings.scope == "InGuestPatch" && var.settings.install_patches != null ? [1] : []
+  dynamic "install_patches" {
+    # install_patches is required if scope = "InGuestPatch"
+    for_each = var.settings.scope == "InGuestPatch" ? [1] : []
     content {
       dynamic "linux" {
-        for_each = try(var.install_patches.linux, null) != null ? [var.install_patches.linux] : []
+        for_each = try(var.install_patches.linux, null) != null ? [1] : []
         content {
-          classifications_to_include    = toset(try(linux.value.classifications_to_include, []))
-          package_names_mask_to_exclude = toset(try(linux.value.package_names_mask_to_exclude, []))
-          package_names_mask_to_include = toset(try(linux.value.package_names_mask_to_include, []))
+          classifications_to_include    = try(var.install_patches.linux.classifications_to_include, [])
+          package_names_mask_to_exclude = try(var.install_patches.linux.package_names_mask_to_exclude, [])
+          package_names_mask_to_include = try(var.install_patches.linux.package_names_mask_to_include, [])
         }
       }
 
       dynamic "windows" {
-        for_each = try(var.settings.install_patches.windows, null) != null ? [var.install_patches.windows] : []
+        for_each = try(var.settings.install_patches.windows, null) != null ? [1] : []
         content {
-          classifications_to_include = toset(try(windows.value.classifications_to_include, []))
-          kb_numbers_to_exclude      = toset(try(windows.value.kb_numbers_to_exclude, []))
-          kb_numbers_to_include      = toset(try(windows.value.kb_numbers_to_include, []))
+          classifications_to_include = try(var.settings.install_patches.windows.classifications_to_include, [])
+          kb_numbers_to_exclude      = try(var.settings.install_patches.windows.kb_numbers_to_exclude, [])
+          kb_numbers_to_include      = try(var.settings.install_patches.windows.kb_numbers_to_include, [])
 
         }
       }
 
-      reboot = try(var.settings.install_patches.reboot, null)
+      reboot = try(var.settings.install_patches.reboot, "IfRequired" )
     }
   }
 
