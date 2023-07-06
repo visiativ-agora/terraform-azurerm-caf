@@ -59,7 +59,19 @@ variable "window" {}
 
 variable "install_patches" {
   description = "Install patches configuration."
-  type = object()
+  type = object({
+    linux = object({
+      classifications_to_include = list(string)
+      kb_numbers_to_exclude      = list(string)
+      kb_numbers_to_include      = list(string)
+    })
+    windows = object({
+      classifications_to_include = list(string)
+      kb_numbers_to_exclude      = list(string)
+      kb_numbers_to_include      = list(string)
+    })
+    reboot = string
+  })
   default = null
   validation {
     condition = (
