@@ -86,7 +86,7 @@ variable "in_guest_user_patch_mode" {
   type        = string
   default     = null
   validation {
-    condition     = var.scope == "InGuestPatch"
+    condition     = var.in_guest_user_patch_mode != null && var.scope == "InGuestPatch"
     error_message = "The 'in_guest_user_patch_mode' must be specified when 'scope' is set to 'InGuestPatch'."
   }
 }
