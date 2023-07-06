@@ -25,9 +25,9 @@ resource "azurerm_maintenance_configuration" "maintenance_configuration" {
     content {
       start_date_time      = window.value.start_date_time
       expiration_date_time = try(window.value.expiration_date_time, null)
-      duration             = try(window.value.duration, null)
+      duration             = window.value.duration
       time_zone            = window.value.time_zone
-      recur_every          = try(window.value.recur_every, null)
+      recur_every          = window.value.recur_every
     }
   }
 
