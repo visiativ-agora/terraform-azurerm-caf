@@ -90,3 +90,19 @@ variable "in_guest_user_patch_mode" {
     error_message = "The 'in_guest_user_patch_mode' must be specified when 'scope' is set to 'InGuestPatch'."
   }
 }
+
+variable "in_guest_user_patch_mode" {
+  description = "The in guest user patch mode."
+  type        = string
+  default     = null
+  validation {
+    condition     = var.in_guest_user_patch_mode != null && dummy_scope == "InGuestPatch"
+    error_message = "The 'in_guest_user_patch_mode' must be specified when 'scope' is set to 'InGuestPatch'."
+  }
+}
+
+variable "dummy_scope" {
+  description = "Dummy scope variable for validation condition"
+  default     = "InGuestPatch"
+}
+
