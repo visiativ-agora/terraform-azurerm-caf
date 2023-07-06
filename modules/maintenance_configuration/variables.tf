@@ -60,31 +60,37 @@ variable "window" {}
 variable "install_patches" {
   description = "Install patches configuration."
   type = object({
-    linux = object({
-      classifications_to_include = list(string)
-      kb_numbers_to_exclude      = list(string)
-      kb_numbers_to_include      = list(string)
-    })
     windows = object({
-      classifications_to_include = list(string)
-      kb_numbers_to_exclude      = list(string)
-      kb_numbers_to_include      = list(string)
+      classifications_to_include    = list(string)
+      kb_numbers_to_exclude         = list(string)
+      kb_numbers_to_include         = list(string)
+    })
+    linux = object({
+      classifications_to_include    = list(string)
+      kb_numbers_to_exclude         = list(string)
+      kb_numbers_to_include         = list(string)
     })
     reboot = string
   })
   default = null
   validation {
     condition = (
-      can(var.install_patches.linux) || can(var.install_patches.windows) ||
-      can(var.install_patches.reboot) && contains(["Always", "IfRequired", "Never"], var.install_patches.reboot) &&
-      (can(var.install_patches.windows) && can(var.install_patches.windows.classifications_to_include) &&
-      contains(["Critical", "Security", "UpdateRollup", "FeaturePack", "ServicePack", "Definition", "Tools", "Updates"], var.install_patches.windows.classifications_to_include)) ||
-      (can(var.install_patches.linux) && can(var.install_patches.linux.classifications_to_include) &&
-      contains(["Critical", "Security", "Other"], var.install_patches.linux.classifications_to_include))
+      var.scope != "InGuestPatch" ||
+      (
+        (can(var.install_patches.windows) || can(var.install_patches.linux)) &&
+        (can(var.install_patches.reboot) && contains(["Always", "IfRequired", "Never"], var.install_patches.reboot)) &&
+        (
+          (can(var.install_patches.windows) && can(var.install_patches.windows.classifications_to_include) &&
+          contains(["Critical", "Security", "UpdateRollup", "FeaturePack", "ServicePack", "Definition", "Tools", "Updates"], var.install_patches.windows.classifications_to_include)) ||
+          (can(var.install_patches.linux) && can(var.install_patches.linux.classifications_to_include) &&
+          contains(["Critical", "Security", "Other"], var.install_patches.linux.classifications_to_include))
+        )
+      )
     )
     error_message = "The 'install_patches' must be specified when 'scope' is set to 'InGuestPatch' and it should include valid configuration."
   }
 }
+
 
 variable "settings" {}
 
