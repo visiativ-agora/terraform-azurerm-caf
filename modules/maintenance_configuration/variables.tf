@@ -80,3 +80,13 @@ variable "resource_group_name" {
 variable "window" {}
 variable "install_patches" {}
 variable "settings" {}
+
+variable "in_guest_user_patch_mode" {
+  description = "The in guest user patch mode."
+  type        = string
+  default     = null
+  validation {
+    condition     = var.scope == "InGuestPatch"
+    error_message = "The 'in_guest_user_patch_mode' must be specified when 'scope' is set to 'InGuestPatch'."
+  }
+}

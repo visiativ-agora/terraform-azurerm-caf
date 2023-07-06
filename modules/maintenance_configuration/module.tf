@@ -9,12 +9,14 @@ resource "azurecaf_name" "maintenance_configuration" {
 }
 
 resource "azurerm_maintenance_configuration" "maintenance_configuration" {
-  name                = azurecaf_name.maintenance_configuration.result
-  resource_group_name = var.resource_group_name
-  location            = var.location
-  scope               = var.scope
-  visibility          = try(var.visibility, null)
-  properties          = try(var.properties, {})
+  name                     = azurecaf_name.maintenance_configuration.result
+  resource_group_name      = var.resource_group_name
+  location                 = var.location
+  scope                    = var.scope
+  visibility               = try(var.visibility, null)
+  properties               = try(var.properties, {})
+  in_guest_user_patch_mode = try(var.in_guest_user_patch_mode, null)
+  #in_guest_user_patch_mode = var.scope == "InGuestPatch" ? var.in_guest_user_patch_mode : null
 
   dynamic "window" {
     #for_each = try(var.window, null) != null ? [1] : []
