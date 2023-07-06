@@ -75,8 +75,6 @@ variable "install_patches" {
   default = null
   validation {
     condition = (
-      var.scope != "InGuestPatch" ||
-      (
         (can(var.install_patches.windows) || can(var.install_patches.linux)) &&
         (can(var.install_patches.reboot) && contains(["Always", "IfRequired", "Never"], var.install_patches.reboot)) &&
         (
@@ -85,7 +83,6 @@ variable "install_patches" {
           (can(var.install_patches.linux) && can(var.install_patches.linux.classifications_to_include) &&
           contains(["Critical", "Security", "Other"], var.install_patches.linux.classifications_to_include))
         )
-      )
     )
     error_message = "The 'install_patches' must be specified when 'scope' is set to 'InGuestPatch' and it should include valid configuration."
   }
