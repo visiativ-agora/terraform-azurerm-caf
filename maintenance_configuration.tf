@@ -12,7 +12,8 @@ module "maintenance_configuration" {
   scope                    = each.value.scope
   in_guest_user_patch_mode = each.value.scope == "InGuestPatch" ? each.value.in_guest_user_patch_mode : null
   window                   = try(each.value.window, null)
-  install_patches          = try(each.value.install_patches, null)
+  install_patches          = each.value.scope == "InGuestPatch" ? try(each.value.install_patches, null) : null
+  # install_patches          = try(each.value.install_patches, null)
   visibility               = try(each.value.visibility, null)
   properties               = try(each.value.properties, {})
   base_tags                = try(local.global_settings.inherit_tags, false) ? try(local.combined_objects_resource_groups[try(each.value.resource_group.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group.key, each.value.resource_group_key)].tags, {}) : {}

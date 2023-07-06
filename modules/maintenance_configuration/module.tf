@@ -16,11 +16,8 @@ resource "azurerm_maintenance_configuration" "maintenance_configuration" {
   visibility               = try(var.visibility, null)
   properties               = try(var.properties, {})
   in_guest_user_patch_mode = try(var.in_guest_user_patch_mode, null)
-  #in_guest_user_patch_mode = var.scope == "InGuestPatch" ? var.in_guest_user_patch_mode : null
-
+  
   dynamic "window" {
-    #for_each = try(var.window, null) != null ? [1] : []
-    #for_each = var.window == "InGuestPatch" ? [1] : []
     for_each = var.window != null ? [var.window] : []
     content {
       start_date_time      = window.value.start_date_time
@@ -53,7 +50,7 @@ resource "azurerm_maintenance_configuration" "maintenance_configuration" {
         }
       }
 
-      reboot = var.install_patches.reboot
+      reboot = try(var.install_patches.reboot, null)
     }
   }
 
