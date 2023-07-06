@@ -75,14 +75,12 @@ variable "install_patches" {
   default = null
   validation {
     condition = (
-      can(var.install_patches.linux) &&
-      can(var.install_patches.windows) &&
-      can(var.install_patches.reboot) &&
-      contains(["Always", "IfRequired", "Never"], var.install_patches.reboot) &&
-      can(var.install_patches.windows.classifications_to_include) &&
-      contains(["Critical", "Security", "UpdateRollup", "FeaturePack", "ServicePack", "Definition", "Tools", "Updates"], var.install_patches.windows.classifications_to_include) &&
-      can(var.install_patches.linux.classifications_to_include) &&
-      contains(["Critical", "Security", "Other"], var.install_patches.windows.classifications_to_include)
+      can(var.install_patches.linux) || can(var.install_patches.windows) ||
+      can(var.install_patches.reboot) && contains(["Always", "IfRequired", "Never"], var.install_patches.reboot) &&
+      (can(var.install_patches.windows) && can(var.install_patches.windows.classifications_to_include) &&
+      contains(["Critical", "Security", "UpdateRollup", "FeaturePack", "ServicePack", "Definition", "Tools", "Updates"], var.install_patches.windows.classifications_to_include)) ||
+      (can(var.install_patches.linux) && can(var.install_patches.linux.classifications_to_include) &&
+      contains(["Critical", "Security", "Other"], var.install_patches.linux.classifications_to_include))
     )
     error_message = "The 'install_patches' must be specified when 'scope' is set to 'InGuestPatch' and it should include valid configuration."
   }
