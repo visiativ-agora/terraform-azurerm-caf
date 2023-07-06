@@ -38,7 +38,7 @@ resource "azurerm_maintenance_configuration" "maintenance_configuration" {
       dynamic "linux" {
         for_each = try(var.install_patches.linux, null) != null ? [1] : []
         content {
-          classifications_to_include    = try(var.install_patches.linux.classifications_to_include, [])
+          classifications_to_include    = try(var.install_patches.linux.classifications_to_include, ["Critical", "Security"])
           package_names_mask_to_exclude = try(var.install_patches.linux.package_names_mask_to_exclude, [])
           package_names_mask_to_include = try(var.install_patches.linux.package_names_mask_to_include, [])
         }
@@ -47,7 +47,7 @@ resource "azurerm_maintenance_configuration" "maintenance_configuration" {
       dynamic "windows" {
         for_each = try(var.settings.install_patches.windows, null) != null ? [1] : []
         content {
-          classifications_to_include = try(var.settings.install_patches.windows.classifications_to_include, [])
+          classifications_to_include = try(var.settings.install_patches.windows.classifications_to_include, ["Critical", "Security"])
           kb_numbers_to_exclude      = try(var.settings.install_patches.windows.kb_numbers_to_exclude, [])
           kb_numbers_to_include      = try(var.settings.install_patches.windows.kb_numbers_to_include, [])
 
