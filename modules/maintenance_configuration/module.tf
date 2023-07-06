@@ -18,7 +18,7 @@ resource "azurerm_maintenance_configuration" "maintenance_configuration" {
   in_guest_user_patch_mode = try(var.in_guest_user_patch_mode, null)
   
   dynamic "window" {
-    for_each = var.window != null ? [var.window] : []
+    for_each = var.settings.window != null ? [var.settings.window] : []
     content {
       start_date_time      = window.value.start_date_time
       expiration_date_time = try(window.value.expiration_date_time, null)
@@ -28,8 +28,8 @@ resource "azurerm_maintenance_configuration" "maintenance_configuration" {
     }
   }
 
-  dynamic "install_patches" {
-    for_each = var.scope == "InGuestPatch" ? [1] : []
+  dynamic "install_patches" {   
+    for_each = var.settings.scope == "InGuestPatch" && var.settings.install_patches != null ? [1] : []
     content {
       dynamic "linux" {
         for_each = try(var.install_patches.linux, null) != null ? [var.install_patches.linux] : []
@@ -41,7 +41,7 @@ resource "azurerm_maintenance_configuration" "maintenance_configuration" {
       }
 
       dynamic "windows" {
-        for_each = try(var.install_patches.windows, null) != null ? [var.install_patches.windows] : []
+        for_each = try(var.maintenance_configuration.install_patches.windows, null) != null ? [var.install_patches.windows] : []
         content {
           classifications_to_include = toset(try(windows.value.classifications_to_include, []))
           kb_numbers_to_exclude      = toset(try(windows.value.kb_numbers_to_exclude, []))
@@ -50,7 +50,7 @@ resource "azurerm_maintenance_configuration" "maintenance_configuration" {
         }
       }
 
-      reboot = try(var.install_patches.reboot, null)
+      reboot = try(var.maintenance_configuration.install_patches.reboot, null)
     }
   }
 
