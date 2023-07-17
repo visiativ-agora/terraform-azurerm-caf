@@ -11,7 +11,8 @@ resource "azurerm_disk_encryption_set" "encryption_set" {
 
 
   identity {
-    type = var.settings.identity.type, "SystemAssigned")
+    type = try(var.settings.identity.type, "SystemAssigned")
+
     # if type contains UserAssigned, `identity_ids` is mandatory
     identity_ids = try(regex("UserAssigned", var.settings.identity.type)) ? flatten([
       for managed_identity in var.settings.identity.managed_identities : [
