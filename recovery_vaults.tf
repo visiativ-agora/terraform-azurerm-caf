@@ -1,4 +1,3 @@
-
 module "recovery_vaults" {
   source   = "./modules/recovery_vault"
   for_each = local.shared_services.recovery_vaults
@@ -17,5 +16,4 @@ module "recovery_vaults" {
 
 output "recovery_vaults" {
   value = module.recovery_vaults
-
 }
