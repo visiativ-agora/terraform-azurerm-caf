@@ -45,14 +45,14 @@ resource "azuread_application" "app" {
   }
 
   dynamic "app_role" {
-    for_each = try(var.settings.app_role, null) != null ? [1] : []
+    for_each = var.app_role
     content {
-      allowed_member_types = try(var.settings.app_role.allowed_member_types, [])
-      description          = try(var.settings.app_role.description, null)
-      display_name         = try(var.settings.app_role.display_name, null)
-      enabled              = try(var.settings.app_role.enabled, null)
-      id                   = try(var.settings.app_role.id, null)
-      value                = try(var.settings.app_role.value, null)
+      allowed_member_types = app_role.value.app_role.allowed_member_types
+      description          = app_role.value.app_role.description
+      display_name         = app_role.value.app_role.display_name
+      enabled              = app_role.value.app_role.enabled
+      id                   = app_role.value.app_role.id
+      value                = app_role.value.app_role.value
     }
   }
 
