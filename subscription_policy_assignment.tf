@@ -16,13 +16,13 @@ module "subscription_policy_assignment" {
   description = try(each.value.description, null)
   display_name = try(each.value.display_name, null)
   enforce = try(each.value.enforce, null)
-  identity = try(each.value.identity, [])  
-  metadata = try(each.value.metadata, {})
-  non_compliance_message = try(each.value.non_compliance_message, [])
+  identity = try(each.value.identity, null)  
+  metadata = try(each.value.metadata, null)
+  non_compliance_message = try(each.value.non_compliance_message, null)
   not_scopes = try(each.value.not_scopes, null)
-  parameters = try(each.value.parameters, {})
-  overrides = try(each.value.overrides, [])
-  resource_selectors = try(each.value.resource_selectors, [])
+  parameters = try(each.value.parameters, null)
+  overrides = try(each.value.overrides, null)
+  resource_selectors = try(each.value.resource_selectors, null)
 }
 output "subscription_policy_assignment" {
   value = module.subscription_policy_assignment

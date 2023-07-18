@@ -16,9 +16,9 @@ module "subscription_policy_definition" {
   description = try(each.value.description, null)
   display_name = try(each.value.display_name, null)
   management_group_id = try(each.value.management_group_id, null)
-  metadata = try(each.value.metadata, {})
+  metadata = try(each.value.metadata, null)
   policy_rule = try(each.value.policy_rule, null)
-  parameters = try(each.value.parameters, {})
+  parameters = try(each.value.parameters, null)
 }
 output "subscription_policy_definition" {
   value = module.subscription_policy_definition
