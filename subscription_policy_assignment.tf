@@ -11,7 +11,7 @@ module "subscription_policy_assignment" {
   location            = try(local.global_settings.regions[each.value.region], null)
 
 
-  policy_definition_id = each.value.policy_definition_id
+  policy_definition_id = module.subscription_policy_definition[each.key].id
   subscription_id      = each.value.subscription_id
   description = try(each.value.description, null)
   display_name = try(each.value.display_name, null)
