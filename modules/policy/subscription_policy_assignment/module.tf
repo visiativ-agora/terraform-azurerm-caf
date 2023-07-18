@@ -36,32 +36,29 @@ resource "azurerm_subscription_policy_assignment" "subscription_policy_assignmen
   dynamic "overrides" {
     for_each = var.settings.overrides != null ? [var.settings.overrides] : []
     content {
-      value    = overrides.value.value
-      selector = try(overrides.value.selector, null)
+      value = overrides.value.value
+      dynamic "selectors" {
+        for_each = var.settings.overrides.selectors != null ? [var.settings.overrides.selectors] : []
+        content {
+          in     = try(selectors.value.in, null)
+          not_in = try(selectors.value.not_in, null)
+        }
+      }
     }
   }
-  dynamic "override_selector" {
-    for_each = var.settings.override_selector != null ? [var.settings.override_selector] : []
-    content {
-      in     = try(override_selector.value.in, null)
-      not_in = try(override_selector.value.not_in, null)
-    }
-  }
+
   dynamic "resource_selectors" {
     for_each = var.settings.resource_selectors != null ? [var.settings.resource_selectors] : []
     content {
-      name      = try(resource_selectors.value.name, null)
-      selectors = resource_selectors.value.selectors
+      name = resource_selectors.value.name
+      dynamic "selectors" {
+        for_each = var.settings.resource_selectors.selectors != null ? [var.settings.resource_selectors.selectors] : []
+        content {
+          kind   = selectors.value.kind
+          in     = try(selectors.value.in, null)
+          not_in = try(selectors.value.not_in, null)
+        }
+      }
     }
   }
-  dynamic "resource_selector" {
-    for_each = var.settings.resource_selector != null ? [var.settings.resource_selector] : []
-    content {
-      kind   = resource_selector.value.kind
-      in     = try(resource_selector.value.in, null)
-      not_in = try(resource_selector.value.not_in, null)
-    }
-  }
-
-
 }
