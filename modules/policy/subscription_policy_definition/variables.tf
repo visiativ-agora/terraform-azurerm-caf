@@ -25,10 +25,6 @@ variable "location" {
   type        = string
 }
 
-variable "resource_group_name" {
-  description = "Resource group object"
-}
-
 variable "settings" {}
 
 
