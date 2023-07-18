@@ -1,6 +1,6 @@
 output "id" {
   description = "The ID of the Policy Definition"
-  value       = azurerm_policy_definition.azurerm_policy_definition.id
+  value       = azurerm_subscription_policy_definition.subscription_policy_definition.id
 }
 
 output "role_definition_ids" {
