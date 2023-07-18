@@ -12,6 +12,7 @@ resource "azuread_application" "app" {
   group_membership_claims        = try(var.settings.group_membership_claims, ["All"])
   prevent_duplicate_names        = try(var.settings.prevent_duplicate_names, false)
 
+  app_role_ids = try(var.settings.app_role_ids, null)
   dynamic "single_page_application" {
     for_each = try(var.settings.single_page_application, null) != null ? [1] : []
 
