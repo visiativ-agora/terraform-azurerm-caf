@@ -15,7 +15,7 @@ resource "azurerm_policy_definition" "subscription_policy_definition" {
   display_name = try(var.display_name, null)
   description = try(var.description, null)
   management_group_id = try(var.management_group_id, null)
-  metadata     = try(var.metadata, {})
+  metadata     = try(var.metadata, null)
   policy_rule  = try(var.policy_rule, null)
-  parameters   = try(var.parameters, {})
+  parameters   = try(var.parameters, null)
 }
