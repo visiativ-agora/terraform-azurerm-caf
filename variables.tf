@@ -430,3 +430,11 @@ variable "aadb2c" {
 variable "preview_features" {
   default = {}
 }
+
+variable "subscription_policy_assignment" {
+  default = {}
+}
+
+variable "subscription_policy_definition" {
+  default = {}
+}
