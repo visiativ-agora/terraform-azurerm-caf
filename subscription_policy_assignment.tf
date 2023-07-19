@@ -1,6 +1,6 @@
 module "subscription_policy_assignment" {
   source   = "./modules/policy/subscription_policy_assignment"
-  for_each = local.policy.subscription_policy_assignment
+  for_each = local.subscription_policy_assignment
 
   client_config   = local.client_config
   global_settings = local.global_settings

@@ -431,10 +431,7 @@ variable "preview_features" {
   default = {}
 }
 
-variable "policy" {
-  default = {}
-}
 
-variable "subscription_policy_definition" {
+variable "subscription_policy_assignment" {
   default = {}
 }
