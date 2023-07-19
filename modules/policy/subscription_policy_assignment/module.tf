@@ -21,47 +21,48 @@ resource "azurerm_subscription_policy_assignment" "subscription_policy_assignmen
   metadata             = try(var.metadata, null)
 
   dynamic "identity" {
-    for_each = var.settings.identity != null ? [var.settings.identity] : []
+    #for_each = var.settings.identity != null ? [var.settings.identity] : []
+    for_each = lookup(var.settings, "identity", false) == false ? [] : [1]
     content {
       type         = try(identity.value.type, null)
       identity_ids = try(identity.value.identity_ids, [])
     }
   }
 
-  dynamic "non_compliance_message" {
-    for_each = var.settings.non_compliance_message != null ? [var.settings.non_compliance_message] : []
-    content {
-      content                        = non_compliance_message.value.content
-      policy_definition_reference_id = try(non_compliance_message.value.policy_definition_reference_id, null)
-    }
-  }
+  # dynamic "non_compliance_message" {
+  #   for_each = var.settings.non_compliance_message != null ? [var.settings.non_compliance_message] : []
+  #   content {
+  #     content                        = non_compliance_message.value.content
+  #     policy_definition_reference_id = try(non_compliance_message.value.policy_definition_reference_id, null)
+  #   }
+  # }
 
-  dynamic "overrides" {
-    for_each = var.settings.overrides != null ? [var.settings.overrides] : []
-    content {
-      value = overrides.value.value
-      dynamic "selectors" {
-        for_each = var.settings.overrides.selectors != null ? [var.settings.overrides.selectors] : []
-        content {
-          in     = try(selectors.value.in, null)
-          not_in = try(selectors.value.not_in, null)
-        }
-      }
-    }
-  }
+  # dynamic "overrides" {
+  #   for_each = var.settings.overrides != null ? [var.settings.overrides] : []
+  #   content {
+  #     value = overrides.value.value
+  #     dynamic "selectors" {
+  #       for_each = var.settings.overrides.selectors != null ? [var.settings.overrides.selectors] : []
+  #       content {
+  #         in     = try(selectors.value.in, null)
+  #         not_in = try(selectors.value.not_in, null)
+  #       }
+  #     }
+  #   }
+  # }
 
-  dynamic "resource_selectors" {
-    for_each = var.settings.resource_selectors != null ? [var.settings.resource_selectors] : []
-    content {
-      name = resource_selectors.value.name
-      dynamic "selectors" {
-        for_each = var.settings.resource_selectors.selectors != null ? [var.settings.resource_selectors.selectors] : []
-        content {
-          kind   = selectors.value.kind
-          in     = try(selectors.value.in, null)
-          not_in = try(selectors.value.not_in, null)
-        }
-      }
-    }
-  }
+  # dynamic "resource_selectors" {
+  #   for_each = var.settings.resource_selectors != null ? [var.settings.resource_selectors] : []
+  #   content {
+  #     name = resource_selectors.value.name
+  #     dynamic "selectors" {
+  #       for_each = var.settings.resource_selectors.selectors != null ? [var.settings.resource_selectors.selectors] : []
+  #       content {
+  #         kind   = selectors.value.kind
+  #         in     = try(selectors.value.in, null)
+  #         not_in = try(selectors.value.not_in, null)
+  #       }
+  #     }
+  #   }
+  # }
 }
