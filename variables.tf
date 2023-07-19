@@ -431,7 +431,7 @@ variable "preview_features" {
   default = {}
 }
 
-variable "subscription_policy_assignment" {
+variable "policy" {
   default = {}
 }
 
