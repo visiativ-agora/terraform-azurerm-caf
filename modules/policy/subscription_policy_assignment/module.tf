@@ -21,7 +21,8 @@ resource "azurerm_subscription_policy_assignment" "subscription_policy_assignmen
   metadata             = try(var.metadata, null)
 
   dynamic "identity" {
-    for_each = var.settings.identity != null ? [var.settings.identity] : []
+    #for_each = var.settings.identity != null ? [var.settings.identity] : []
+    for_each = can(var.settings.identity) ? [var.settings.identity] : []
     content {
       type         = try(identity.value.type, null)
       identity_ids = try(identity.value.identity_ids, [])
