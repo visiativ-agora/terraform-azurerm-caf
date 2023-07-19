@@ -4,17 +4,17 @@ variable "global_settings" {
 variable "client_config" {
   description = "Client configuration object (see module README.md)."
 }
-variable "tags" {
-  description = "Tags to be used for this resource deployment."
-  type        = map(any)
-  default     = {}
-}
+# variable "tags" {
+#   description = "Tags to be used for this resource deployment."
+#   type        = map(any)
+#   default     = {}
+# }
 
-variable "base_tags" {
-  description = "Base tags for the resource to be inherited from the resource group."
-  type        = map(any)
-  default     = {}
-}
+# variable "base_tags" {
+#   description = "Base tags for the resource to be inherited from the resource group."
+#   type        = map(any)
+#   default     = {}
+# }
 
 variable "name" {
   description = "(Required) The name of the PowerBI Embedded. Changing this forces a new resource to be created."

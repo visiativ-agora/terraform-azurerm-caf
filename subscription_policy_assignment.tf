@@ -7,7 +7,7 @@ module "subscription_policy_assignment" {
   settings        = each.value
   name            = each.value.name
 
-  base_tags = local.global_settings.inherit_tags
+  #base_tags = local.global_settings.inherit_tags
   location  = try(local.global_settings.regions[each.value.region], null)
 
 
