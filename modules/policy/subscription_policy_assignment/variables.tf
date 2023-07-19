@@ -63,7 +63,3 @@ variable "overrides" {
 variable "resource_selectors" {
   description = "(Optional) One or more resource_selectors blocks as defined below to filter polices by resource properties."
 }
-
-variable "subscription_policy_assignment" {
-  
-}
