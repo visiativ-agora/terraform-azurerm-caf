@@ -29,7 +29,8 @@ resource "azurerm_subscription_policy_assignment" "subscription_policy_assignmen
   }
 
   dynamic "non_compliance_message" {
-    for_each = var.settings.non_compliance_message != null ? [var.settings.non_compliance_message] : []
+    #for_each = var.settings.non_compliance_message != null ? [var.settings.non_compliance_message] : []
+    for_each = can(var.settings.non_compliance_message) ? [var.settings.non_compliance_message] : []
     content {
       content                        = non_compliance_message.value.content
       policy_definition_reference_id = try(non_compliance_message.value.policy_definition_reference_id, null)
@@ -37,7 +38,8 @@ resource "azurerm_subscription_policy_assignment" "subscription_policy_assignmen
   }
 
   dynamic "overrides" {
-    for_each = var.settings.overrides != null ? [var.settings.overrides] : []
+    #for_each = var.settings.overrides != null ? [var.settings.overrides] : []
+    for_each = can(var.settings.overrides) ? [var.settings.overrides] : []
     content {
       value = overrides.value.value
       dynamic "selectors" {
@@ -51,7 +53,8 @@ resource "azurerm_subscription_policy_assignment" "subscription_policy_assignmen
   }
 
   dynamic "resource_selectors" {
-    for_each = var.settings.resource_selectors != null ? [var.settings.resource_selectors] : []
+    #for_each = var.settings.resource_selectors != null ? [var.settings.resource_selectors] : []
+    for_each = can(var.settings.resource_selectors) ? [var.settings.resource_selectors] : []
     content {
       name = resource_selectors.value.name
       dynamic "selectors" {
