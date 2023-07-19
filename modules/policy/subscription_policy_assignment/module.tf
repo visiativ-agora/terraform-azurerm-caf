@@ -19,6 +19,7 @@ resource "azurerm_subscription_policy_assignment" "subscription_policy_assignmen
   not_scopes           = try(var.not_scopes, null)
   parameters           = try(var.parameters, null)
   metadata             = try(var.metadata, null)
+
   dynamic "identity" {
     for_each = var.settings.identity != null ? [var.settings.identity] : []
     content {
@@ -33,6 +34,7 @@ resource "azurerm_subscription_policy_assignment" "subscription_policy_assignmen
       policy_definition_reference_id = try(non_compliance_message.value.policy_definition_reference_id, null)
     }
   }
+
   dynamic "overrides" {
     for_each = var.settings.overrides != null ? [var.settings.overrides] : []
     content {
