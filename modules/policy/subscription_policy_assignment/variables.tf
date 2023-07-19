@@ -40,9 +40,7 @@ variable "display_name" {
 variable "enforce" {
   description = "(Optional) Specifies if this Policy should be enforced or not? Defaults to true"
 }
-# variable "identity" {
-#   description = "(Optional) An identity block as defined below."
-# }
+variable "identity" {}
 variable "location" {
   description = "(Optional) The Azure Region where the Policy Assignment should exist. Changing this forces a new Policy Assignment to be created."
 }
