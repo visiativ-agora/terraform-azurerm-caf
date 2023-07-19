@@ -23,10 +23,11 @@ resource "azurerm_subscription_policy_assignment" "subscription_policy_assignmen
   dynamic "identity" {
     for_each = var.settings.identity != null ? [var.settings.identity] : []
     content {
-      type         = identity.value.type
+      type         = try(identity.value.type, null)
       identity_ids = try(identity.value.identity_ids, [])
     }
   }
+
   dynamic "non_compliance_message" {
     for_each = var.settings.non_compliance_message != null ? [var.settings.non_compliance_message] : []
     content {
