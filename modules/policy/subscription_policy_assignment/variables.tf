@@ -40,19 +40,19 @@ variable "display_name" {
 variable "enforce" {
   description = "(Optional) Specifies if this Policy should be enforced or not? Defaults to true"
 }
-variable "identity" {}
+# variable "identity" {}
 variable "location" {
   description = "(Optional) The Azure Region where the Policy Assignment should exist. Changing this forces a new Policy Assignment to be created."
 }
 variable "metadata" {
   description = "(Optional) A JSON mapping of any Metadata for this Policy."
 }
-variable "non_compliance_message" {}
+# variable "non_compliance_message" {}
 variable "not_scopes" {
   description = "(Optional) Specifies a list of Resource Scopes (for example a Subscription, or a Resource Group) within this Management Group which are excluded from this Policy."
 }
 variable "parameters" {
   description = "(Optional) A JSON mapping of any Parameters for this Policy."
 }
-variable "overrides" {}
-variable "resource_selectors" {}
+# variable "overrides" {}
+# variable "resource_selectors" {}
