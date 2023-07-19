@@ -448,7 +448,7 @@ locals {
   }
 
   policy = {
-    subscription_policy_assignment = try(var.policy.subscription_policy_assignment, {})
+    subscription_policy_assignment = try(var.subscription_policy_assignment, {})
   }
 
 }
