@@ -17,8 +17,8 @@ resource "azurerm_subscription_policy_assignment" "subscription_policy_assignmen
   enforce              = try(var.enforce, null)
   location             = try(var.location, null)
   not_scopes           = try(var.not_scopes, null)
-  parameters           = try(var.parameters, null)
-  metadata             = try(var.metadata, null)
+  parameters           = try(jsondecode(var.parameters), null)
+  metadata             = try(jsondecode(var.metadata), null)
 
   dynamic "identity" {
     #for_each = var.settings.identity != null ? [var.settings.identity] : []
