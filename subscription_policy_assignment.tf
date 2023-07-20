@@ -8,7 +8,7 @@ module "subscription_policy_assignment" {
   name            = each.value.name
 
   #base_tags = local.global_settings.inherit_tags
-  location  = try(local.global_settings.regions[each.value.region], null)
+  location  = try(each.value.location, null)
 
 
   policy_definition_id   = each.value.policy_definition_id
