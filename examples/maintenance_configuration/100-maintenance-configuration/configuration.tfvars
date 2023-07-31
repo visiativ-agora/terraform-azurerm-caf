@@ -17,7 +17,7 @@ maintenance_configuration = {
     name               = "example-mc"
     region             = "region1"
     resource_group_key = "rg1"
-    scope              = "All"
+    scope              = "Host"
     # tags               = {} # optional
   }
 }
