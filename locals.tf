@@ -196,6 +196,7 @@ locals {
     managed_identities          = local.combined_objects_managed_identities
     mssql_databases             = local.combined_objects_mssql_databases
     mssql_servers               = local.combined_objects_mssql_servers
+    maintenance_configuration   = local.combined_objects_maintenance_configuration
     storage_accounts            = local.combined_objects_storage_accounts
     networking                  = local.combined_objects_networking
   }
@@ -446,6 +447,11 @@ locals {
     iot_security_device_group           = try(var.iot.iot_security_device_group, {})
     iot_central_application             = try(var.iot.iot_central_application, {})
   }
-  
-  powerbi_embedded = try(var.powerbi_embedded, {})  
+
+  powerbi_embedded = try(var.powerbi_embedded, {})
+  maintenance = {
+    maintenance_configuration              = try(var.maintenance.maintenance_configuration, {})
+    maintenance_assignment_virtual_machine = try(var.maintenance.maintenance_assignment_virtual_machine, {})
+  }
+
 }
