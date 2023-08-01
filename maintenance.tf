@@ -48,7 +48,7 @@ module "maintenance_assignment_virtual_machine" {
   #virtual_machine_id = can(each.value.virtual_machine_id) ? each.value.virtual_machine_id : can(local.combined_objects_virtual_machines[try(each.value.lz_key, local.client_config.landingzone_key)][each.value.virtual_machine_key]) ? local.combined_objects_virtual_machines[try(each.value.lz_key, local.client_config.landingzone_key)][each.value.virtual_machine_key].id : null
   #virtual_machine_id = can(each.value.virtual_machine_id) ? each.value.virtual_machine_id : try(local.combined_objects_virtual_machines[try(each.value.lz_key, local.client_config.landingzone_key)][each.value.virtual_machine_key].id, null)
   #virtual_machine_id = can(each.value.virtual_machine_id) ? each.value.virtual_machine_id : try(local.combined_objects_virtual_machines[try(each.value.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group.key, each.value.resource_group_key)][each.value.virtual_machine_key].id, null)
-  combined_objects_virtual_machines = local.combined_objects_virtual_machines[try(each.value.lz_key, local.client_config.landingzone_key)]
+  combined_objects_virtual_machines = local.combined_objects_virtual_machines
 
 
   #virtual_machine_id = try(var.virtual_machine_id, var.local_combined_resources.virtual_machine.id)
