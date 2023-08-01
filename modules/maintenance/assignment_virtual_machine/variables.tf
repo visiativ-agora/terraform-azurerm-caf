@@ -47,6 +47,6 @@ variable "virtual_machine_id" {
   default = {}
 }
 
-variable "combined_objects_virtual_machines" {
-  default = {}
-}
+# variable "combined_objects_virtual_machines" {
+#   default = {}
+# }
