@@ -3,3 +3,6 @@
 #   value       = azurerm_maintenance_assignment_virtual_machine.maintenance_assignment_virtual_machine.id
 # }
 
+output "debug" {
+  value = var.combined_objects_virtual_machines
+}

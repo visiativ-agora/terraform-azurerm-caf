@@ -46,3 +46,7 @@ variable "maintenance_configuration_id" {
 variable "virtual_machine_id" {
   default = {}
 }
+
+variable "combined_objects_virtual_machines" {
+  default = {}
+}
