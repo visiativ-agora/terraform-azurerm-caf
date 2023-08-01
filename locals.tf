@@ -451,8 +451,7 @@ locals {
   powerbi_embedded = try(var.powerbi_embedded, {})
   maintenance = {
     maintenance_configuration              = try(var.maintenance.maintenance_configuration, {})
-    maintenance_assignment_virtual_machine = try(var.maintenance.maintenance_assignment_virtual_machine, {})
-    debug = jsonencode(local.combined_objects_virtual_machines)
+    maintenance_assignment_virtual_machine = try(var.maintenance.maintenance_assignment_virtual_machine, {})    
   }
 
 }
