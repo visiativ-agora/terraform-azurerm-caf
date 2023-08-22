@@ -11,6 +11,14 @@ resource_groups = {
   }
 }
 
+# msi
+managed_identities = {
+  asr1 = {
+    name               = "asr1"
+    resource_group_key = "primary"
+  }
+}
+
 recovery_vaults = {
   asr1 = {
     name               = "vault_re1"
@@ -98,6 +106,19 @@ recovery_vaults = {
     encryption = {
       key_id                            = "https://myvault001.vault.azure.net/keys/asr-cmk/"
       infrastructure_encryption_enabled = true
+      user_assigned_identity = {
+        key = "asr1"
+      }
+    }
+
+    identity = {
+      # Do not use "SystemAssigned, UserAssigned", there is a bug in the provider
+      type = "UserAssigned"
+      managed_identities = {
+        asr1 = {
+          key = "asr1"
+        }
+      }
     }
   }
 }
