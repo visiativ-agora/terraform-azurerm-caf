@@ -26,3 +26,7 @@ output "tags" {
 output "event_hubs" {
   value = module.event_hubs
 }
+
+output "auth_rules" {
+  value = module.event_hub_namespace_auth_rules
+}

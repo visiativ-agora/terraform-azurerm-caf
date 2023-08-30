@@ -21,18 +21,18 @@ output "diagnostics" {
   value = local.combined_diagnostics
 }
 
-# Additionnal outputs so we can use the properties of these resources
-output "diagnostic_event_hub_namespaces" {
-  value = module.diagnostic_event_hub_namespaces
-}
+# # Additionnal outputs so we can use the properties of these resources
+# output "diagnostic_event_hub_namespaces" {
+#   value = module.diagnostic_event_hub_namespaces
+# }
 
-output "diagnostic_log_analytics" {
-  value = module.diagnostic_log_analytics
-}
+# output "diagnostic_log_analytics" {
+#   value = module.diagnostic_log_analytics
+# }
 
-output "diagnostic_storage_accounts" {
-  value = module.diagnostic_storage_accounts
-}
+# output "diagnostic_storage_accounts" {
+#   value = module.diagnostic_storage_accounts
+# }
 
 module "diagnostic_storage_accounts" {
   source   = "./modules/storage_account"

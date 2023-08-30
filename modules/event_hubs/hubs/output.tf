@@ -7,3 +7,7 @@ output "name" {
   description = "The name of the EventHub."
   value       = azurerm_eventhub.evhub.name
 }
+
+output "auth_rules" {
+  value = module.authorization_rules
+}
