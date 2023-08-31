@@ -38,8 +38,10 @@ module "event_hub_namespace_auth_rules" {
 output "event_hub_namespace_auth_rules" {
   value = merge(
     module.event_hub_namespace_auth_rules,
-    { for key, eh in module.event_hub_namespaces : key => eh.auth_rules },
-    { for key, eh in module.diagnostic_event_hub_namespaces : key => eh.auth_rules }
+    module.event_hub_namespaces.*.auth_rules,
+    module.diagnostic_event_hub_namespaces.*.auth_rules,
+    # { for key, eh in module.event_hub_namespaces : key => eh.auth_rules },
+    # { for key, eh in module.diagnostic_event_hub_namespaces : key => eh.auth_rules }
   )
   # value = module.event_hub_namespace_auth_rules
 }
@@ -139,7 +141,8 @@ module "event_hub_auth_rules" {
 output "event_hub_auth_rules" {
   value = merge(
     module.event_hub_auth_rules,
-    { for key, eh in module.event_hubs : key => eh.auth_rules },
+    module.event_hubs.*.auth_rules,
+    # { for key, eh in module.event_hubs : key => eh.auth_rules },
   )
   # value = module.event_hub_auth_rules
 }
