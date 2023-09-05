@@ -380,6 +380,11 @@ variable "event_hub_namespace_auth_rules" {
   default     = {}
 }
 
+variable "diagnostic_event_hub_namespace_auth_rules" {
+  description = "Configuration object - Diagnostic Event Hub namespaces authentication rules"
+  default     = {}
+}
+
 variable "event_hub_consumer_groups" {
   description = "Configuration object - Event Hub consumer group rules"
   default     = {}
