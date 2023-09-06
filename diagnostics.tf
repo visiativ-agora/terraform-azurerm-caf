@@ -122,6 +122,6 @@ module "diagnostic_event_hub_namespace_auth_rules" {
   resource_group_name = local.combined_objects_resource_groups[try(each.value.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group_key, each.value.resource_group.key)].name
 
   depends_on = [
-    module.event_hub_namespaces
+    module.diagnostic_event_hub_namespaces
   ]
 }
