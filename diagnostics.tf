@@ -8,11 +8,12 @@ locals {
 
   # Remote amd locally created diagnostics  objects
   combined_diagnostics = {
-    diagnostics_definition   = try(var.diagnostics.diagnostics_definition, {})
-    diagnostics_destinations = try(var.diagnostics.diagnostics_destinations, {})
-    storage_accounts         = merge(try(var.diagnostics.storage_accounts, {}), module.diagnostic_storage_accounts)
-    log_analytics            = merge(try(var.diagnostics.log_analytics, {}), module.diagnostic_log_analytics)
-    event_hub_namespaces     = merge(try(var.diagnostics.event_hub_namespaces, {}), module.diagnostic_event_hub_namespaces)
+    diagnostics_definition         = try(var.diagnostics.diagnostics_definition, {})
+    diagnostics_destinations       = try(var.diagnostics.diagnostics_destinations, {})
+    storage_accounts               = merge(try(var.diagnostics.storage_accounts, {}), module.diagnostic_storage_accounts)
+    log_analytics                  = merge(try(var.diagnostics.log_analytics, {}), module.diagnostic_log_analytics)
+    event_hub_namespaces           = merge(try(var.diagnostics.event_hub_namespaces, {}), module.diagnostic_event_hub_namespaces)
+    event_hub_namespace_auth_rules = merge(try(var.diagnostics.event_hub_namespace_auth_rules, {}), module.diagnostic_event_hub_namespace_auth_rules)
   }
 }
 
@@ -108,4 +109,19 @@ module "diagnostic_log_analytics_diagnostics" {
   resource_location = module.diagnostic_log_analytics[each.key].location
   diagnostics       = local.combined_diagnostics
   profiles          = try(each.value.diagnostic_profiles, {})
+}
+
+module "diagnostic_event_hub_namespace_auth_rules" {
+  source   = "./modules/event_hubs/namespaces/auth_rules"
+  for_each = try(var.diagnostic_event_hub_namespace_auth_rules, {})
+
+  client_config       = local.client_config
+  global_settings     = local.global_settings
+  namespace_name      = module.diagnostic_event_hub_namespaces[each.value.event_hub_namespace_key].name
+  settings            = each.value
+  resource_group_name = local.combined_objects_resource_groups[try(each.value.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group_key, each.value.resource_group.key)].name
+
+  depends_on = [
+    module.event_hub_namespaces
+  ]
 }

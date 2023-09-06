@@ -35,21 +35,6 @@ module "event_hub_namespace_auth_rules" {
   ]
 }
 
-module "diagnostic_event_hub_namespace_auth_rules" {
-  source   = "./modules/event_hubs/namespaces/auth_rules"
-  for_each = try(var.diagnostic_event_hub_namespace_auth_rules, {})
-
-  client_config       = local.client_config
-  global_settings     = local.global_settings
-  namespace_name      = module.diagnostic_event_hub_namespaces[each.value.event_hub_namespace_key].name
-  settings            = each.value
-  resource_group_name = local.combined_objects_resource_groups[try(each.value.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group_key, each.value.resource_group.key)].name
-
-  depends_on = [
-    module.event_hub_namespaces
-  ]
-}
-
 output "event_hub_namespace_auth_rules" {
   # value = merge(
   #   module.event_hub_namespace_auth_rules,
@@ -59,10 +44,6 @@ output "event_hub_namespace_auth_rules" {
   #   # { for key, eh in module.diagnostic_event_hub_namespaces : key => eh.auth_rules }
   # )
   value = module.event_hub_namespace_auth_rules
-}
-
-output "diagnostic_event_hub_namespace_auth_rules" {
-  value = module.diagnostic_event_hub_namespaces
 }
 
 module "event_hub_namespaces_diagnostics" {
