@@ -4,6 +4,9 @@ variable "global_settings" {
   description = "Global settings object (see module README.md)"
 }
 
+variable "diagnostic_profiles" {
+  default = null
+}
 variable "diagnostics" {}
 variable "private_endpoints" {}
 variable "vnets" {}
