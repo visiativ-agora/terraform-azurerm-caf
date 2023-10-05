@@ -5,9 +5,13 @@ variable "global_settings" {
 }
 
 variable "diagnostic_profiles" {
+  default = {}
+}
+
+variable "diagnostics" {
   default = null
 }
-variable "diagnostics" {}
+
 variable "private_endpoints" {}
 variable "vnets" {}
 variable "client_config" {
