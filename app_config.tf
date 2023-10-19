@@ -3,6 +3,11 @@ module "app_config" {
   for_each = local.database.app_config
   name     = each.value.name
 
+  vnets             = local.combined_objects_networking
+  private_endpoints = try(each.value.private_endpoints, {})
+  private_dns       = local.combined_objects_private_dns
+  resource_groups   = local.combined_objects_resource_groups
+
   client_config       = local.client_config
   combined_objects    = local.dynamic_app_config_combined_objects
   global_settings     = local.global_settings

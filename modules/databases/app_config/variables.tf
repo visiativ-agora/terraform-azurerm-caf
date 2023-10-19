@@ -28,3 +28,10 @@ variable "combined_objects" {
 }
 
 variable "client_config" {}
+
+variable "vnets" {}
+variable "private_endpoints" {}
+variable "resource_groups" {}
+variable "private_dns" {
+  default = {}
+}
