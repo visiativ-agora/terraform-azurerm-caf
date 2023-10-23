@@ -36,5 +36,5 @@ resource "azurerm_app_configuration_key" "config" {
   # if value is a keyvault reference, set the correct type, set value to null and set vault_key_reference
   type                = can(each.value.value.keyvault) ? "vault" : "kv"
   value               = can(each.value.value.keyvault) ? null : each.value.value
-  vault_key_reference = can(each.value.value.keyvault) ? "${var.keyvaults[try(each.value.value.keyvault.lz_key, var.client_config.landingzone_key)][each.value.value.keyvault.key].vault_uri}/secrets/${each.value.value.keyvault.secret_name}" : null
+  vault_key_reference = can(each.value.value.keyvault) ? "${var.keyvaults[try(each.value.value.keyvault.lz_key, var.client_config.landingzone_key)][each.value.value.keyvault.key].vault_uri}/secrets/${each.value.value.secret_name}" : null
 }
