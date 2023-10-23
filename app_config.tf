@@ -11,6 +11,7 @@ module "app_config" {
   client_config       = local.client_config
   combined_objects    = local.dynamic_app_config_combined_objects
   global_settings     = local.global_settings
+  managed_identities  = local.combined_objects_managed_identities
   settings            = each.value
   base_tags           = local.global_settings.inherit_tags
   resource_group      = local.combined_objects_resource_groups[try(each.value.resource_group.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group_key, each.value.resource_group.key)]

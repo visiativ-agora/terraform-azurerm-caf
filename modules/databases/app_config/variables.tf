@@ -28,6 +28,7 @@ variable "combined_objects" {
 }
 
 variable "client_config" {}
+variable "managed_identities" {}
 
 variable "vnets" {}
 variable "private_endpoints" {}
