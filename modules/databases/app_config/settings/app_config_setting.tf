@@ -27,7 +27,7 @@
 #   }
 # }
 
-resource "azurerm_app_configuration_key" "test" {
+resource "azurerm_app_configuration_key" "config" {
   for_each = var.config_settings
 
   configuration_store_id = var.app_config_id

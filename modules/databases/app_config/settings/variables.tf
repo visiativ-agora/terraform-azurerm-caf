@@ -17,6 +17,7 @@ variable "app_config_id" {
   description = "App Config Resource Id"
 }
 
+variable "client_config" {}
 variable "config_settings" {}
 variable "keyvaults" {}
 
