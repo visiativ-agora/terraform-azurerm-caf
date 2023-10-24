@@ -8,6 +8,7 @@ module "mssql_databases" {
   for_each = local.database.mssql_databases
 
   global_settings     = local.global_settings
+  client_config       = local.client_config
   cloud               = local.cloud
   managed_identities  = local.combined_objects_managed_identities
   settings            = each.value
