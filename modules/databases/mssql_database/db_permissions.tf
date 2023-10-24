@@ -12,12 +12,12 @@ resource "null_resource" "set_db_permissions" {
     on_failure  = fail
 
     environment = {
-      SQLCMDSERVER = local.server_name
-      SQLCMDDBNAME = azurerm_mssql_database.mssqldb.name
-      DBUSERNAMES  = format("'%s'", join(",", each.value.db_usernames))
-      DBROLES      = format("'%s'", join(",", each.value.db_roles))
-      SQLFILEPATH  = format("%s/scripts/set_db_permissions.sql", path.module)
+      SQLADMINPASSWORD = try(data.azurerm_key_vault_secret.sql_admin_password.value, "")
+      SQLCMDSERVER     = local.server_name
+      SQLCMDDBNAME     = azurerm_mssql_database.mssqldb.name
+      DBUSERNAMES      = format("'%s'", join(",", each.value.db_usernames))
+      DBROLES          = format("'%s'", join(",", each.value.db_roles))
+      SQLFILEPATH      = format("%s/scripts/set_db_permissions.sql", path.module)
     }
   }
-
 }

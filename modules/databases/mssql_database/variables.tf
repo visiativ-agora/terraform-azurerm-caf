@@ -7,6 +7,7 @@ variable "settings" {}
 variable "server_id" {}
 variable "server_name" {}
 variable "storage_accounts" {}
+variable "keyvaults" {}
 variable "elastic_pool_id" {
   default = null
 }
