@@ -12,7 +12,7 @@ resource "null_resource" "set_db_permissions" {
     on_failure  = fail
 
     environment = {
-      SQLADMINPASSWORD = try(data.azurerm_key_vault_secret.sql_admin_password.value, "")
+      SQLADMINPASSWORD = try(data.azurerm_key_vault_secret.sql_admin_password[0].value, "")
       SQLCMDSERVER     = local.server_name
       SQLCMDDBNAME     = azurerm_mssql_database.mssqldb.name
       DBUSERNAMES      = format("'%s'", join(",", each.value.db_usernames))
