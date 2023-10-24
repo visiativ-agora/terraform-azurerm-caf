@@ -27,7 +27,7 @@ locals {
 }
 
 data "azurerm_key_vault_secret" "sql_admin_password" {
-  for_each = can(var.settings.sql_admin_password.keyvault_key) ? [1] : []
+  count = can(var.settings.sql_admin_password.keyvault_key) ? 1 : 0
 
   name         = var.settings.sql_admin_password.keyvault_secret_name
   key_vault_id = var.keyvaults[try(var.settings.sql_admin_password.lz_key, var.client_config.landingzone_key)][var.settings.sql_admin_password.keyvault_key].id
