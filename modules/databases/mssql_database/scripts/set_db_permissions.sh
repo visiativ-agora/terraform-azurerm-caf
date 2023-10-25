@@ -20,5 +20,5 @@ else
   # the SqlServer Powershell module allows to use an access_token from the current connected user to be used to query the SqlServer instance
   # the user must be an admin
   access_token=$(az account get-access-token --resource https://database.windows.net | jq -r .accessToken)
-  pwsh -c "Install-Module -Name SqlServer -Confirm; Install-Module Az.Accounts -Confirm; Import-Module SqlServer; Import-Module Az.Accounts; Invoke-Sqlcmd -ServerInstance '${SQLCMDSERVER}' -AccessToken '${access_token}' -InputFile '${SQLFILEPATH}';"
+  pwsh -c "Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted; Install-Module -Name SqlServer; Install-Module Az.Accounts; Import-Module SqlServer; Import-Module Az.Accounts; Invoke-Sqlcmd -ServerInstance '${SQLCMDSERVER}' -AccessToken '${access_token}' -InputFile '${SQLFILEPATH}';"
 fi
