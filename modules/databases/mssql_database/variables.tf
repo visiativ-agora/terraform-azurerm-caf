@@ -1,16 +1,12 @@
 variable "global_settings" {
   description = "Global settings object (see module README.md)"
 }
-variable "client_config" {
-  description = "Client configuration object (see module README.md)."
-}
 variable "cloud" {}
 variable "location" {}
 variable "settings" {}
 variable "server_id" {}
 variable "server_name" {}
 variable "storage_accounts" {}
-variable "keyvaults" {}
 variable "elastic_pool_id" {
   default = null
 }
