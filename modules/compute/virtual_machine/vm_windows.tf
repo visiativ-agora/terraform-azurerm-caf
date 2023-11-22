@@ -58,7 +58,7 @@ resource "azurerm_windows_virtual_machine" "vm" {
   patch_mode                                             = try(each.value.patch_mode, "AutomaticByOS")
   # Available since https://github.com/hashicorp/terraform-provider-azurerm/releases/tag/v3.67.0
   #bypass_platform_safety_checks_on_user_schedule_enabled = (each.value.patch_mode == "AutomaticByPlatform" ? true : try(each.value.bypass_platform_safety_checks_on_user_schedule_enabled, false))
-  bypass_platform_safety_checks_on_user_schedule_enabled = can(each.value.patch_mode) && each.value.patch_mode == "AutomaticByPlatform" ? true : coalesce(each.value.bypass_platform_safety_checks_on_user_schedule_enabled, false))
+  bypass_platform_safety_checks_on_user_schedule_enabled = (can(each.value.patch_mode) && each.value.patch_mode == "AutomaticByPlatform" ? true : coalesce(each.value.bypass_platform_safety_checks_on_user_schedule_enabled, false))
   provision_vm_agent                                     = try(each.value.provision_vm_agent, true)
   proximity_placement_group_id                           = can(each.value.proximity_placement_group_key) || can(each.value.proximity_placement_group.key) ? var.proximity_placement_groups[try(var.client_config.landingzone_key, var.client_config.landingzone_key)][try(each.value.proximity_placement_group_key, each.value.proximity_placement_group.key)].id : try(each.value.proximity_placement_group_id, each.value.proximity_placement_group.id, null)
   resource_group_name                                    = local.resource_group_name
