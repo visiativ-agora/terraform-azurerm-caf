@@ -243,6 +243,9 @@ locals {
     cognitive_services_account = try(var.cognitive_services.cognitive_services_account, {})
   }
 
+  maps = {
+    maps_accounts = try(var.maps.maps_accounts, {})
+  }
   messaging = {
     signalr_services             = try(var.messaging.signalr_services, {})
     servicebus_namespaces        = try(var.messaging.servicebus_namespaces, {})
@@ -383,10 +386,11 @@ locals {
   }
 
   storage = {
-    netapp_accounts        = try(var.storage.netapp_accounts, {})
-    storage_account_blobs  = try(var.storage.storage_account_blobs, {})
-    storage_account_queues = try(var.storage.storage_account_queues, {})
-    storage_containers     = try(var.storage.storage_containers, {})
+    netapp_accounts             = try(var.storage.netapp_accounts, {})
+    storage_account_blobs       = try(var.storage.storage_account_blobs, {})
+    storage_account_file_shares = try(var.storage.storage_account_file_shares, {})
+    storage_account_queues      = try(var.storage.storage_account_queues, {})
+    storage_containers          = try(var.storage.storage_containers, {})
   }
 
   webapp = {
@@ -449,6 +453,7 @@ locals {
   }
 
   powerbi_embedded = try(var.powerbi_embedded, {})
+  
   maintenance = {
     maintenance_configuration              = try(var.maintenance.maintenance_configuration, {})
     maintenance_assignment_virtual_machine = try(var.maintenance.maintenance_assignment_virtual_machine, {})    

@@ -48,17 +48,18 @@ resource "azuread_application" "app" {
   }
 
   dynamic "app_role" {
-    for_each = try(var.settings.app_role, null) != null ? [1] : []
+    for_each = try(var.settings.app_roles, [])
+
     content {
-      allowed_member_types = try(var.settings.app_role.allowed_member_types, [])
-      description          = try(var.settings.app_role.description, null)
-      display_name         = try(var.settings.app_role.display_name, null)
-      enabled              = try(var.settings.app_role.enabled, null)
-      id                   = try(var.settings.app_role.id, null)
-      value                = try(var.settings.app_role.value, null)
+      allowed_member_types = app_role.value.allowed_member_types
+      description          = app_role.value.description
+      display_name         = app_role.value.display_name
+      enabled              = try(app_role.value.enabled, null)
+      id                   = try(app_role.value.id, random_uuid.app_role_id[app_role.key].id)
+      value                = try(app_role.value.value, null)
     }
   }
-  
+
   dynamic "required_resource_access" {
     for_each = var.azuread_api_permissions
 
@@ -121,5 +122,12 @@ resource "azuread_application" "app" {
         }
       }
     }
+  }
+}
+
+resource "random_uuid" "app_role_id" {
+  for_each = {
+    for key, value in try(var.settings.app_roles, {}) : key => value
+    if try(value.id, null) == null
   }
 }

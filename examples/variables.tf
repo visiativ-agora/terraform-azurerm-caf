@@ -232,6 +232,12 @@ variable "mssql_mi_secondary_tdes" {
 variable "storage_accounts" {
   default = {}
 }
+variable "storage_account_file_shares" {
+  default = {}
+}
+variable "maps_accounts" {
+  default = {}
+}
 variable "azuread_credential_policies" {
   default = {}
 }
@@ -284,6 +290,9 @@ variable "virtual_machines" {
   default = {}
 }
 variable "virtual_machine_scale_sets" {
+  default = {}
+}
+variable "ddos_services" {
   default = {}
 }
 variable "bastion_hosts" {
@@ -1090,7 +1099,6 @@ variable "cosmosdb_role_mapping" {
 variable "cosmosdb_role_definitions" {
   default = {}
 }
-
 variable "maintenance_configuration" {
   default = {}
 }
