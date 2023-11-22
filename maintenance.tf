@@ -22,20 +22,6 @@ output "maintenance_configuration" {
   value = module.maintenance_configuration
 }
 
-
-# #OK
-# module "maintenance_assignment_virtual_machine" {
-#   source   = "./modules/maintenance/assignment_virtual_machine"
-#   for_each = local.maintenance.maintenance_assignment_virtual_machine
-
-
-#   location = can(local.global_settings.regions[each.value.region]) ? local.global_settings.regions[each.value.region] : local.combined_objects_resource_groups[try(each.value.resource_group.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group.key, each.value.resource_group_key)].location
-#   maintenance_configuration_id = can(each.value.maintenance_configuration_id) ? each.value.maintenance_configuration_id : local.combined_objects_maintenance_configuration[try(each.value.lz_key, local.client_config.landingzone_key)][each.value.maintenance_configuration_key].id
-#   virtual_machine_id           = each.value.virtual_machine_id  
-
-# }
-
-
 module "maintenance_assignment_virtual_machine" {
   source   = "./modules/maintenance/assignment_virtual_machine"
   for_each = local.maintenance.maintenance_assignment_virtual_machine
@@ -43,20 +29,8 @@ module "maintenance_assignment_virtual_machine" {
   client_config                = local.client_config
   global_settings              = local.global_settings
   location                     = can(local.global_settings.regions[each.value.region]) ? local.global_settings.regions[each.value.region] : local.combined_objects_resource_groups[try(each.value.resource_group.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group.key, each.value.resource_group_key)].location
-  maintenance_configuration_id = can(each.value.maintenance_configuration_id) ? each.value.maintenance_configuration_id : local.combined_objects_maintenance_configuration[try(each.value.lz_key, local.client_config.landingzone_key)][each.value.maintenance_configuration_key].id
-  #virtual_machine_id      = can(each.value.virtual_machine_id) ? each.value.virtual_machine_id : local.combined_objects_virtual_machines[try(each.value.resource_group.lz_key, local.client_config.landingzone_key)][try(each.value.virtual_machine_key, each.value.virtual_machine.key)].id
-  #virtual_machine_id = can(each.value.virtual_machine_id) ? each.value.virtual_machine_id : can(local.combined_objects_virtual_machines[try(each.value.lz_key, local.client_config.landingzone_key)][each.value.virtual_machine_key]) ? local.combined_objects_virtual_machines[try(each.value.lz_key, local.client_config.landingzone_key)][each.value.virtual_machine_key].id : null
-  #virtual_machine_id = can(each.value.virtual_machine_id) ? each.value.virtual_machine_id : try(local.combined_objects_virtual_machines[try(each.value.lz_key, local.client_config.landingzone_key)][each.value.virtual_machine_key].id, null)
-  #virtual_machine_id = can(each.value.virtual_machine_id) ? each.value.virtual_machine_id : try(local.combined_objects_virtual_machines[try(each.value.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group.key, each.value.resource_group_key)][each.value.virtual_machine_key].id, null)
-  #combined_objects_virtual_machines =  try(local.combined_objects_virtual_machines[each.value.virtual_machine.lz_key][each.value.virtual_machine.key].id, null)
+  maintenance_configuration_id = can(each.value.maintenance_configuration_id) ? each.value.maintenance_configuration_id : local.combined_objects_maintenance_configuration[try(each.value.lz_key, local.client_config.landingzone_key)][each.value.maintenance_configuration_key].id  
   virtual_machine_id = try(local.combined_objects_virtual_machines[each.value.virtual_machine.lz_key][each.value.virtual_machine.key].id, null)
-
-  #virtual_machine_id = try(var.virtual_machine_id, var.local_combined_resources.virtual_machine.id)
-  #location = can(local.global_settings.regions[each.value.region]) ? local.global_settings.regions[each.value.region] : local.combined_objects_resource_groups[try(each.value.resource_group.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group.key, each.value.resource_group_key)].location
-  #maintenance_configuration_id = can(each.value.maintenance_configuration_id) ? each.value.maintenance_configuration_id : local.combined_objects_maintenance_configuration[try(each.value.lz_key, local.client_config.landingzone_key)][each.value.maintenance_configuration_key].id
-  #virtual_machine_id = can(each.value.virtual_machine_id) ? each.value.virtual_machine_id : local.combined_objects_virtual_machines[try(each.value.lz_key, local.client_config.landingzone_key)][each.value.virtual_machine_key].id
-  #virtual_machine_id = can(each.value.virtual_machine_id) ? each.value.virtual_machine_id : local.combined_objects_virtual_machines[try(each.value.lz_key, local.client_config.landingzone_key)][try(each.value.virtual_machine_key, each.value.virtual_machine.key)]
-
 }
 
 output "maintenance_assignment_virtual_machine" {
