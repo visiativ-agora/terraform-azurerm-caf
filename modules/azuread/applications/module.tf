@@ -44,18 +44,6 @@ resource "azuread_application" "app" {
     }
   }
 
-  dynamic "app_role" {
-    for_each = var.app_role
-    content {
-      allowed_member_types = app_role.value.app_role.allowed_member_types
-      description          = app_role.value.app_role.description
-      display_name         = app_role.value.app_role.display_name
-      enabled              = app_role.value.app_role.enabled
-      id                   = app_role.value.app_role.id
-      value                = app_role.value.app_role.value
-    }
-  }
-
   dynamic "required_resource_access" {
     for_each = var.azuread_api_permissions
 

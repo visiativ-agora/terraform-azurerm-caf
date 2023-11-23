@@ -18,22 +18,6 @@ variable "base_tags" {
   default     = {}
 }
 
-#OK
-# variable "location" {
-#   description = "(Required) Specifies the supported Azure location where the resource exists. Changing this forces a new resource to be created."
-#   type        = string
-# }
-
-# variable "maintenance_configuration_id" {
-#   description = "(Required) Specifies the ID of the Maintenance Configuration Resource. Changing this forces a new resource to be created."
-#   type        = string
-# }
-
-# variable "virtual_machine_id" {
-#   description = "(Required) Specifies the Virtual Machine ID to which the Maintenance Configuration will be assigned. Changing this forces a new resource to be created."
-#   type        = string
-# }
-
 variable "location" {
   description = "(Required) Specifies the supported Azure location where the resource exists. Changing this forces a new resource to be created."
   type        = string
@@ -43,10 +27,8 @@ variable "maintenance_configuration_id" {
   description = "(Required) Specifies the ID of the Maintenance Configuration Resource. Changing this forces a new resource to be created."
   type        = string
 }
-variable "virtual_machine_id" {
-  default = {}
-}
 
-# variable "combined_objects_virtual_machines" {
-#   default = {}
-# }
+variable "virtual_machine_id" {
+  description = "(Required) Specifies the Virtual Machine ID to which the Maintenance Configuration will be assigned. Changing this forces a new resource to be created."
+  type        = string
+}

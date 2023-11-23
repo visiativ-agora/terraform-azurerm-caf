@@ -12,6 +12,49 @@ resource_groups = {
   }
 }
 
+keyvaults = {
+  example_vm_rg1 = {
+    name               = "vmsecrets"
+    resource_group_key = "rg1"
+    sku_name           = "standard"
+    creation_policies = {
+      logged_in_user = {
+        secret_permissions = ["Set", "Get", "List", "Delete", "Purge", "Recover"]
+      }
+    }
+  }
+}
+
+vnets = {
+  vnet_region1 = {
+    resource_group_key = "rg1"
+    vnet = {
+      name          = "virtual_machines"
+      address_space = ["10.100.100.0/24"]
+    }
+    specialsubnets = {}
+    subnets = {
+      example = {
+        name = "examples"
+        cidr = ["10.100.100.0/29"]
+      }
+    }
+
+  }
+}
+
+public_ip_addresses = {
+  example_vm_pip1_rg1 = {
+    name                    = "example_vm_pip1"
+    resource_group_key      = "rg1"
+    sku                     = "Standard"
+    allocation_method       = "Static"
+    ip_version              = "IPv4"
+    idle_timeout_in_minutes = "4"
+
+  }
+}
+
 virtual_machines = {
 
   # Configuration to deploy a bastion host linux virtual machine
@@ -43,7 +86,7 @@ virtual_machines = {
 
     virtual_machine_settings = {
       windows = {
-        name           = "example_vm2"
+        name           = "example_vm1"
         size           = "Standard_F2"
         admin_username = "adminuser"
 
@@ -52,7 +95,8 @@ virtual_machines = {
         priority        = "Spot"
         eviction_policy = "Deallocate"
 
-        patch_mode = "AutomaticByOS"
+        patch_mode                         = "AutomaticByPlatform"
+        bypassPlatformChecksOnUserSchedule = true
         # When you want to load the file from the folder in the custom_data always use the relative path from the caf_solution in landing zones
         custom_data = "../../examples/compute/virtual_machine/101-single-windows-vm/scripts/custom.ps1"
         # Value of the nic keys to attach the VM. The first one in the list is the default nic
@@ -106,7 +150,7 @@ maintenance_assignment_virtual_machine = {
   example = {
     region                        = "region1"
     maintenance_configuration_key = "mc_re1"
-    virtual_machine_id            = "/subscriptions/xxxxx/rsg_umc/providers/Microsoft.Compute/virtualMachines/example_vm1"
+    virtual_machine_key           = "example_vm1"
   }
 }
 
