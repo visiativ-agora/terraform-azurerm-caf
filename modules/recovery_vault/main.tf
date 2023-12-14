@@ -31,3 +31,8 @@ resource "time_sleep" "delay_create" {
 
   create_duration = "60s"
 }
+resource "time_sleep" "target_disk_encryption_set_id" {
+  depends_on = [azurerm_site_recovery_replicated_vm.vm_replication]
+
+  create_duration = "5h"
+}

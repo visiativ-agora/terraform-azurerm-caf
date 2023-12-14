@@ -39,3 +39,8 @@ output "rbac_id" {
   description = "Principal Id of the Vault"
   value       = try(azurerm_recovery_services_vault.asr.identity.0.principal_id, null)
 }
+
+output "replicated_vm_id" {
+  description = "The ID of the replicated VM."
+  value       = azurerm_site_recovery_replicated_vm.vm_replication.id
+}
