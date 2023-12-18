@@ -1,7 +1,7 @@
 resource "azurerm_site_recovery_replicated_vm" "replication" {
   count = try(var.settings.replication, null) == null ? 0 : 1
 
-  name                = "${var.settings.replication.name}-vm-replication"
+  name                = local.os_type == "linux" ? azurerm_linux_virtual_machine.vm["linux"].name : azurerm_windows_virtual_machine.vm["windows"].name
   resource_group_name = coalesce(
     try(var.settings.replication.recovery_vault_rg, null),
     try(split("/", var.settings.replication.recovery_vault_id)[4], null),
