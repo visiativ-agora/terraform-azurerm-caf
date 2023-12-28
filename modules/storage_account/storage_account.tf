@@ -1,6 +1,6 @@
 locals {
   # Need to update the storage tags if the environment tag is updated with the rover command line
-  caf_tags = lookup(var.storage_account, "tags", null) == null ? null : lookup(var.storage_account.tags, "environment", null) == null ? var.storage_account.tags : merge(lookup(var.storage_account, "tags", {}), { "environment" : var.global_settings.environment })
+  caf_tags = can(var.storage_account.tags.caf_environment) || can(var.storage_account.tags.environment) ? merge(lookup(var.storage_account, "tags", {}), { "caf_environment" : var.global_settings.environment }) : {}
 }
 
 # naming convention
@@ -22,7 +22,7 @@ resource "azurerm_storage_account" "stg" {
   account_tier                      = try(var.storage_account.account_tier, "Standard")
   account_replication_type          = try(var.storage_account.account_replication_type, "LRS")
   account_kind                      = try(var.storage_account.account_kind, "StorageV2")
-  access_tier                       = try(var.storage_account.access_tier, "Hot")
+  access_tier                       = can(var.storage_account.access_tier) ? var.storage_account.access_tier : ( try(var.storage_account.account_kind, "StorageV2") == "Storage" ? null : "Hot")
   allow_nested_items_to_be_public   = try(var.storage_account.allow_nested_items_to_be_public, var.storage_account.allow_blob_public_access, false)
   cross_tenant_replication_enabled  = try(var.storage_account.cross_tenant_replication_enabled, null)
   edge_zone                         = try(var.storage_account.edge_zone, null)
@@ -38,6 +38,7 @@ resource "azurerm_storage_account" "stg" {
   resource_group_name               = local.resource_group_name
   table_encryption_key_type         = try(var.storage_account.table_encryption_key_type, null)
   tags                              = merge(local.tags, try(var.storage_account.tags, null), local.caf_tags)
+  public_network_access_enabled     = try(var.storage_account.public_network_access_enabled, null)
 
 
   dynamic "custom_domain" {
