@@ -1,23 +1,31 @@
+resource "azurecaf_name" "cdn_frontdoor" {
+  name          = var.settings.name
+  resource_type = "azurerm_cdn_frontdoor_firewall_policy"
+  prefixes      = var.global_settings.prefixes
+  random_length = var.global_settings.random_length
+  clean_input   = true
+  passthrough   = var.global_settings.passthrough
+  use_slug      = var.global_settings.use_slug
+}
+
 resource "azurerm_cdn_frontdoor_firewall_policy" "cdn_frontdoor_firewall_policy" {
-  
-  name                              = var.settings.name
+  name                              = azurecaf_name.cdn_frontdoor.result
   resource_group_name               = var.resource_group_name
-  sku_name                          = var.sku_name
-  enabled                           = try(var.settings.enabled, true)
+  sku_name                          = var.settings.sku_name
+  enabled                           = try(var.settings.enabled, null)
   mode                              = try(var.settings.mode, null)
   redirect_url                      = try(var.settings.redirect_url, null)
   custom_block_response_status_code = try(var.settings.custom_block_response_status_code, null)
   custom_block_response_body        = try(var.settings.custom_block_response_body, null)
-  tags                              = local.tags
 
   dynamic "custom_rule" {
-    for_each = try(var.settings.custom_rules, {})
+    for_each = try(each.value.custom_rules, {})
     content {
       name                           = custom_rule.value.name
-      enabled                        = try(custom_rule.value.enabled, true)
-      priority                       = custom_rule.value.priority
-      rate_limit_duration_in_minutes = try(custom_rule.value.rate_limit_duration_in_minutes, 1)
-      rate_limit_threshold           = try(custom_rule.value.rate_limit_threshold, 10)
+      enabled                        = try(custom_rule.value.enabled, null)
+      priority                       = try(custom_rule.value.priority, null)
+      rate_limit_duration_in_minutes = try(custom_rule.value.rate_limit_duration_in_minutes, null)
+      rate_limit_threshold           = try(custom_rule.value.rate_limit_threshold, null)
       type                           = custom_rule.value.type
       action                         = custom_rule.value.action
 
@@ -28,7 +36,7 @@ resource "azurerm_cdn_frontdoor_firewall_policy" "cdn_frontdoor_firewall_policy"
           match_values       = match_condition.value.match_values
           operator           = match_condition.value.operator
           selector           = try(match_condition.value.selector, null)
-          negation_condition = try(match_condition.value.negation_condition, null)
+          negation_condition = try(match_condition.value.negate_condition, null)
           transforms         = try(match_condition.value.transforms, null)
         }
       }
@@ -54,12 +62,11 @@ resource "azurerm_cdn_frontdoor_firewall_policy" "cdn_frontdoor_firewall_policy"
         content {
           rule_group_name = override.value.rule_group_name
           dynamic "exclusion" {
-            iterator = override_exclusion
             for_each = try(override.value.exclusions, {})
             content {
-              match_variable = override_exclusion.value.match_variable
-              operator       = override_exclusion.value.operator
-              selector       = override_exclusion.value.selector
+              match_variable = exclusion.value.match_variable
+              operator       = exclusion.value.operator
+              selector       = exclusion.value.selector
             }
           }
           dynamic "rule" {
@@ -67,7 +74,7 @@ resource "azurerm_cdn_frontdoor_firewall_policy" "cdn_frontdoor_firewall_policy"
             content {
               rule_id = rule.value.rule_id
               action  = rule.value.action
-              enabled = rule.value.enabled
+              enabled = try(rule.value.enabled, null)
               dynamic "exclusion" {
                 iterator = rule_exclusion
                 for_each = try(rule.value.exclusions, {})
@@ -83,30 +90,5 @@ resource "azurerm_cdn_frontdoor_firewall_policy" "cdn_frontdoor_firewall_policy"
       }
     }
   }
-}
-
-resource "azurerm_cdn_frontdoor_security_policy" "cdn_frontdoor_security_policy" {
-  name                     = coalesce(each.value.custom_resource_name, data.azurecaf_name.cdn_frontdoor_security_policy[each.key].result)
-  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn_frontdoor_profile.id
-
-  security_policies {
-    firewall {
-      cdn_frontdoor_firewall_policy_id = azurerm_cdn_frontdoor_firewall_policy.cdn_frontdoor_firewall_policy[each.value.firewall_policy_name].id
-      association {
-        patterns_to_match = each.value.patterns_to_match
-        dynamic "domain" {
-          for_each = try(each.value.custom_domain_names, [])
-          content {
-            cdn_frontdoor_domain_id = azurerm_cdn_frontdoor_custom_domain.cdn_frontdoor_custom_domain[domain.value].id
-          }
-        }
-        dynamic "domain" {
-          for_each = try(each.value.endpoint_names, [])
-          content {
-            cdn_frontdoor_domain_id = azurerm_cdn_frontdoor_endpoint.cdn_frontdoor_endpoint[domain.value].id
-          }
-        }
-      }
-    }
-  }
+  tags = local.tags
 }

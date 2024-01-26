@@ -27,4 +27,3 @@ variable "settings" {}
 variable "tags" {
   default = {}
 }
-
