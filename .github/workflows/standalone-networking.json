@@ -14,6 +14,7 @@
     "networking/app_gateway/303-ssl-profile",
     "networking/bastion/100-bastion-with-vm",
     "networking/cdn/100-simple-cdn",
+    "networking/cdn/200-simple-cdn-frontdoor",
     "networking/dns_zones/100-simple-dns_zone",
     "networking/express_routes",
     "networking/firewall/100-standard-firewall-legacy-pip",
