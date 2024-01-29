@@ -9,7 +9,7 @@ resource "azurecaf_name" "cdn_frontdoor_profile" {
 }
 
 resource "azurerm_cdn_frontdoor_profile" "cdn_frontdoor_profile" {
-  name                     = azurecaf_name.cdn_frontdoor.result
+  name                     = azurecaf_name.cdn_frontdoor_profile.result
   resource_group_name      = var.resource_group_name  
   sku_name                 = var.sku_name
   tags = var.tags
