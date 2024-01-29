@@ -790,6 +790,36 @@ variable "cdn_endpoint" {
 variable "cdn_profile" {
   default = {}
 }
+variable "cdn_frondoor_custom_domain" {
+  default = {}
+}
+variable "cdn_frondoor_endpoint" {
+  default = {}
+}
+variable "cdn_frondoor_firewall_policy" {
+  default = {}
+}
+variable "cdn_frontdoor_origin" {
+  default = {}
+}
+variable "cdn_frontdoor_origin_group" {
+  default = {}
+}
+variable "cdn_frontdoor_profile" {
+  default = {}
+}
+variable "cdn_frontdoor_route" {
+  default = {}
+}
+variable "cdn_frontdoor_rule" {
+  default = {}
+}
+variable "cdn_frontdoor_rule_set" {
+  default = {}
+}
+variable "cdn_frontdoor_security_policy" {
+  default = {}
+}
 variable "function_apps" {
   default = {}
 }
