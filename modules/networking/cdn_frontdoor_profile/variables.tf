@@ -12,6 +12,11 @@ variable "base_tags" {
   type        = map(any)
   default     = {}
 }
+variable "tags" {
+  description = "Tags to be used for this resource deployment."
+  type        = map(any)
+  default     = {}
+}
 variable "resource_group_name" {
   description = " The name of the resource group in which to"
 }
