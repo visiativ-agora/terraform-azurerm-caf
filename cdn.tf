@@ -107,9 +107,9 @@ output "cdn_frontdoor_origin_group" {
 # Azure Front Door Origin
 #
 #
-module "azurerm_cdn_frontdoor_origin" {
-  source   = "./modules/networking/azurerm_cdn_frontdoor_origin"
-  for_each = local.networking.azurerm_cdn_frontdoor_origin
+module "cdn_frontdoor_origin" {
+  source   = "./modules/networking/cdn_frontdoor_origin"
+  for_each = local.networking.cdn_frontdoor_origin
 
   global_settings                                             = local.global_settings
   client_config                                               = local.client_config
@@ -127,8 +127,8 @@ module "azurerm_cdn_frontdoor_origin" {
   private_link                                                = try(each.value.private_link, null)
 }
 
-output "azurerm_cdn_frontdoor_origin" {
-  value = module.azurerm_cdn_frontdoor_origin
+output "cdn_frontdoor_origin" {
+  value = module.cdn_frontdoor_origin
 }
 #
 #
