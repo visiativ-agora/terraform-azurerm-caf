@@ -69,10 +69,12 @@ module "cdn_frontdoor_endpoint" {
   global_settings           = local.global_settings
   client_config             = local.client_config
   settings                  = each.value
-  name                      = each.value.name
-  cdn_frontdoor_profile_id  = can(each.value.cdn_frontdoor_profile_id) ? each.value.cdn_frontdoor_profile_id : local.combined_objects_cdn_frontdoor_profile[try(each.value.lz_key, local.client_config.landingzone_key)][each.value.cdn_frontdoor_profile_key].id
-  enabled                   = try(each.value.enabled, null)
   tags                      = try(each.value.tags, {})
+  #cdn_frontdoor_profile_id  = can(each.value.cdn_frontdoor_profile_id) ? each.value.cdn_frontdoor_profile_id : local.combined_objects_cdn_frontdoor_profile[try(each.value.lz_key, local.client_config.landingzone_key)][each.value.cdn_frontdoor_profile_key].id
+  remote_objects = {
+    cdn_frontdoor_profile_id = can(each.value.cdn_frontdoor_profile.id ? each.value.cdn_frontdoor_profile.id : local.combined_objects_cdn_frontdoor_profile[try(each.value.cdn_frontdoor_profile.lz_key, local.client_config.landingzone_key)][each.value.cdn_frontdoor_profile.key].id
+  }
+
 }
 
 output "cdn_frontdoor_endpoint" {
