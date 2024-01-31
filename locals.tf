@@ -275,7 +275,7 @@ locals {
     azurerm_routes                                          = try(var.networking.azurerm_routes, {})
     cdn_endpoint                                            = try(var.networking.cdn_endpoint, {})
     cdn_frondoor_custom_domain                              = try(var.networking.cdn_frondoor_custom_domain, {})
-    cdn_frondoor_endpoint                                   = try(var.networking.cdn_frondoor_endpoint, {})
+    cdn_frontdoor_endpoint                                   = try(var.networking.cdn_frontdoor_endpoint, {})
     cdn_frondoor_firewall_policy                            = try(var.networking.cdn_frondoor_firewall_policy, {})
     cdn_frontdoor_origin                                    = try(var.networking.cdn_frontdoor_origin, {})
     cdn_frontdoor_origin_group                              = try(var.networking.cdn_frontdoor_origin_group, {})
