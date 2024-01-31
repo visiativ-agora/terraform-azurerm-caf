@@ -11,7 +11,7 @@ resource "azurecaf_name" "cdn_frontdoor_endpoint" {
 
 resource "azurerm_cdn_frontdoor_endpoint" "cdn_frontdoor_endpoint" {
   name                      = azurecaf_name.cdn_frontdoor_endpoint.result
-  cdn_frontdoor_profile_id  = var.remote_objects.cdn_frontdoor_profile_id
+  cdn_frontdoor_profile_id  = var.remote_objects.cdn_frontdoor_profile
   enabled = try(var.settings.enabled, null)
   tags = local.tags
 }
