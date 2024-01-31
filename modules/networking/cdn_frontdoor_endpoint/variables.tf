@@ -16,4 +16,8 @@ variable "base_tags" {
   type        = map(any)
   default     = {}
 }
-
+variable "tags" {
+  description = "Tags to be used for this resource deployment."
+  type        = map(any)
+  default     = {}
+}
