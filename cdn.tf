@@ -62,22 +62,22 @@ output "cdn_frontdoor_profile" {
 # Azure Front Door Endpoint
 #
 #
-# module "cdn_frontdoor_endpoint" {
-#   source   = "./modules/networking/cdn_frontdoor_endpoint"
-#   for_each = local.networking.cdn_frontdoor_endpoint
+module "cdn_frontdoor_endpoint" {
+  source   = "./modules/networking/cdn_frontdoor_endpoint"
+  for_each = local.networking.cdn_frontdoor_endpoint
 
-#   global_settings           = local.global_settings
-#   client_config             = local.client_config
-#   settings                  = each.value
-#   name                      = each.value.name
-#   cdn_frontdoor_profile_id  = can(each.value.cdn_frontdoor_profile_id) ? each.value.cdn_frontdoor_profile_id : local.combined_objects_cdn_frontdoor_profile[try(each.value.lz_key, local.client_config.landingzone_key)][each.value._cdn_frontdoor_profile_key].id
-#   enabled                   = try(each.value.enabled, null)
-#   tags                      = try(each.value.tags, {})
-# }
+  global_settings           = local.global_settings
+  client_config             = local.client_config
+  settings                  = each.value
+  name                      = each.value.name
+  cdn_frontdoor_profile_id  = can(each.value.cdn_frontdoor_profile_id) ? each.value.cdn_frontdoor_profile_id : local.combined_objects_cdn_frontdoor_profile[try(each.value.lz_key, local.client_config.landingzone_key)][each.value.cdn_frontdoor_profile_key].id
+  enabled                   = try(each.value.enabled, null)
+  tags                      = try(each.value.tags, {})
+}
 
-# output "cdn_frontdoor_endpoint" {
-#   value = module.cdn_frontdoor_endpoint
-# }
+output "cdn_frontdoor_endpoint" {
+  value = module.cdn_frontdoor_endpoint
+}
 # #
 # #
 # # Azure Front Door Origin Group

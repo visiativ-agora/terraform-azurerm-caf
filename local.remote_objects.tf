@@ -37,7 +37,7 @@ locals {
     cdn_profile                                    = try(local.combined_objects_cdn_profile, null)
     cdn_frontdoor_profile                          = try(local.combined_objects_cdn_frontdoor_profile, null)
     # cdn_frontdoor_origin_group                     = try(local.combined_objects_cdn_frontdoor_origin_group, null)
-    # cdn_frontdoor_endpoint                         = try(local.combined_objects_cdn_frontdoor_endpoint, null)
+    cdn_frontdoor_endpoint                         = try(local.combined_objects_cdn_frontdoor_endpoint, null)
     # cdn_frontdoor_rule_set                         = try(local.combined_objects_cdn_frontdoor_rule_set, null)
     cognitive_services_accounts                    = try(local.combined_objects_cognitive_services_accounts, null)
     consumption_budgets_resource_groups            = try(local.combined_objects_consumption_budgets_resource_groups, null)
