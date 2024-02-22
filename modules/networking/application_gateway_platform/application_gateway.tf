@@ -208,19 +208,19 @@ resource "azurerm_application_gateway" "agw" {
     priority                   = try(var.settings.default.priority, null)
   }
 
-  lifecycle {
-    ignore_changes = [
-      backend_address_pool,
-      backend_http_settings,
-      frontend_port,
-      http_listener,
-      probe,
-      redirect_configuration,
-      request_routing_rule,
-      rewrite_rule_set,
-      ssl_certificate,
-      tags["managed-by-k8s-ingress"],
-      url_path_map
-    ]
-  }
+  # lifecycle {
+  #   ignore_changes = [
+  #     backend_address_pool,
+  #     backend_http_settings,
+  #     frontend_port,
+  #     http_listener,
+  #     probe,
+  #     redirect_configuration,
+  #     request_routing_rule,
+  #     rewrite_rule_set,
+  #     ssl_certificate,
+  #     tags["managed-by-k8s-ingress"],
+  #     url_path_map
+  #   ]
+  # }
 }
