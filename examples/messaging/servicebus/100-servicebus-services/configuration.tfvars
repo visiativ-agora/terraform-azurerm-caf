@@ -56,6 +56,7 @@ servicebus_namespaces = {
     capacity = 1         # capacity only for Premium: 1,2,4,8,16 otherwise 0
     # zone_redundant = false # only true for Premium
     # tags = {} # optional
+    premium_messaging_partitions = 1
     namespace_auth_rules = {
       rule1 = {
         name   = "rule1"
