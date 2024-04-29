@@ -14,5 +14,22 @@ module "managed_identities" {
 
 output "managed_identities" {
   value = module.managed_identities
+}
 
+module "federated_identity_credential" {
+  source   = "./modules/security/federated_identity_credential"
+  for_each = var.federated_identity_credential
+
+  client_config       = local.client_config
+  global_settings     = local.global_settings  
+  name                = each.value.name
+  resource_group_name = module.managed_identities[each.key].resource_group_name
+  parent_id           = module.managed_identities[each.key].id
+  audience            = ["api://AzureADTokenExchange"]
+  issuer              = each.value.issuer
+  subject             = each.value.sku_name
+}
+
+output "federated_identity_credential" {
+  value = module.federated_identity_credential
 }

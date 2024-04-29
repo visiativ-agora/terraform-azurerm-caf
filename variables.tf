@@ -262,6 +262,11 @@ variable "managed_identities" {
   default     = {}
 }
 
+variable "federated_identity_credential" {
+  description = "Configuration object - Azure managed identity resources"
+  default     = {}
+}
+
 variable "keyvaults" {
   description = "Configuration object - Azure Key Vault resources"
   default     = {}
