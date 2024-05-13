@@ -67,7 +67,7 @@ resource "azurerm_cognitive_deployment" "deployment" {
   # version_upgrade_option = can(each.value.version_upgrade_option)
 
   dynamic "model" {
-    for_each = can(var.settings.deployment) ? [var.settings.deployment] : []
+    for_each = each.value != null ? [each.value] : []
 
     content {
       format  = model.value.model_format
@@ -76,7 +76,7 @@ resource "azurerm_cognitive_deployment" "deployment" {
     }
   }
   dynamic "scale" {
-    for_each = can(var.settings.deployment) ? [var.settings.deployment] : []
+    for_each = each.value != null ? [each.value] : []
     content {
       type     = scale.value.scale_type
       capacity = try(scale.value.capacity, 1)
