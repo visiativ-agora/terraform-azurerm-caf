@@ -47,3 +47,38 @@ resource "azurerm_cognitive_account" "service" {
 
   tags = try(var.settings.tags, {})
 }
+
+resource "azurecaf_name" "deployment" {
+  name          = var.settings.name
+  prefixes      = var.global_settings.prefixes
+  resource_type = "azurerm_cognitive_deployment"
+  random_length = var.global_settings.random_length
+  clean_input   = true
+  passthrough   = var.global_settings.passthrough
+  use_slug      = var.global_settings.use_slug
+}
+
+resource "azurerm_cognitive_deployment" "deployment" {
+  for_each               = try(var.settings.deployment, {})
+  name                   = azurecaf_name.deployment.result
+  cognitive_account_id   = azurerm_cognitive_account.service.id
+  rai_policy_name        = can(each.value.rai_policy)
+  version_upgrade_option = can(each.value.version_upgrade_option)
+
+  dynamic "model" {
+    for_each = can(var.settings.deployment) ? [var.settings.deployment] : []
+
+    content {
+      format  = model.value.model_format
+      name    = model.value.model_name
+      version = model.value.model_version
+    }
+  }
+  dynamic "scale" {
+    for_each = can(var.settings.deployment) ? [var.settings.deployment] : []
+    content {
+      type     = scale.value.scale_type
+      capacity = try(scale.value.capacity, 1)
+    }
+  }
+}
