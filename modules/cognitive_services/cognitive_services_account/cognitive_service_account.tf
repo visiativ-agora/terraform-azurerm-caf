@@ -64,7 +64,7 @@ resource "azurerm_cognitive_deployment" "deployment" {
   name                   = "openai-deployment"
   cognitive_account_id   = azurerm_cognitive_account.service.id
   rai_policy_name        = can(each.value.rai_policy)
-  version_upgrade_option = can(each.value.version_upgrade_option)
+  # version_upgrade_option = can(each.value.version_upgrade_option)
 
   dynamic "model" {
     for_each = can(var.settings.deployment) ? [var.settings.deployment] : []
