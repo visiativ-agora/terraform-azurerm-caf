@@ -13,9 +13,5 @@ variable "resource_group_name" {
   description = "Name of the existing resource group to deploy the virtual machine"
   type        = string
 }
-variable "name" {
-  description = "(Required) The name of the Cognitive Services Account Deployment. Changing this forces a new resource to be created."
-  type        = string
-}
 variable "settings" {}
 
