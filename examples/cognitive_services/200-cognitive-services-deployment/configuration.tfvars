@@ -26,6 +26,8 @@ cognitive_services_account = {
     tags = {
       env = "test"
     }
+     # you must first agree to the Responsible AI terms for that resource type in your Azure subscription. This is a legal agreement that must be accepted in the Azure Portal before you can proceed with deployment via Terraform.
+     # https://learn.microsoft.com/en-us/legal/cognitive-services/openai/limited-access
     deployment = {
         test_deployment-1 = {
           name          = "cs-dep-caf-test-1"

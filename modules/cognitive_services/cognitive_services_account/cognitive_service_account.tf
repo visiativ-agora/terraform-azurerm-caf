@@ -48,16 +48,6 @@ resource "azurerm_cognitive_account" "service" {
   tags = try(var.settings.tags, {})
 }
 
-# resource "azurecaf_name" "deployment" {
-#   name          = var.settings.name
-#   prefixes      = var.global_settings.prefixes
-#   resource_type = "azurerm_cognitive_deployment"
-#   random_length = var.global_settings.random_length
-#   clean_input   = true
-#   passthrough   = var.global_settings.passthrough
-#   use_slug      = var.global_settings.use_slug
-# }
-
 resource "azurecaf_name" "deployment" {
   name          = var.settings.name
   resource_type = "azurerm_cognitive_account"
@@ -70,8 +60,7 @@ resource "azurecaf_name" "deployment" {
 
 resource "azurerm_cognitive_deployment" "deployment" {
   for_each               = try(var.settings.deployment, {})
-  name                   = azurecaf_name.deployment.result
-  # name                   = "openai-deployment"
+  name                   = azurecaf_name.deployment.result  
   cognitive_account_id   = azurerm_cognitive_account.service.id
   rai_policy_name        = can(each.value.rai_policy)
   # version_upgrade_option = can(each.value.version_upgrade_option)
