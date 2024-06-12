@@ -100,7 +100,6 @@ resource "azurerm_site_recovery_replicated_vm" "replication" {
     )
     target_disk_type              = var.virtual_machine_os_disk.storage_account_type
     target_replica_disk_type      = var.virtual_machine_os_disk.storage_account_type
-    target_disk_encryption_set_id = try(var.virtual_machine_os_disk.disk_encryption_set_id, null)
   }
 
   dynamic "managed_disk" {
@@ -117,8 +116,7 @@ resource "azurerm_site_recovery_replicated_vm" "replication" {
       )
       target_disk_type              = managed_disk.value.storage_account_type
       target_replica_disk_type      = managed_disk.value.storage_account_type
-      target_disk_encryption_set_id = try(managed_disk.value.disk_encryption_set_key, null)
-      # target_disk_encryption_set_id = try(managed_disk.value.disk_encryption_set_key, null) == null ? null : var.disk_encryption_sets[try(managed_disk.value.lz_key, var.client_config.landingzone_key)][managed_disk.value.disk_encryption_set_key].id
+
     }
   }
 

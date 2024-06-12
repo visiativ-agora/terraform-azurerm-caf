@@ -16,7 +16,7 @@ module "vm_replication" {
   recovery_vaults            = local.combined_objects_recovery_vaults
   resource_groups            = local.combined_objects_resource_groups
   storage_accounts           = local.combined_objects_storage_accounts
-  disk_encryption_sets       = try(local.combined_objects_disk_encryption_sets, null)
+  #disk_encryption_sets       = try(local.combined_objects_disk_encryption_sets, null)
   settings                   = each.value
   vnets                      = local.combined_objects_networking
   client_config              = local.client_config
