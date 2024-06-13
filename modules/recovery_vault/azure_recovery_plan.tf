@@ -4,8 +4,19 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
 
   name                      = each.value.name
   recovery_vault_id         = azurerm_recovery_services_vault.asr.id
-  source_recovery_fabric_id = azurerm_site_recovery_fabric.recovery_fabric[each.value.source_recovery_fabric_key].id
-  target_recovery_fabric_id = azurerm_site_recovery_fabric.recovery_fabric[each.value.target_recovery_fabric_key].id
+  
+  # source_recovery_fabric_id = azurerm_site_recovery_fabric.recovery_fabric[each.value.source_recovery_fabric_key].id
+  # target_recovery_fabric_id = azurerm_site_recovery_fabric.recovery_fabric[each.value.target_recovery_fabric_key].id
+  source_recovery_fabric_id = coalesce(
+    try(var.settings.replication_plan.source.recovery_fabric_id, null),
+    try(var.recovery_vaults[var.client_config.landingzone_key][var.settings.replication_plan.vault_key].recovery_fabrics[var.settings.replication_plan.source.recovery_fabric_key].id, null),
+    try(var.recovery_vaults[var.settings.replication_plan.lz_key][var.settings.replication_plan.vault_key].recovery_fabrics[var.settings.replication_plan.source.recovery_fabric_key].id, null)
+  )
+  target_recovery_fabric_id = coalesce(
+    try(var.settings.replication_plan.target.recovery_fabric_id, null),
+    try(var.recovery_vaults[var.client_config.landingzone_key][var.settings.replication_plan.vault_key].recovery_fabrics[var.settings.replication_plan.target.recovery_fabric_key].id, null),
+    try(var.recovery_vaults[var.settings.replication_plan.lz_key][var.settings.replication_plan.vault_key].recovery_fabrics[var.settings.replication_plan.target.recovery_fabric_key].id, null)
+  )
 
   dynamic "shutdown_recovery_group" {
     for_each = try(each.value.shutdown_recovery_group, [])
