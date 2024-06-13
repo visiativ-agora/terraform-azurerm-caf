@@ -14,7 +14,9 @@ module "recovery_vaults" {
   resource_group      = local.combined_objects_resource_groups[try(each.value.resource_group.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group.key, each.value.resource_group_key)]
   base_tags           = local.global_settings.inherit_tags
   managed_identities  = local.combined_objects_managed_identities
-  #replicated_protected_items = local.combined_objects_virtual_machines_replication[try(each.value.virtual_machine[vm_key].lz_key, local.client_config.landingzone_key)][try(each.value.replicated_protected_items.key, each.value.rreplicated_protected_items_key)]
+  replicated_protected_items = [
+    for vm in each.value.virtual_machine : local.combined_objects_virtual_machines_replication[try(vm.lz_key, local.client_config.landingzone_key)][try(vm.key, vm)].replicated_objects_id
+  ]
 }
 
 output "recovery_vaults" {

@@ -32,4 +32,7 @@ variable "base_tags" {
 }
 variable "managed_identities" {}
 
-variable "replicated_protected_items" {}
+variable "replicated_protected_items" {
+  description = "List of replicated protected items"
+  type        = list(string)
+}
