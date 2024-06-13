@@ -1,8 +1,3 @@
-locals {
-  specific_replicated_object_id = azurerm_site_recovery_replicated_vm.replication[local.specific_vm_key].id
-}
-
-
 resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
   depends_on = [time_sleep.delay_create]
   for_each   = try(var.settings.replication_plan, {})
