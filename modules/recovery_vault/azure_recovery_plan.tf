@@ -4,8 +4,8 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
 
   name                      = each.value.name
   recovery_vault_id         = azurerm_recovery_services_vault.asr.id
-  source_recovery_fabric_id = try(var.settings.replication_plan.source_recovery_fabric_id, null)
-  target_recovery_fabric_id = try(var.settings.replication_plan.target_recovery_fabric_id, null)
+  source_recovery_fabric_id = try(each.value.source_recovery_fabric_id, null)
+  target_recovery_fabric_id = try(each.value.target_recovery_fabric_id, null)
   # source_recovery_fabric_id = azurerm_site_recovery_fabric.recovery_fabric[each.value.source_recovery_fabric_key].id
   # target_recovery_fabric_id = azurerm_site_recovery_fabric.recovery_fabric[each.value.target_recovery_fabric_key].id
 
