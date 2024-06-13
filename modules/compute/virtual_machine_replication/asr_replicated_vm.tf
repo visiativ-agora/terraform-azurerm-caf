@@ -133,28 +133,3 @@ resource "azurerm_site_recovery_replicated_vm" "replication" {
     create = "6h"
   }
 }
-
-resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
-  for_each               = try(var.settings.replication_plan, {})
-  name = var.settings.replication_plan.name
-  recovery_vault_id         = var.settings.replication.recovery_vault_id
-  source_recovery_fabric_id = coalesce(
-    try(var.settings.replication.source.recovery_fabric_name, null),
-    try(var.recovery_vaults[var.client_config.landingzone_key][var.settings.replication.vault_key].recovery_fabrics[var.settings.replication.source.recovery_fabric_key].name, null),
-    try(var.recovery_vaults[var.settings.replication.lz_key][var.settings.replication.vault_key].recovery_fabrics[var.settings.replication.source.recovery_fabric_key].name, null)
-  )
-  target_recovery_fabric_id = coalesce(
-    try(var.settings.replication.target.recovery_fabric_id, null),
-    try(var.recovery_vaults[var.client_config.landingzone_key][var.settings.replication.vault_key].recovery_fabrics[var.settings.replication.target.recovery_fabric_key].id, null),
-    try(var.recovery_vaults[var.settings.replication.lz_key][var.settings.replication.vault_key].recovery_fabrics[var.settings.replication.target.recovery_fabric_key].id, null)
-  )
-
-  # shutdown_recovery_group {}
-
-  # failover_recovery_group {}
-
-  # boot_recovery_group {
-  #   replicated_protected_items = azurerm_site_recovery_replicated_vm.replication.id
-  # }
-
-}
