@@ -76,9 +76,9 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
   dynamic "boot_recovery_group" {
     for_each = try(each.value.boot_recovery_group, [])
     content {
-      # replicated_protected_items = try(boot_recovery_group.value.replicated_protected_items, [])
+      replicated_protected_items = try(boot_recovery_group.value.replicated_protected_items, [])
       
-      replicated_protected_items = [var.replicated_protected_items]
+      # replicated_protected_items = [var.replicated_protected_items]
       # replicated_protected_items = [
       #   for vm_key in keys(each.value.virtual_machine) : can(
       #     local.combined_objects_virtual_machines_replication[try(each.value.virtual_machine[vm_key].lz_key, local.client_config.landingzone_key)]
