@@ -31,3 +31,5 @@ variable "base_tags" {
   type        = bool
 }
 variable "managed_identities" {}
+
+variable "replicated_protected_items" {}
