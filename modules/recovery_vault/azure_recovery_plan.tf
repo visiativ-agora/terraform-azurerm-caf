@@ -84,7 +84,13 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
   dynamic "boot_recovery_group" {
     for_each = try(each.value.boot_recovery_group, null) != null ? [each.value.boot_recovery_group] : []
     content {      
-      replicated_protected_items = try(each.value.virtual_machines, ["test"])
+      # replicated_protected_items = try(each.value.virtual_machines, ["test"])
+      replicated_protected_items = try(each.value.boot_recovery_group.virtual_machines, [])
+
+      # Temporary output for debugging
+      output "boot_recovery_group_debug" {
+        value = each.value.boot_recovery_group
+      }
                
       dynamic "pre_action" {
         # for_each = try(boot_recovery_group.value.pre_action, [])
