@@ -14,9 +14,9 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
     # for_each = try(each.value.shutdown_recovery_group, [])
     for_each = try(each.value.shutdown_recovery_group, null) != null ? [each.value.shutdown_recovery_group] : []
     content {
-      dynamic "pre_action" {
-        # for_each = try(shutdown_recovery_group.value.pre_action, [])
-        for_each = try(shutdown_recovery_group.value.pre_action, null) != null ? [shutdown_recovery_group.value.pre_action] : []
+      dynamic "pre_action" {        
+        # for_each = try(shutdown_recovery_group.value.pre_action, null) != null ? [shutdown_recovery_group.value.pre_action] : []
+        for_each = try(shutdown_recovery_group.value.pre_action, null) != null ? [1] : []
         content {
           name                      = pre_action.value.name
           type                      = pre_action.value.type
@@ -31,7 +31,8 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
 
       dynamic "post_action" {
         # for_each = try(shutdown_recovery_group.value.post_action, [])
-        for_each = try(shutdown_recovery_group.value.post_action, null) != null ? [shutdown_recovery_group.value.post_action] : []
+        # for_each = try(shutdown_recovery_group.value.post_action, null) != null ? [shutdown_recovery_group.value.post_action] : []
+        for_each = try(shutdown_recovery_group.value.post_action, null) != null ? [1] : []
         content {
           name                      = post_action.value.name
           type                      = post_action.value.type
@@ -51,7 +52,8 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
     content {
       dynamic "pre_action" {
         # for_each = try(failover_recovery_group.value.pre_action, [])
-        for_each = try(failover_recovery_group.value.pre_action, null) != null ? [failover_recovery_group.value.pre_action] : []
+        # for_each = try(failover_recovery_group.value.pre_action, null) != null ? [failover_recovery_group.value.pre_action] : []
+        for_each = try(failover_recovery_group.value.pre_action, null) != null ? [1] : []
         content {
           name                      = pre_action.value.name
           type                      = pre_action.value.type
@@ -66,7 +68,8 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
 
       dynamic "post_action" {
         # for_each = try(failover_recovery_group.value.post_action, [])
-        for_each = try(failover_recovery_group.value.post_action, null) != null ? [failover_recovery_group.value.post_action] : []
+        # for_each = try(failover_recovery_group.value.post_action, null) != null ? [failover_recovery_group.value.post_action] : []
+        for_each = try(failover_recovery_group.value.post_action, null) != null ? [1] : []
         content {
           name                      = post_action.value.name
           type                      = post_action.value.type
@@ -84,12 +87,12 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
   dynamic "boot_recovery_group" {
     for_each = try(each.value.boot_recovery_group, null) != null ? [each.value.boot_recovery_group] : []
     content {      
-      # replicated_protected_items = try(each.value.virtual_machines, ["test"])
       replicated_protected_items = try(each.value.boot_recovery_group.virtual_machines, [])
      
       dynamic "pre_action" {
         # for_each = try(boot_recovery_group.value.pre_action, [])
-        for_each = try(boot_recovery_group.value.pre_action, null) != null ? [boot_recovery_group.value.pre_action] : []
+        # for_each = try(boot_recovery_group.value.pre_action, null) != null ? [boot_recovery_group.value.pre_action] : []
+        for_each = try(boot_recovery_group.value.pre_action, null) != null ? [1] : []
         content {
           name                      = pre_action.value.name
           type                      = pre_action.value.type
@@ -104,7 +107,8 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
 
       dynamic "post_action" {
         # for_each = try(boot_recovery_group.value.post_action, [])
-        for_each = try(boot_recovery_group.value.post_action, null) != null ? [boot_recovery_group.value.post_action] : []
+        # for_each = try(boot_recovery_group.value.post_action, null) != null ? [boot_recovery_group.value.post_action] : []
+        for_each = try(boot_recovery_group.value.post_action, null) != null ? [1] : []
         content {
           name                      = post_action.value.name
           type                      = post_action.value.type
