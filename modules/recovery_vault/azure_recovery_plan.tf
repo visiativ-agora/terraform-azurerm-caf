@@ -18,7 +18,7 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
       dynamic "pre_action" {        
         # for_each = try(shutdown_recovery_group.value.pre_action, null) != null ? [shutdown_recovery_group.value.pre_action] : []
         # for_each = try(shutdown_recovery_group.value.pre_action, null) != null ? [1] : []
-        for_each = try(var.settings.replication_plan.shutdown_recovery_group.pre_action, null) != null ? [var.settings.areplication_plan.shutdown_recovery_group.pre_action] : {}
+        for_each = try(var.settings.replication_plan.shutdown_recovery_group.pre_action, null) != null ? [var.settings.areplication_plan.shutdown_recovery_group.pre_action] : []
         content {
           name                      = pre_action.value.name
           type                      = pre_action.value.type
