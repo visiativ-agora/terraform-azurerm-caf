@@ -15,7 +15,8 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
     for_each = try(each.value.shutdown_recovery_group, null) != null ? [each.value.shutdown_recovery_group] : []
     content {
       dynamic "pre_action" {
-        for_each = try(shutdown_recovery_group.value.pre_action, [])
+        # for_each = try(shutdown_recovery_group.value.pre_action, [])
+        for_each = try(shutdown_recovery_group.value.pre_action, null) != null ? [shutdown_recovery_group.value.pre_action] : []
         content {
           name                      = pre_action.value.name
           type                      = pre_action.value.type
@@ -29,7 +30,8 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
       }
 
       dynamic "post_action" {
-        for_each = try(shutdown_recovery_group.value.post_action, [])
+        # for_each = try(shutdown_recovery_group.value.post_action, [])
+        for_each = try(shutdown_recovery_group.value.post_action, null) != null ? [shutdown_recovery_group.value.post_action] : []
         content {
           name                      = post_action.value.name
           type                      = post_action.value.type
@@ -48,7 +50,8 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
     for_each = try(each.value.failover_recovery_group, null) != null ? [each.value.failover_recovery_group] : []
     content {
       dynamic "pre_action" {
-        for_each = try(failover_recovery_group.value.pre_action, [])
+        # for_each = try(failover_recovery_group.value.pre_action, [])
+        for_each = try(failover_recovery_group.value.pre_action, null) != null ? [failover_recovery_group.value.pre_action] : []
         content {
           name                      = pre_action.value.name
           type                      = pre_action.value.type
@@ -62,7 +65,8 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
       }
 
       dynamic "post_action" {
-        for_each = try(failover_recovery_group.value.post_action, [])
+        # for_each = try(failover_recovery_group.value.post_action, [])
+        for_each = try(failover_recovery_group.value.post_action, null) != null ? [failover_recovery_group.value.post_action] : []
         content {
           name                      = post_action.value.name
           type                      = post_action.value.type
@@ -79,21 +83,12 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
 
   dynamic "boot_recovery_group" {
     for_each = try(each.value.boot_recovery_group, null) != null ? [each.value.boot_recovery_group] : []
-    content {
-      replicated_protected_items = try(each.value.virtual_machine, [])
-      
-      # replicated_protected_items = [var.replicated_protected_items]
-      # replicated_protected_items = [
-      #   for vm_key in keys(each.value.virtual_machine) : can(
-      #     local.combined_objects_virtual_machines_replication[try(each.value.virtual_machine[vm_key].lz_key, local.client_config.landingzone_key)]
-      #     [vm_key]
-      #   ) ? local.combined_objects_virtual_machines_replication[try(each.value.virtual_machine[vm_key].lz_key, local.client_config.landingzone_key)]
-      #     [vm_key].replicated_objects_id : null
-      # ]
-            
-
+    content {      
+      replicated_protected_items = try(each.value.virtual_machines, "test")
+               
       dynamic "pre_action" {
-        for_each = try(boot_recovery_group.value.pre_action, [])
+        # for_each = try(boot_recovery_group.value.pre_action, [])
+        for_each = try(boot_recovery_group.value.pre_action, null) != null ? [boot_recovery_group.value.pre_action] : []
         content {
           name                      = pre_action.value.name
           type                      = pre_action.value.type
@@ -107,7 +102,8 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
       }
 
       dynamic "post_action" {
-        for_each = try(boot_recovery_group.value.post_action, [])
+        # for_each = try(boot_recovery_group.value.post_action, [])
+        for_each = try(boot_recovery_group.value.post_action, null) != null ? [boot_recovery_group.value.post_action] : []
         content {
           name                      = post_action.value.name
           type                      = post_action.value.type
