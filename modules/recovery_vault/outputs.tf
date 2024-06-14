@@ -54,3 +54,9 @@ output "replication_plan_ids" {
   description = "Output the set of replication plan ids"
   value       = { for key, value in azurerm_site_recovery_replication_recovery_plan.replication_plan : key => value.id }
 }
+
+# Temporary output for debugging
+output "boot_recovery_group_debug" {
+  value = each.value.boot_recovery_group
+}
+          
