@@ -11,7 +11,8 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
 
 
   dynamic "shutdown_recovery_group" {
-    for_each = try(each.value.shutdown_recovery_group, [])
+    # for_each = try(each.value.shutdown_recovery_group, [])
+    for_each = try(each.value.shutdown_recovery_group, null) != null ? [1] : []
     content {
       dynamic "pre_action" {
         for_each = try(shutdown_recovery_group.value.pre_action, [])
@@ -44,7 +45,8 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
   }
 
   dynamic "failover_recovery_group" {
-    for_each = try(each.value.failover_recovery_group, [])
+    # for_each = try(each.value.failover_recovery_group, [])
+    for_each = try(each.value.failover_recovery_group, null) != null ? [1] : []
     content {
       dynamic "pre_action" {
         for_each = try(failover_recovery_group.value.pre_action, [])
@@ -77,9 +79,10 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
   }
 
   dynamic "boot_recovery_group" {
-    for_each = try(each.value.boot_recovery_group, [])
+    # for_each = try(each.value.boot_recovery_group, [])
+    for_each = try(each.value.boot_recovery_group, null) != null ? [1] : []
     content {
-      replicated_protected_items = try(boot_recovery_group.value.replicated_protected_items, [])
+      replicated_protected_items = try(each.value.virtual_machine, [])
       
       # replicated_protected_items = [var.replicated_protected_items]
       # replicated_protected_items = [
