@@ -1,12 +1,14 @@
 # this is necessary to bypass a bug in the provider that doesn't normalize case and detects change when there is none
 locals {
-  os_disk_id = join("/", concat(
-    [""],
-    slice(split("/", var.virtual_machine_os_disk.id), 1, 4),
-    [lower(split("/", var.virtual_machine_os_disk.id)[4])],
-    slice(split("/", var.virtual_machine_os_disk.id), 5, 8),
-    [lower(split("/", var.virtual_machine_os_disk.id)[8])]
-  ))
+
+  os_disk_id = var.virtual_machine_os_disk.id
+  # os_disk_id = join("/", concat(
+  #   [""],
+  #   slice(split("/", var.virtual_machine_os_disk.id), 1, 4),
+  #   [lower(split("/", var.virtual_machine_os_disk.id)[4])],
+  #   slice(split("/", var.virtual_machine_os_disk.id), 5, 8),
+  #   [lower(split("/", var.virtual_machine_os_disk.id)[8])]
+  # ))
 
   data_disk_id = {
     for key, value in lookup(var.settings, "data_disks", {}) : key =>
@@ -19,13 +21,14 @@ locals {
     ))
   }
 
-  virtual_machine_id = join("/", concat(
-    [""],
-    slice(split("/", var.virtual_machine_id), 1, 4),
-    [lower(split("/", var.virtual_machine_id)[4])],
-    slice(split("/", var.virtual_machine_id), 5, 8),
-    [lower(split("/", var.virtual_machine_id)[8])]
-  ))
+  virtual_machine_id = var.virtual_machine_id
+  # virtual_machine_id = join("/", concat(
+  #   [""],
+  #   slice(split("/", var.virtual_machine_id), 1, 4),
+  #   [lower(split("/", var.virtual_machine_id)[4])],
+  #   slice(split("/", var.virtual_machine_id), 5, 8),
+  #   [lower(split("/", var.virtual_machine_id)[8])]
+  # ))
 }
 
 resource "azurerm_site_recovery_replicated_vm" "replication" {

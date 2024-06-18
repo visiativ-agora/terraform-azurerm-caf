@@ -36,3 +36,5 @@ variable "managed_identities" {}
 #   description = "List of replicated protected items"
 #   type        = list(string)
 # }
+
+variable "virtual_machines_replication" {}
