@@ -89,7 +89,7 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
   dynamic "boot_recovery_group" {
     for_each = try(each.value.boot_recovery_group, null) != null ? [each.value.boot_recovery_group] : []
     content {
-        replicated_protected_items = []
+        replicated_protected_items = try(each.value.boot_recovery_group.virtual_machines, [])
       # replicated_protected_items = flatten([for v in each.value.virtual_machines : [
       #   var.virtual_machines_replication[try(v.lz_key, var.client_config.landingzone_key)][v.key]
       # ]])
