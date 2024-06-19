@@ -37,4 +37,4 @@ variable "managed_identities" {}
 #   type        = list(string)
 # }
 
-# variable "virtual_machines_replication" {}
+variable "virtual_machines_replication" {}
