@@ -12,9 +12,6 @@ locals {
     try(var.settings.tags,
     null)
   )
-
-  location            = var.resource_group.location
-  resource_group_name = var.resource_group.name
 }
 
 

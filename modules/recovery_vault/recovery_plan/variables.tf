@@ -16,7 +16,3 @@ variable "base_tags" {
 variable "virtual_machines_replication" {
   default = {}
 }
-
-variable "resource_group" {
-  description = "Resource group object"
-}
