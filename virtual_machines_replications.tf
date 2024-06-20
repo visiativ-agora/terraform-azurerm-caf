@@ -24,3 +24,19 @@ module "vm_replication" {
   virtual_machine_data_disks = try(module.virtual_machines[each.key].data_disks, null)
   virtual_machine_nics       = module.virtual_machines[each.key].nics
 }
+
+module "recovery_plans" {
+  source   = "./modules/recovery_vault/recovery_plan"
+  for_each = var.recovery_plans
+
+  global_settings     = local.global_settings
+  client_config       = local.client_config
+  settings            = each.value  
+  base_tags           = local.global_settings.inherit_tags  
+  virtual_machines_replication  = try(local.combined_objects_virtual_machines_replication, null)
+}
+
+output "recovery_plans" {
+  value = module.recovery_plans
+}
+
