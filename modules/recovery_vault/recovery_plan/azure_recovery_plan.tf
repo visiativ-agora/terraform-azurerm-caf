@@ -1,6 +1,5 @@
 resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
-  depends_on = [time_sleep.delay_create]
-  for_each   = try(var.settings.replication_plan, {})
+  for_each   = try(var.settings, {})
 
   name              = each.value.name
   recovery_vault_id = azurerm_recovery_services_vault.asr.id
@@ -9,11 +8,10 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
   source_recovery_fabric_id = azurerm_site_recovery_fabric.recovery_fabric[each.value.source_recovery_fabric_key].id
   target_recovery_fabric_id = azurerm_site_recovery_fabric.recovery_fabric[each.value.target_recovery_fabric_key].id
 
-
   dynamic "shutdown_recovery_group" {
-    # for_each = try(each.value.shutdown_recovery_group, [])
+    for_each = try(each.value.shutdown_recovery_group, [])
     # for_each = try(each.value.shutdown_recovery_group, null) != null ? [each.value.shutdown_recovery_group] : []
-    for_each = try(var.settings.replication_plan.shutdown_recovery_group, null) != null ? [var.settings.replication_plan.shutdown_recovery_group] : []
+    # for_each = try(var.settings.replication_plan.shutdown_recovery_group, null) != null ? [var.settings.replication_plan.shutdown_recovery_group] : []
     content {
       dynamic "pre_action" {
         # for_each = try(shutdown_recovery_group.value.pre_action, null) != null ? [shutdown_recovery_group.value.pre_action] : []
@@ -32,9 +30,9 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
       }
 
       dynamic "post_action" {
-        # for_each = try(shutdown_recovery_group.value.post_action, [])
+        for_each = try(shutdown_recovery_group.value.post_action, [])
         # for_each = try(shutdown_recovery_group.value.post_action, null) != null ? [shutdown_recovery_group.value.post_action] : []
-        for_each = try(shutdown_recovery_group.value.post_action, null) != null ? [1] : []
+        # for_each = try(shutdown_recovery_group.value.post_action, null) != null ? [1] : []
         content {
           name                      = post_action.value.name
           type                      = post_action.value.type

@@ -49,9 +49,3 @@ output "protection_containers" {
   description = "Output the set of protection containers in the vault"
   value       = azurerm_site_recovery_protection_container.protection_container
 }
-
-output "replication_plan_ids" {
-  description = "Output the set of replication plan ids"
-  value       = { for key, value in azurerm_site_recovery_replication_recovery_plan.replication_plan : key => value.id }
-}
-

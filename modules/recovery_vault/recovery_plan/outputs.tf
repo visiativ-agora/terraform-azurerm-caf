@@ -1,7 +1,7 @@
 
 output "id" {
   # depends_on = [azurerm_resource_group_template_deployment.asr]
-  description = "The ID of the Site Recovery Fabric."
-  value       = azurerm_recovery_services_vault.asr.id
+  description = "The ID of the Recovery Plan."
+  value       = azurerm_site_recovery_replication_recovery_plan.replication_plan.id
 }
 
