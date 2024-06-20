@@ -89,7 +89,11 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
   dynamic "boot_recovery_group" {
     for_each = try(each.value.boot_recovery_group, null) != null ? [each.value.boot_recovery_group] : []
     content {
-      replicated_protected_items = azurerm_site_recovery_replicated_vm.replication[each.value.replicated_objects_id]
+      # replicated_protected_items = azurerm_site_recovery_replicated_vm.replication[each.value.replicated_objects_id]
+      replicated_protected_items = coalesce(
+        try(var.remote_objects.virtual_machines_replication[var.settings.replication_plan.boot_recovery_group.virtual_machines_key], null),
+        try(var.settings.replication_plan.boot_recovery_group.virtual_machines, null)
+      )
       # replicated_protected_items = flatten([for v in each.value.virtual_machines : [
       #   var.virtual_machines_replication[try(v.lz_key, var.client_config.landingzone_key)][v.key]
       # ]])
