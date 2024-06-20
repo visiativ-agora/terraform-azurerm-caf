@@ -4,16 +4,6 @@ variable "global_settings" {
   description = "Global settings object (see module README.md)"
 }
 
-variable "diagnostic_profiles" {
-  default = {}
-}
-
-variable "diagnostics" {
-  default = null
-}
-
-variable "private_endpoints" {}
-variable "vnets" {}
 variable "client_config" {
   description = "Client configuration object (see module README.md)."
 }
