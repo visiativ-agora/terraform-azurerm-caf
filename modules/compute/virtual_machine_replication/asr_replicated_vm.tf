@@ -1,3 +1,11 @@
+locals {
+  normalized_disk_id = regexreplace(
+    lower(var.virtual_machine_os_disk.id),
+    "/providers/microsoft.compute/",
+    "/providers/Microsoft.Compute/"
+  )
+}
+
 resource "azurerm_site_recovery_replicated_vm" "replication" {
   count = try(var.settings.replication, null) == null ? 0 : 1
 
@@ -59,7 +67,8 @@ resource "azurerm_site_recovery_replicated_vm" "replication" {
   )
 
   managed_disk {
-    disk_id = lower(var.virtual_machine_os_disk.id)
+    #disk_id = lower(var.virtual_machine_os_disk.id)
+    disk_id = local.normalized_disk_id
     staging_storage_account_id = coalesce(
       try(var.storage_accounts[var.client_config.landingzone_key][var.settings.replication.staging_storage_account_key].id, null),
       try(var.storage_accounts[var.settings.replication.staging_storage_account.lz_key][var.settings.replication.staging_storage_account.key].id, null)
