@@ -1,9 +1,9 @@
 locals {
-  normalized_disk_id = regexreplace(
-    lower(var.virtual_machine_os_disk.id),
-    "/providers/microsoft.compute/",
-    "/providers/Microsoft.Compute/"
-  )
+  # Convertir tout en minuscules
+  normalized_disk_id_lower = lower(var.virtual_machine_os_disk.id)
+  
+  # Corriger la casse de Microsoft.Compute
+  normalized_disk_id = replace(local.normalized_disk_id_lower, "/providers/microsoft.compute/", "/providers/Microsoft.Compute/")
 }
 
 resource "azurerm_site_recovery_replicated_vm" "replication" {
