@@ -1,12 +1,3 @@
-locals {
-  # Convertir tout en minuscules
-  normalized_disk_id_lower = lower(var.virtual_machine_os_disk.id)
-  disk_id_lower = lower(var.virtual_machine_data_disks[managed_disk.key])
-  
-  # Corriger la casse de Microsoft.Compute
-  normalized_disk_id = replace(local.normalized_disk_id_lower, "/providers/microsoft.compute/", "/providers/Microsoft.Compute/")
-}
-
 resource "azurerm_site_recovery_replicated_vm" "replication" {
   count = try(var.settings.replication, null) == null ? 0 : 1
 
@@ -35,7 +26,7 @@ resource "azurerm_site_recovery_replicated_vm" "replication" {
     try(var.recovery_vaults[var.client_config.landingzone_key][var.settings.replication.vault_key].recovery_fabrics[var.settings.replication.source.recovery_fabric_key].name, null),
     try(var.recovery_vaults[var.settings.replication.lz_key][var.settings.replication.vault_key].recovery_fabrics[var.settings.replication.source.recovery_fabric_key].name, null)
   )
-  source_vm_id = lower(var.virtual_machine_id)
+  source_vm_id = upper(var.virtual_machine_id)
   source_recovery_protection_container_name = coalesce(
     try(var.settings.replication.source.protection_container_name, null),
     try(var.recovery_vaults[var.client_config.landingzone_key][var.settings.replication.vault_key].protection_containers[var.settings.replication.source.protection_container_key].name, null),
@@ -68,8 +59,7 @@ resource "azurerm_site_recovery_replicated_vm" "replication" {
   )
 
   managed_disk {
-    #disk_id = lower(var.virtual_machine_os_disk.id)
-    disk_id = local.normalized_disk_id
+    disk_id = var.virtual_machine_os_disk.id
     staging_storage_account_id = coalesce(
       try(var.storage_accounts[var.client_config.landingzone_key][var.settings.replication.staging_storage_account_key].id, null),
       try(var.storage_accounts[var.settings.replication.staging_storage_account.lz_key][var.settings.replication.staging_storage_account.key].id, null)
@@ -85,8 +75,8 @@ resource "azurerm_site_recovery_replicated_vm" "replication" {
 
   dynamic "managed_disk" {
     for_each = lookup(var.settings, "data_disks", {})
-    content {      
-      disk_id       = replace(local.disk_id_lower, "/providers/microsoft.compute/", "/providers/Microsoft.Compute/")
+    content {
+      disk_id = var.virtual_machine_data_disks[managed_disk.key]
       staging_storage_account_id = coalesce(
         try(var.storage_accounts[var.client_config.landingzone_key][var.settings.replication.staging_storage_account_key].id, null),
         try(var.storage_accounts[var.settings.replication.staging_storage_account.lz_key][var.settings.replication.staging_storage_account.key].id, null)
