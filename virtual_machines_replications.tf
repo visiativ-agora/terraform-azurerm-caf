@@ -35,7 +35,7 @@ module "recovery_plans" {
   base_tags                     = local.global_settings.inherit_tags  
   virtual_machines_replication  = try(local.combined_objects_virtual_machines_replication, null)
   recovery_vault_id             = module.recovery_vaults.id
-  recovery_fabric               = module.recovery_vaults.recovery_fabrics
+  recovery_fabrics              = module.recovery_vaults.recovery_fabrics
 }
 
 output "recovery_plans" {
