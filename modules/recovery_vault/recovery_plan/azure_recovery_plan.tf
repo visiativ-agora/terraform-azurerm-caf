@@ -1,12 +1,12 @@
 resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
   for_each   = try(var.settings, {})
 
-  name              = each.value.name
-  recovery_vault_id = azurerm_recovery_services_vault.asr[each.value.recovery_vault_key].id
-  # source_recovery_fabric_id = try(each.value.source_recovery_fabric_id, null)
-  # target_recovery_fabric_id = try(each.value.target_recovery_fabric_id, null)
-  source_recovery_fabric_id = azurerm_site_recovery_fabric.recovery_fabric[each.value.source_recovery_fabric_key].id
-  target_recovery_fabric_id = azurerm_site_recovery_fabric.recovery_fabric[each.value.target_recovery_fabric_key].id
+  name                      = each.value.name
+  recovery_vault_id         = var.recovery_vault_id[each.value.recovery_vault_key]
+  source_recovery_fabric_id = var.recovery_fabrics[each.value.source_recovery_fabric_key].id
+  target_recovery_fabric_id = var.recovery_fabrics[each.value.target_recovery_fabric_key].id
+  # source_recovery_fabric_id = azurerm_site_recovery_fabric.recovery_fabric[each.value.source_recovery_fabric_key].id
+  # target_recovery_fabric_id = azurerm_site_recovery_fabric.recovery_fabric[each.value.target_recovery_fabric_key].id
 
   dynamic "shutdown_recovery_group" {
     for_each = try(each.value.shutdown_recovery_group, [])

@@ -16,3 +16,14 @@ variable "base_tags" {
 variable "virtual_machines_replication" {
   default = {}
 }
+
+# variable "replicated_objects_id" {
+#   type = map(string)
+# }
+
+variable "recovery_fabrics" {
+  default = {}
+}
+
+variable "recovery_vault_id" {
+}
