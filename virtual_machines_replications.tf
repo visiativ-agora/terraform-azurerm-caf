@@ -34,8 +34,8 @@ module "recovery_plans" {
   settings                      = each.value  
   base_tags                     = local.global_settings.inherit_tags  
   virtual_machines_replication  = try(local.combined_objects_virtual_machines_replication, null)
-  recovery_vault_id             = module.recovery_vaults[each.key].id
-  recovery_fabrics              = module.recovery_vaults[each.key].recovery_fabrics
+  recovery_vault_id             = module.recovery_vaults[each.value.recovery_vault_key].id
+  recovery_fabrics              = module.recovery_vaults[each.value.recovery_vault_key].recovery_fabrics
 }
 
 output "recovery_plans" {
