@@ -1,16 +1,14 @@
 resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
-  for_each   = try(var.settings, {})
 
-  name                      = each.value.name
-  recovery_vault_id         = var.recovery_vault_id[each.value.recovery_vault_key]
-  source_recovery_fabric_id = var.recovery_fabrics[each.value.source_recovery_fabric_key].id
-  target_recovery_fabric_id = var.recovery_fabrics[each.value.target_recovery_fabric_key].id
-  # source_recovery_fabric_id = azurerm_site_recovery_fabric.recovery_fabric[each.value.source_recovery_fabric_key].id
-  # target_recovery_fabric_id = azurerm_site_recovery_fabric.recovery_fabric[each.value.target_recovery_fabric_key].id
+  name                      = var.settings.name
+  recovery_vault_id         = var.recovery_vault_id[var.settings.recovery_vault_key]
+  source_recovery_fabric_id = var.recovery_fabrics[var.settings.source_recovery_fabric_key].id
+  target_recovery_fabric_id = var.recovery_fabrics[var.settings.target_recovery_fabric_key].id
+
 
   dynamic "shutdown_recovery_group" {
-    for_each = try(each.value.shutdown_recovery_group, [])
-    # for_each = try(each.value.shutdown_recovery_group, null) != null ? [each.value.shutdown_recovery_group] : []
+    for_each = try(var.settings.shutdown_recovery_group, [])
+    # for_each = try(var.settings.shutdown_recovery_group, null) != null ? [var.settings.shutdown_recovery_group] : []
     # for_each = try(var.settings.replication_plan.shutdown_recovery_group, null) != null ? [var.settings.replication_plan.shutdown_recovery_group] : []
     content {
       dynamic "pre_action" {
@@ -48,7 +46,7 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
   }
 
   dynamic "failover_recovery_group" {
-    for_each = try(each.value.failover_recovery_group, null) != null ? [each.value.failover_recovery_group] : []
+    for_each = try(var.settings.failover_recovery_group, null) != null ? [var.settings.failover_recovery_group] : []
     content {
       dynamic "pre_action" {
         # for_each = try(failover_recovery_group.value.pre_action, [])
@@ -85,14 +83,14 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
   }
 
   dynamic "boot_recovery_group" {
-    for_each = try(each.value.boot_recovery_group, null) != null ? [each.value.boot_recovery_group] : []
+    for_each = try(var.settings.boot_recovery_group, null) != null ? [var.settings.boot_recovery_group] : []
     content {
-      # replicated_protected_items = azurerm_site_recovery_replicated_vm.replication[each.value.replicated_objects_id]
+      # replicated_protected_items = azurerm_site_recovery_replicated_vm.replication[var.settings.replicated_objects_id]
       replicated_protected_items = coalesce(
         try(var.remote_objects.virtual_machines_replication[var.settings.replication_plan.boot_recovery_group.virtual_machines_key], null),
         try(var.settings.replication_plan.boot_recovery_group.virtual_machines, null)
       )
-      # replicated_protected_items = flatten([for v in each.value.virtual_machines : [
+      # replicated_protected_items = flatten([for v in var.settings.virtual_machines : [
       #   var.virtual_machines_replication[try(v.lz_key, var.client_config.landingzone_key)][v.key]
       # ]])
 
