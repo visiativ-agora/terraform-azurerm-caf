@@ -37,10 +37,3 @@ variable "managed_identities" {}
 #   type        = list(string)
 # }
 
-variable "remote_objects" {
-  default = null
-}
-
-variable "virtual_machines_replication" {
-  default = {}
-}
