@@ -1,7 +1,7 @@
 resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
 
   name                      = var.settings.name
-  recovery_vault_id         = var.recovery_vault_id[var.settings.recovery_vault_key]
+  recovery_vault_id         = var.recovery_vault_id
   source_recovery_fabric_id = var.recovery_fabrics[var.settings.source_recovery_fabric_key].id
   target_recovery_fabric_id = var.recovery_fabrics[var.settings.target_recovery_fabric_key].id
 
@@ -84,15 +84,11 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
 
   dynamic "boot_recovery_group" {
     for_each = try(var.settings.boot_recovery_group, null) != null ? [var.settings.boot_recovery_group] : []
-    content {
-      # replicated_protected_items = azurerm_site_recovery_replicated_vm.replication[var.settings.replicated_objects_id]
+    content {      
       replicated_protected_items = coalesce(
-        try(var.virtual_machines_replication[var.settings.replication_plan.boot_recovery_group.virtual_machines_key], null),
-        try(var.settings.replication_plan.boot_recovery_group.virtual_machines, null)
+        try(var.virtual_machines_replication[var.settings.boot_recovery_group.virtual_machines_key], null),
+        try(var.settings.boot_recovery_group.boot_recovery_group.replicated_protected_items_id, null)
       )
-      # replicated_protected_items = flatten([for v in var.settings.virtual_machines : [
-      #   var.virtual_machines_replication[try(v.lz_key, var.client_config.landingzone_key)][v.key]
-      # ]])
 
       dynamic "pre_action" {
         # for_each = try(boot_recovery_group.value.pre_action, [])
