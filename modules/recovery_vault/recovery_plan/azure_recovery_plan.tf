@@ -86,7 +86,7 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
     for_each = try(var.settings.boot_recovery_group, null) != null ? [var.settings.boot_recovery_group] : []
     content {      
       replicated_protected_items = coalesce(
-        try(var.virtual_machines_replication[var.settings.boot_recovery_group.virtual_machines_key], null),
+        try(var.virtual_machines_replication[var.settings.boot_recovery_group.virtual_machines_key].id, null),
         try(var.settings.boot_recovery_group.boot_recovery_group.replicated_protected_items_id, null)
       )
 
