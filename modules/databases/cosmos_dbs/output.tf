@@ -2,12 +2,40 @@ output "cosmos_account" {
   value = azurerm_cosmosdb_account.cosmos_account.id
 }
 
-output "connection_string" {
-  value = azurerm_cosmosdb_account.cosmos_account.connection_strings[0]
-}
-
 output "primary_key" {
   value = azurerm_cosmosdb_account.cosmos_account.primary_key
+}
+
+output "primary_sql_connection_string" {
+  value = azurerm_cosmosdb_account.cosmos_account.primary_sql_connection_string
+}
+
+output "secondary_sql_connection_string" {
+  value = azurerm_cosmosdb_account.cosmos_account.secondary_sql_connection_string
+}
+
+output "primary_readonly_sql_connection_string" {
+  value = azurerm_cosmosdb_account.cosmos_account.primary_readonly_sql_connection_string
+}
+
+output "secondary_readonly_sql_connection_string" {
+  value = azurerm_cosmosdb_account.cosmos_account.secondary_readonly_sql_connection_string
+}
+
+output "primary_mongodb_connection_string" {
+  value = azurerm_cosmosdb_account.cosmos_account.primary_mongodb_connection_string
+}
+
+output "secondary_mongodb_connection_string" {
+  value = azurerm_cosmosdb_account.cosmos_account.secondary_mongodb_connection_string
+}
+
+output "primary_readonly_mongodb_connection_string" {
+  value = azurerm_cosmosdb_account.cosmos_account.primary_readonly_mongodb_connection_string
+}
+
+output "secondary_readonly_mongodb_connection_string" {
+  value = azurerm_cosmosdb_account.cosmos_account.secondary_readonly_mongodb_connection_string
 }
 
 output "endpoint" {
