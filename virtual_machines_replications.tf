@@ -24,7 +24,7 @@ module "vm_replication" {
   virtual_machine_nics       = module.virtual_machines[each.key].nics
   os_disk_storage_account_type = module.virtual_machines[each.key].os_disk.storage_account_type
   # os_disk_id                =  replace(replace(lower(module.virtual_machines[each.key].os_disk.id), "microsoft.compute", "Microsoft.Compute"), "resourcegroups", "resourceGroups")
-  os_disk_id = format("/subscriptions/4936a57f-886a-4874-9ff3-bbbf940bde45/resourceGroups/rsg30162000app001/providers/Microsoft.Compute/disks/%s", lower(module.virtual_machines[each.key].os_disk.name))
+  os_disk_id = format("/subscriptions/%s/resourceGroups/rsg30162000app001/providers/Microsoft.Compute/disks/%s", local.client_config.subscription_id ,lower(module.virtual_machines[each.key].os_disk.name))
 }
 
 module "recovery_plans" {
