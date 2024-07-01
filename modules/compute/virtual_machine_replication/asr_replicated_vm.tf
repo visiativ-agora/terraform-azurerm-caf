@@ -152,25 +152,3 @@ resource "azurerm_site_recovery_replicated_vm" "replication" {
 }
 
 
-
-resource "null_resource" "example1" {
-
-  provisioner "local-exec" {
-
-    command = format("/subscriptions/4936a57f-886a-4874-9ff3-bbbf940bde45/resourceGroups/rsg30162000app001/providers/Microsoft.Compute/disks/%s", lower(var.virtual_machine_os_disk.name))
-
-  }
-
-}
-
-
-resource "null_resource" "example2" {
-
-  provisioner "local-exec" {
-
-    command = replace(replace(lower(var.virtual_machine_os_disk.id), "microsoft.compute", "Microsoft.Compute"), "resourcegroups", "resourceGroups")
-
-  }
-
-}
-
