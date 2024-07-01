@@ -1,3 +1,16 @@
+locals {
+  os_disk_id = join("/", concat(
+    [""],
+    slice(split("/", var.virtual_machine_os_disk.id), 1, 4),
+    [lower(split("/", var.virtual_machine_os_disk.id)[4])],
+    slice(split("/", var.virtual_machine_os_disk.id), 5, 8),
+    [lower(split("/", var.virtual_machine_os_disk.id)[8])]
+  ))
+}
+
+
+replace(replace(replace(lower(var.virtual_machine_id), "microsoft.compute", "Microsoft.Compute"), "resourcegroups", "resourceGroups"),"virtualmachines","virtualMachines")
+
 resource "azurerm_site_recovery_replicated_vm" "replication" {
   count = try(var.settings.replication, null) == null ? 0 : 1
 
@@ -60,11 +73,25 @@ resource "azurerm_site_recovery_replicated_vm" "replication" {
   )
 
   managed_disk {
-    # disk_id = lower(var.virtual_machine_os_disk.id)
+    disk_id = local.os_disk_id
     # disk_id = lower(var.virtual_machine_os_disk.id)
     # disk_id = format("/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Compute/disks/%s", lower(subscription_id), lower(resource_group_name), var.virtual_machine_os_disk.name)
 
-    disk_id = format("/subscriptions/4936a57f-886a-4874-9ff3-bbbf940bde45/resourceGroups/rsg30162000app001/providers/Microsoft.Compute/disks/%s", lower(var.virtual_machine_os_disk.name))
+    # disk_id = format("/subscriptions/4936a57f-886a-4874-9ff3-bbbf940bde45/resourceGroups/rsg30162000app001/providers/Microsoft.Compute/disks/%s", lower(var.virtual_machine_os_disk.name))
+
+
+
+
+    # disk_id =  format("/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Compute/disks/%s",
+    #   var.client_config.subscription_id,
+    #   (
+    #     try(each.value.resource_group.name, null) != null || try(each.value.resource_group_name, null) != null ?
+    #     try(each.value.resource_group.name, each.value.resource_group_name) :
+    #     local.combined_objects_resource_groups[try(each.value.resource_group.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group_key, each.value.resource_group.key)].name
+    #   ),
+    #   local.combined_objects_resource_groups[try(each.value.resource_group.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group_key, each.value.resource_group.key)].name,
+    #   lower(var.virtual_machine_os_disk.name)
+    # )
 
     # disk_id = replace(replace(lower(var.virtual_machine_os_disk.id), "microsoft.compute", "Microsoft.Compute"), "resourcegroups", "resourceGroups")
 
