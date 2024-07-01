@@ -37,7 +37,7 @@ resource "azurerm_site_recovery_replicated_vm" "replication" {
     try(var.recovery_vaults[var.client_config.landingzone_key][var.settings.replication.vault_key].recovery_fabrics[var.settings.replication.source.recovery_fabric_key].name, null),
     try(var.recovery_vaults[var.settings.replication.lz_key][var.settings.replication.vault_key].recovery_fabrics[var.settings.replication.source.recovery_fabric_key].name, null)
   )
-  source_vm_id = replace(replace(replace(lower(var.virtual_machine_id), "microsoft.compute", "Microsoft.Compute"), "resourcegroups", "resourceGroups"),"virtualmachines","virtualMachines")
+  source_vm_id = replace(replace(replace(lower(var.virtual_machine_id), "microsoft.compute", "Microsoft.Compute"), "resourcegroups", "resourceGroups"), "virtualmachines", "virtualMachines")
 
   source_recovery_protection_container_name = coalesce(
     try(var.settings.replication.source.protection_container_name, null),
@@ -71,7 +71,13 @@ resource "azurerm_site_recovery_replicated_vm" "replication" {
   )
 
   managed_disk {
-    disk_id = local.os_disk_id
+    disk_id = join("/", concat(
+      [""],
+      slice(split("/", var.virtual_machine_os_disk.id), 1, 4),
+      [lower(split("/", var.virtual_machine_os_disk.id)[4])],
+      slice(split("/", var.virtual_machine_os_disk.id), 5, 8),
+      [lower(split("/", var.virtual_machine_os_disk.id)[8])]
+    ))
     # disk_id = lower(var.virtual_machine_os_disk.id)
     # disk_id = format("/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Compute/disks/%s", lower(subscription_id), lower(resource_group_name), var.virtual_machine_os_disk.name)
 
@@ -93,7 +99,7 @@ resource "azurerm_site_recovery_replicated_vm" "replication" {
 
     # disk_id = replace(replace(lower(var.virtual_machine_os_disk.id), "microsoft.compute", "Microsoft.Compute"), "resourcegroups", "resourceGroups")
 
-  
+
     staging_storage_account_id = coalesce(
       try(var.storage_accounts[var.client_config.landingzone_key][var.settings.replication.staging_storage_account_key].id, null),
       try(var.storage_accounts[var.settings.replication.staging_storage_account.lz_key][var.settings.replication.staging_storage_account.key].id, null)
