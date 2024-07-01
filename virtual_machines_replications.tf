@@ -23,7 +23,7 @@ module "vm_replication" {
   virtual_machine_data_disks = try(module.virtual_machines[each.key].data_disks, null)
   virtual_machine_nics       = module.virtual_machines[each.key].nics
   os_disk_storage_account_type = module.virtual_machines[each.key].os_disk.storage_account_type
-  os_disk_id                =  module.virtual_machines[each.key].os_disk.id
+  os_disk_id                =  replace(replace(lower(module.virtual_machines[each.key].os_disk.id), "microsoft.compute", "Microsoft.Compute"), "resourcegroups", "resourceGroups")
 }
 
 module "recovery_plans" {
