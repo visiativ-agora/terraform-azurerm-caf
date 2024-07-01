@@ -123,4 +123,12 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
       }
     }
   }
+
+  dynamic "azure_to_azure_settings" {
+    for_each = try(var.settings.azure_to_azure_settings, null) != null ? [var.settings.azure_to_azure_settings] : []
+    content {
+      primary_zone = "azure_to_azure_settings.value.primary_zone"
+      recovery_zone = "azure_to_azure_settings.value.recovery_zone"
+    }
+  }
 }
