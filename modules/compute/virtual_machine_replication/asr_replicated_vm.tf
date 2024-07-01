@@ -60,7 +60,7 @@ resource "azurerm_site_recovery_replicated_vm" "replication" {
   )
 
   managed_disk {
-    disk_id = var.virtual_machine_os_disk.id
+    disk_id = lower(var.virtual_machine_os_disk.id)
     # disk_id = lower(var.virtual_machine_os_disk.id)
     # disk_id = format("/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Compute/disks/%s", lower(subscription_id), lower(resource_group_name), var.virtual_machine_os_disk.name)
 
