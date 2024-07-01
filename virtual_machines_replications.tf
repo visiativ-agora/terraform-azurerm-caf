@@ -10,7 +10,7 @@ module "vm_replication" {
     for key, value in try(local.compute.virtual_machines, {}) : key => value
     if try(value.replication, null) != null
   }
-  client_config       = local.client_config
+  client_config               = local.client_config
   virtual_machine_id         = module.virtual_machines[each.key].id
   virtual_machine_name       = module.virtual_machines[each.key].name
   recovery_vaults            = local.combined_objects_recovery_vaults
@@ -18,8 +18,7 @@ module "vm_replication" {
   storage_accounts           = local.combined_objects_storage_accounts
   #disk_encryption_sets       = try(local.combined_objects_disk_encryption_sets, null)
   settings                   = each.value
-  vnets                      = local.combined_objects_networking
-  client_config              = local.client_config
+  vnets                      = local.combined_objects_networking  
   virtual_machine_os_disk    = module.virtual_machines[each.key].os_disk
   virtual_machine_data_disks = try(module.virtual_machines[each.key].data_disks, null)
   virtual_machine_nics       = module.virtual_machines[each.key].nics
