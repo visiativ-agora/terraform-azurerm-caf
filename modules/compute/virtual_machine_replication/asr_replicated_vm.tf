@@ -9,8 +9,6 @@ locals {
 }
 
 
-replace(replace(replace(lower(var.virtual_machine_id), "microsoft.compute", "Microsoft.Compute"), "resourcegroups", "resourceGroups"),"virtualmachines","virtualMachines")
-
 resource "azurerm_site_recovery_replicated_vm" "replication" {
   count = try(var.settings.replication, null) == null ? 0 : 1
 
