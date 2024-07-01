@@ -26,8 +26,8 @@ resource "azurerm_site_recovery_replicated_vm" "replication" {
     try(var.recovery_vaults[var.client_config.landingzone_key][var.settings.replication.vault_key].recovery_fabrics[var.settings.replication.source.recovery_fabric_key].name, null),
     try(var.recovery_vaults[var.settings.replication.lz_key][var.settings.replication.vault_key].recovery_fabrics[var.settings.replication.source.recovery_fabric_key].name, null)
   )
-  source_vm_id = replace(lower(var.virtual_machine_id), "microsoft.compute", "Microsoft.Compute")
-  
+  source_vm_id = replace(replace(lower(var.virtual_machine_id), "microsoft.compute", "Microsoft.Compute"), "resourcegroups", "resourceGroups")
+
   source_recovery_protection_container_name = coalesce(
     try(var.settings.replication.source.protection_container_name, null),
     try(var.recovery_vaults[var.client_config.landingzone_key][var.settings.replication.vault_key].protection_containers[var.settings.replication.source.protection_container_key].name, null),
@@ -69,8 +69,8 @@ resource "azurerm_site_recovery_replicated_vm" "replication" {
       try(var.resource_groups[var.client_config.landingzone_key][var.settings.replication.target.resource_group_key].id, null),
       try(var.recovery_vaults[var.settings.replication.target.resource_group.lz_key][var.settings.replication.resource_group.key].id, null)
     )
-    target_disk_type              = var.virtual_machine_os_disk.storage_account_type
-    target_replica_disk_type      = var.virtual_machine_os_disk.storage_account_type
+    target_disk_type         = var.virtual_machine_os_disk.storage_account_type
+    target_replica_disk_type = var.virtual_machine_os_disk.storage_account_type
   }
 
   dynamic "managed_disk" {
@@ -85,8 +85,8 @@ resource "azurerm_site_recovery_replicated_vm" "replication" {
         try(var.resource_groups[var.client_config.landingzone_key][var.settings.replication.target.resource_group_key].id, null),
         try(var.recovery_vaults[var.settings.replication.target.resource_group.lz_key][var.settings.replication.resource_group.key].id, null)
       )
-      target_disk_type              = managed_disk.value.storage_account_type
-      target_replica_disk_type      = managed_disk.value.storage_account_type
+      target_disk_type         = managed_disk.value.storage_account_type
+      target_replica_disk_type = managed_disk.value.storage_account_type
 
     }
   }
