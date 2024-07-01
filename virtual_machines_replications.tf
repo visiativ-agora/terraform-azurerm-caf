@@ -10,7 +10,7 @@ module "vm_replication" {
     for key, value in try(local.compute.virtual_machines, {}) : key => value
     if try(value.replication, null) != null
   }
-
+  client_config       = local.client_config
   virtual_machine_id         = module.virtual_machines[each.key].id
   virtual_machine_name       = module.virtual_machines[each.key].name
   recovery_vaults            = local.combined_objects_recovery_vaults
