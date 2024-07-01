@@ -22,7 +22,7 @@ module "vm_replication" {
   virtual_machine_os_disk    = module.virtual_machines[each.key].os_disk
   virtual_machine_data_disks = try(module.virtual_machines[each.key].data_disks, null)
   virtual_machine_nics       = module.virtual_machines[each.key].nics
-  os_disk_storage_account_type = module.virtual_machines[each.key].os_disk.storage_account_type
+  os_disk_storage_account_type = format(module.virtual_machines[each.key].os_disk.storage_account_type)
   # os_disk_id                =  format(replace(replace(lower(module.virtual_machines[each.key].os_disk.id), "microsoft.compute", "Microsoft.Compute"), "resourcegroups", "resourceGroups"))
   os_disk_id = format("/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Compute/disks/%s", local.client_config.subscription_id , lower(module.virtual_machines[each.key].os_disk.resource_group_name), lower(module.virtual_machines[each.key].os_disk.name))
 }

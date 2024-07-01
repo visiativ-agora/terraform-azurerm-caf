@@ -110,10 +110,10 @@ resource "azurerm_site_recovery_replicated_vm" "replication" {
     )
     # target_disk_type         = var.virtual_machine_os_disk.storage_account_type
     # target_replica_disk_type = var.virtual_machine_os_disk.storage_account_type
-    target_disk_type         = "StandardSSD_LRS"
-    target_replica_disk_type = "StandardSSD_LRS"
-  #   target_disk_type         = var.os_disk_storage_account_type
-  #   target_replica_disk_type = var.os_disk_storage_account_type
+    # target_disk_type         = "StandardSSD_LRS"
+    # target_replica_disk_type = "StandardSSD_LRS"
+    target_disk_type         = var.os_disk_storage_account_type
+    target_replica_disk_type = var.os_disk_storage_account_type
   }
 
   dynamic "managed_disk" {
