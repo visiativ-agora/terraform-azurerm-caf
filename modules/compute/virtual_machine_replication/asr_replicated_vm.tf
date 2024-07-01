@@ -71,19 +71,19 @@ resource "azurerm_site_recovery_replicated_vm" "replication" {
   )
 
   managed_disk {
-    disk_id = join("/", concat(
-      [""],
-      slice(split("/", var.virtual_machine_os_disk.id), 1, 4),
-      [lower(split("/", var.virtual_machine_os_disk.id)[4])],
-      slice(split("/", var.virtual_machine_os_disk.id), 5, 8),
-      [lower(split("/", var.virtual_machine_os_disk.id)[8])]
-    ))
+    # disk_id = join("/", concat(
+    #   [""],
+    #   slice(split("/", var.virtual_machine_os_disk.id), 1, 4),
+    #   [lower(split("/", var.virtual_machine_os_disk.id)[4])],
+    #   slice(split("/", var.virtual_machine_os_disk.id), 5, 8),
+    #   [lower(split("/", var.virtual_machine_os_disk.id)[8])]
+    # ))
     # disk_id = lower(var.virtual_machine_os_disk.id)
     # disk_id = format("/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Compute/disks/%s", lower(subscription_id), lower(resource_group_name), var.virtual_machine_os_disk.name)
 
     # disk_id = format("/subscriptions/4936a57f-886a-4874-9ff3-bbbf940bde45/resourceGroups/rsg30162000app001/providers/Microsoft.Compute/disks/%s", lower(var.virtual_machine_os_disk.name))
 
-
+    disk_id = var.os_disk_id
 
 
     # disk_id =  format("/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Compute/disks/%s",
@@ -110,8 +110,10 @@ resource "azurerm_site_recovery_replicated_vm" "replication" {
     )
     # target_disk_type         = var.virtual_machine_os_disk.storage_account_type
     # target_replica_disk_type = var.virtual_machine_os_disk.storage_account_type
-    target_disk_type         = "StandardSSD_LRS"
-    target_replica_disk_type = "StandardSSD_LRS"
+    # target_disk_type         = "StandardSSD_LRS"
+    # target_replica_disk_type = "StandardSSD_LRS"
+    target_disk_type         = var.os_disk_storage_account_type
+    target_replica_disk_type = var.os_disk_storage_account_type
   }
 
   dynamic "managed_disk" {

@@ -43,3 +43,11 @@ variable "virtual_machine_os_disk" {
 variable "virtual_machine_nics" {
   default = {}
 }
+
+variable "os_disk_id" {
+  default = {}
+}
+
+variable "os_disk_storage_account_type" {
+   default = {}
+}
