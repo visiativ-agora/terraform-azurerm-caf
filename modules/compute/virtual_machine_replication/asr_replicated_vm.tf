@@ -64,9 +64,9 @@ resource "azurerm_site_recovery_replicated_vm" "replication" {
     # disk_id = lower(var.virtual_machine_os_disk.id)
     # disk_id = format("/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Compute/disks/%s", lower(subscription_id), lower(resource_group_name), var.virtual_machine_os_disk.name)
 
-    # disk_id = format("/subscriptions/4936a57f-886a-4874-9ff3-bbbf940bde45/resourceGroups/rsg30162000app001/providers/Microsoft.Compute/disks/%s", lower(var.virtual_machine_os_disk.name))
+    disk_id = format("/subscriptions/4936a57f-886a-4874-9ff3-bbbf940bde45/resourceGroups/rsg30162000app001/providers/Microsoft.Compute/disks/%s", lower(var.virtual_machine_os_disk.name))
 
-    disk_id = replace(replace(lower(var.virtual_machine_os_disk.id), "microsoft.compute", "Microsoft.Compute"), "resourcegroups", "resourceGroups")
+    # disk_id = replace(replace(lower(var.virtual_machine_os_disk.id), "microsoft.compute", "Microsoft.Compute"), "resourcegroups", "resourceGroups")
 
   
     staging_storage_account_id = coalesce(
