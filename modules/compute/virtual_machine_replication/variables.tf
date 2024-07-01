@@ -45,9 +45,9 @@ variable "virtual_machine_nics" {
 }
 
 variable "os_disk_id" {
-  default = {}
+  default = ""
 }
 
 variable "os_disk_storage_account_type" {
-   default = {}
+  default = ""
 }
