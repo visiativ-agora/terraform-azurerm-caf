@@ -452,6 +452,6 @@ variable "load_test" {
 variable "recovery_plans" {  
   default     = {}
 }
-variable "cdn_frontdoor_profiles" {  
-  default     = {}
-}
+# variable "cdn_frontdoor_profiles" {  
+#   default     = {}
+# }
