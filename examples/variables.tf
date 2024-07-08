@@ -1135,3 +1135,6 @@ variable "search_services" {
 variable "load_test" {
   default = {}
 }
+variable "cdn_front_door_profiles" {
+  default = {}
+}
