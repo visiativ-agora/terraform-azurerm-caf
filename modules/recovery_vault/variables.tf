@@ -31,3 +31,9 @@ variable "base_tags" {
   type        = bool
 }
 variable "managed_identities" {}
+
+# variable "replicated_protected_items" {
+#   description = "List of replicated protected items"
+#   type        = list(string)
+# }
+
