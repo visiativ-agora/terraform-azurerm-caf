@@ -10,7 +10,7 @@ resource "azurecaf_name" "service" {
 
 resource "azurerm_cognitive_account" "service" {
   name                          = azurecaf_name.service.result
-  location                      = "eastus"
+  location                      = var.location
   resource_group_name           = var.resource_group_name
   kind                          = var.settings.kind
   sku_name                      = var.settings.sku_name
