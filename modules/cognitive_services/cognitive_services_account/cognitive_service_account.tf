@@ -70,7 +70,7 @@ resource "azurerm_cognitive_deployment" "deployment" {
   }
 
   scale {
-    type = each.value.scale.type
+    type     = each.value.scale.type
     tier     = try(each.value.scale.tier, null)
     size     = try(each.value.scale.size, null)
     family   = try(each.value.scale.family, null)
