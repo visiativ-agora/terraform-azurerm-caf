@@ -9,13 +9,23 @@ resource "azurecaf_name" "service" {
 }
 
 resource "azurerm_cognitive_account" "service" {
-  name                = azurecaf_name.service.result
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  kind                = var.settings.kind
-  sku_name            = var.settings.sku_name
+  name                          = azurecaf_name.service.result
+  location                      = "eastus"
+  resource_group_name           = var.resource_group_name
+  kind                          = var.settings.kind
+  sku_name                      = var.settings.sku_name
+  public_network_access_enabled = try(var.settings.public_network_access_enabled, true)
+  custom_subdomain_name         = try(var.settings.custom_subdomain_name, null)
+  tags                          = merge(local.tags, try(var.settings.tags, null))
+  qna_runtime_endpoint          = var.settings.kind == "QnAMaker" ? var.settings.qna_runtime_endpoint : try(var.settings.qna_runtime_endpoint, null)
 
-  qna_runtime_endpoint = var.settings.kind == "QnAMaker" ? var.settings.qna_runtime_endpoint : try(var.settings.qna_runtime_endpoint, null)
+  dynamic "identity" {
+    for_each = lookup(var.settings, "identity", {}) != {} ? [1] : []
+    content {
+      type         = lookup(var.settings.identity, "type", null)
+      identity_ids = can(var.settings.identity.ids) ? var.settings.identity.ids : can(var.settings.identity.key) ? [var.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.identity.key].id] : null
+    }
+  }
 
   dynamic "network_acls" {
     for_each = can(var.settings.network_acls) ? [var.settings.network_acls] : []
@@ -42,8 +52,63 @@ resource "azurerm_cognitive_account" "service" {
       }
     }
   }
+}
 
-  custom_subdomain_name = try(var.settings.custom_subdomain_name, null)
+# resource "azurecaf_name" "deployment" {
+#   name          = var.settings.deployment.name
+#   resource_type = "azurerm_cognitive_account"
+#   prefixes      = var.global_settings.prefixes
+#   random_length = var.global_settings.random_length
+#   clean_input   = true
+#   passthrough   = var.global_settings.passthrough
+#   use_slug      = var.global_settings.use_slug
+# }
 
-  tags = try(var.settings.tags, {})
+# resource "azurerm_cognitive_deployment" "deployment" {
+#   for_each               = try(var.settings.deployment.deployment, {})
+#   name                   = azurecaf_name.deployment.result  
+#   cognitive_account_id   = azurerm_cognitive_account.service.id
+#   rai_policy_name        = can(each.value.rai_policy)
+#   # version_upgrade_option = can(each.value.version_upgrade_option)
+
+#   dynamic "model" {
+#     for_each = each.value != null ? [each.value] : []
+
+#     content {
+#       format  = model.value.model_format
+#       name    = model.value.model_name
+#       version = model.value.model_version
+#     }
+#   }
+#   dynamic "scale" {
+#     for_each = each.value != null ? [each.value] : []
+#     content {
+#       type     = scale.value.scale_type
+#       capacity = try(scale.value.capacity, 1)
+#     }
+#   }
+# }
+
+resource "azurerm_cognitive_deployment" "deployment" {
+  depends_on = [azurerm_cognitive_account.service]
+
+  for_each               = var.settings.deployment
+  name                   = each.value.name
+  cognitive_account_id   = azurerm_cognitive_account.service.id
+  rai_policy_name        = try(each.value.rai_policy, null)
+  version_upgrade_option = try(each.value.version_upgrade_option, null)
+
+  model {
+    name    = each.value.model.name
+    format  = each.value.model.format
+    version = try(each.value.model.version, null)
+  }
+
+  scale {
+    type = each.value.scale.type
+    tier     = try(each.value.scale.tier, null)
+    size     = try(each.value.scale.size, null)
+    family   = try(each.value.scale.family, null)
+    capacity = try(each.value.scale.capacity, null)
+  }
 }
