@@ -54,41 +54,6 @@ resource "azurerm_cognitive_account" "service" {
   }
 }
 
-# resource "azurecaf_name" "deployment" {
-#   name          = var.settings.deployment.name
-#   resource_type = "azurerm_cognitive_account"
-#   prefixes      = var.global_settings.prefixes
-#   random_length = var.global_settings.random_length
-#   clean_input   = true
-#   passthrough   = var.global_settings.passthrough
-#   use_slug      = var.global_settings.use_slug
-# }
-
-# resource "azurerm_cognitive_deployment" "deployment" {
-#   for_each               = try(var.settings.deployment.deployment, {})
-#   name                   = azurecaf_name.deployment.result  
-#   cognitive_account_id   = azurerm_cognitive_account.service.id
-#   rai_policy_name        = can(each.value.rai_policy)
-#   # version_upgrade_option = can(each.value.version_upgrade_option)
-
-#   dynamic "model" {
-#     for_each = each.value != null ? [each.value] : []
-
-#     content {
-#       format  = model.value.model_format
-#       name    = model.value.model_name
-#       version = model.value.model_version
-#     }
-#   }
-#   dynamic "scale" {
-#     for_each = each.value != null ? [each.value] : []
-#     content {
-#       type     = scale.value.scale_type
-#       capacity = try(scale.value.capacity, 1)
-#     }
-#   }
-# }
-
 resource "azurerm_cognitive_deployment" "deployment" {
   depends_on = [azurerm_cognitive_account.service]
 
