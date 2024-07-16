@@ -2,8 +2,8 @@ variable "global_settings" {
   description = "Global settings object (see module README.md)"
 }
 
-variable "local_combined_resources" {
-  description = "object of local combined resources"
+variable "resource_groups" {
+  description = "(Required) The resource group objects where to create the resource."
 }
 
 variable "client_config" {

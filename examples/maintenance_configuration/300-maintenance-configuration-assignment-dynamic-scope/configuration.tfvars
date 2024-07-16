@@ -50,7 +50,10 @@ maintenance_assignment_dynamic_scope = {
       locations       = ["West Europe", "France Central"]
       os_types        = ["Linux"]
       resource_types  = ["Microsoft.Compute/virtualMachines"]
-      resource_group_key       = ["rg1", "rg2"]
+      resource_group       = {
+        # lz_key = ""
+        key =  ["rg1", "rg2"]
+      }
       # resource_group_name = ["rsg_umc","rsg_umc2"]
       tag_filter      = "All"
       tags = {
