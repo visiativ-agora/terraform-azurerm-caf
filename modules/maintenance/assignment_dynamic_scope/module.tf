@@ -23,7 +23,7 @@ resource "azurerm_maintenance_assignment_dynamic_scope" "maintenance_assignment_
       var.settings.filter.resource_group_name,
       flatten([
         for rg_key in var.settings.filter.resource_group_key : [
-          for rg in var.local_combined_resources.resource_groups[rg_key][try(var.settings.filter.lz_key, var.client_config.landingzone_key)] : rg.name
+          for rg in var.local_combined_resources.resource_groups[rg_key] : rg.name
         ]
       ])
     )
