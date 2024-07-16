@@ -19,11 +19,22 @@ resource "azurerm_maintenance_assignment_dynamic_scope" "maintenance_assignment_
     #   ])
     # )
 
+    # resource_groups = try(
+    #   var.settings.filter.resource_group_name,
+    #   flatten([
+    #     for rg_key in var.settings.filter.resource_group_key : [
+    #       for rg in var.local_combined_resources.resource_groups[rg_key] : rg.name
+    #     ]
+    #   ])
+    # )
+
     resource_groups = try(
       var.settings.filter.resource_group_name,
       flatten([
         for rg_key in var.settings.filter.resource_group_key : [
-          for rg in var.local_combined_resources.resource_groups[rg_key] : rg.name
+          for lz_key, rg_list in var.local_combined_resources.resource_groups[rg_key] : [
+            for rg in rg_list : rg.name
+          ]
         ]
       ])
     )
