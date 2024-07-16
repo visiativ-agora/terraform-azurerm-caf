@@ -10,31 +10,29 @@ locals {
   module_tag = {
     "module" = basename(abspath(path.module))
   }
-  tags     = merge(var.base_tags, local.module_tag, try(var.tags, null))
+  tags = merge(var.base_tags, local.module_tag, try(var.tags, null))
 
-  # resource_groups = coalesce(
+  # resource_groups = flatten(coalesce(
   #   try([
-  #     for rg_key in try(var.settings.filter.resource_group_key, []) : [
+  #     for rg_key in try(var.settings.filter.resource_group_key, []) : 
   #       try(var.resource_groups[var.client_config.landingzone_key][rg_key], [])
-  #     ]
-  #   ]),
+  #     ], []),
   #   try([
-  #     for rg_key in try(var.settings.filter.resource_group.key, []) : [
+  #     for rg_key in try(var.settings.filter.resource_group.key, []) : 
   #       try(var.resource_groups[var.client_config.landingzone_key][rg_key], [])
-  #     ]
-  #   ]),
+  #     ], []),
   #   []
-  # )
+  # ))
 
   resource_groups = flatten(coalesce(
     try([
-      for rg_key in try(var.settings.filter.resource_group_key, []) : 
-        try(var.resource_groups[var.client_config.landingzone_key][rg_key], [])
-      ], []),
+      for rg_key in try(var.settings.filter.resource_group_key, []) :
+      try(var.resource_groups[var.client_config.landingzone_key][rg_key], var.resource_groups[var.settings.filter.lz_key][rg_key], [])
+    ], []),
     try([
-      for rg_key in try(var.settings.filter.resource_group.key, []) : 
-        try(var.resource_groups[var.client_config.landingzone_key][rg_key], [])
-      ], []),
+      for rg_key in try(var.settings.filter.resource_group.key, []) :
+      try(var.resource_groups[var.client_config.landingzone_key][rg_key], var.resource_groups[var.settings.filter.lz_key][rg_key], [])
+    ], []),
     []
   ))
 }
