@@ -40,6 +40,7 @@ output "maintenance_assignment_virtual_machine" {
 
 module "maintenance_assignment_dynamic_scope" {
   source   = "./modules/maintenance/assignment_dynamic_scope"
+  depends_on = [module.resource_groups]
   for_each = local.maintenance.maintenance_assignment_dynamic_scope
 
   client_config                = local.client_config
