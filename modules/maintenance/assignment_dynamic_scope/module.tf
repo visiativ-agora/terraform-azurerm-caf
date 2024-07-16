@@ -32,8 +32,8 @@ resource "azurerm_maintenance_assignment_dynamic_scope" "maintenance_assignment_
       var.settings.filter.resource_group_name,
       flatten([
         for rg_key in var.settings.filter.resource_group_key : [
-          for lz_key, rg_list in var.local_combined_resources.resource_groups[rg_key] : [
-            for rg in rg_list : rg.name
+          for lz_key in keys(var.local_combined_resources.resource_groups[rg_key]) : [
+            for rg in var.local_combined_resources.resource_groups[rg_key][lz_key] : rg.name
           ]
         ]
       ])
