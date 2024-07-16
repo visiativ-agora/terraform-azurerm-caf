@@ -2,6 +2,10 @@ variable "global_settings" {
   description = "Global settings object (see module README.md)"
 }
 
+variable "local_combined_resources" {
+  description = "object of local combined resources"
+}
+
 variable "client_config" {
   description = "Client configuration object (see module README.md)."
 }
@@ -22,6 +26,7 @@ variable "maintenance_configuration_id" {
   description = "(Required) Specifies the ID of the Maintenance Configuration Resource. Changing this forces a new resource to be created."
   type        = string
 }
+
 
 variable "settings" {
   description = "(Required) The configuration for each module"
