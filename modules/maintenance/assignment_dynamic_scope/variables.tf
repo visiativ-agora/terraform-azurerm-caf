@@ -27,7 +27,6 @@ variable "maintenance_configuration_id" {
   type        = string
 }
 
-
 variable "settings" {
   description = "(Required) The configuration for each module"
 }
@@ -35,8 +34,4 @@ variable "settings" {
 variable "name" {
   description = "(Required) The name which should be used for this Dynamic Maintenance Assignment. Changing this forces a new Dynamic Maintenance Assignment to be created."
   type        = string
-}
-
-variable "resource_group_name" {
-  description = "Resource group object"
 }
