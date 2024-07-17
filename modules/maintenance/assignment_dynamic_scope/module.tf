@@ -6,11 +6,11 @@ resource "azurerm_maintenance_assignment_dynamic_scope" "maintenance_assignment_
     locations = try(var.settings.filter.locations, [])
     os_types  = try(var.settings.filter.os_types, [])
 
-    # resource_groups = local.resource_groups.name
-    resource_groups = local.resource_groups
-    # resource_groups = try(
-    #   var.settings.filter.resource_group_name, var.local_combined_resources.resource_groups[var.settings.filter.resource_group.lz_key][var.settings.resource_group.key], null
-    # )
+
+    # resource_groups = local.resource_groups
+
+    resource_groups = var.resource_groups
+
 
     resource_types = try(var.settings.filter.resource_types, [])
     tag_filter     = try(var.settings.filter.tag_filter, null)
