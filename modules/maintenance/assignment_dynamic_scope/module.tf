@@ -14,7 +14,7 @@ resource "azurerm_maintenance_assignment_dynamic_scope" "maintenance_assignment_
     resource_groups = flatten(
     [
       for key, value in try(var.resource_groups, {}) : [
-        can(value.id) ? value.id : var.resource_groups[try(value.lz_key, var.client_config.landingzone_key)][value.key].name
+        can(value.id) ? value.id : var.resource_groups[try(value.lz_key, var.client_config.landingzone_key)][value.key]
       ]
     ]
   )
