@@ -37,8 +37,7 @@ locals {
   # )
 
   resource_groups = try(coalesce(
-    try(var.settings.filter.resource_group_key, null),
-    try(var.settings.filter.resource_group.key, null),
+    try(var.resource_groups[var.settings.filter.resource_group.lz_key][var.settings.filter.resource_group.key], null),
     try(var.resource_groups[var.client_config.landingzone_key][var.settings.filter.resource_group_key], null),
     try(var.resource_groups[var.client_config.landingzone_key][var.settings.filter.resource_group.key], null),
   ), null)
