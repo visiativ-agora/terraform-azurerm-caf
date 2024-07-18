@@ -93,7 +93,8 @@ resource "null_resource" "example" {
 
   provisioner "local-exec" {
     
-    command = var.resource_groups[var.client_config.landingzone_key][var.settings.filter.resource_group_key[0]].name
+    # command = var.resource_groups[var.client_config.landingzone_key][var.settings.filter.resource_group_key[0]].name
+    command = try(flatten([for rg_key in var.settings.filter.resource_group_key : var.resource_groups[var.client_config.landingzone_key][rg_key].name]), [])
 
 
   }
