@@ -12,10 +12,12 @@ locals {
   }
   tags = merge(var.base_tags, local.module_tag, try(var.tags, null))
 
-  resource_groups = try(coalesce(
-    try(var.resource_groups[var.settings.filter.resource_group.lz_key][var.settings.filter.resource_group.key], null),
-    try(var.resource_groups[var.client_config.landingzone_key][var.settings.filter.resource_group_key], null),
-    try(var.resource_groups[var.client_config.landingzone_key][var.settings.filter.resource_group.key], null),
-  ), null)
+  filtered_resource_groups = try(flatten([
+      for rg_key, rg_value in var.settings.filter.resources_groups : [
+        for lz_key in rg_value.key :
+        if try(var.resource_groups[rg_value.lz_key][lz_key], null) != null :
+        var.resource_groups[rg_value.lz_key][lz_key]
+      ]
+    ]), [])
 }
 
