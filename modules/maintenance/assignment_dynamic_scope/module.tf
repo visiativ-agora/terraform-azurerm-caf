@@ -8,7 +8,7 @@ resource "azurerm_maintenance_assignment_dynamic_scope" "maintenance_assignment_
 
 
     # resource_groups = try(flatten([for rg_key in var.settings.filter.resource_group_key : var.resource_groups[var.client_config.landingzone_key][rg_key].name]), [])
-    resource_groups = try(flatten([for rg_key in var.settings.filter.resource_group_key : var.resource_groups[try(rg_key.lz_key, var.client_config.landingzone_key)][rg_key].name]), [])
+    resource_groups = try(flatten([for rg_key in var.settings.filter.resource_group_key : var.resource_groups[var.client_config.landingzone_key][rg_key].name]), flatten([for rg_key in var.settings.filter.resources_groups : var.resource_groups[try(rg_key.lz_key, var.client_config.landingzone_key)][rg_key].name]), [])
 
     resource_types = try(var.settings.filter.resource_types, [])
     tag_filter     = try(var.settings.filter.tag_filter, null)
