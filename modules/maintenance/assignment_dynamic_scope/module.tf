@@ -19,11 +19,19 @@ resource "azurerm_maintenance_assignment_dynamic_scope" "maintenance_assignment_
   #   ]
   # )
 
-    resource_groups = try(flatten([
-      for key, value in var.resource_groups[try(var.settings.filter.lz_key, var.client_config.landingzone_key)] : value
-      if contains(var.settings.filter.resource_groups_keys, key)
-      ]), [])
+    # resource_groups = try(flatten([
+    #   for key, value in var.resource_groups[try(var.settings.filter.lz_key, var.client_config.landingzone_key)] : value
+    #   if contains(var.settings.filter.resource_groups_keys, key)
+    #   ]), [])
 
+    resource_groups = try(flatten([
+      for rg_key, rg_value in var.settings.filter.resources_groups :
+      [
+        for lz_key in rg_value.key :
+        if try(var.resource_groups[rg_value.lz_key][lz_key], null) != null :
+        var.resource_groups[rg_value.lz_key][lz_key]
+      ]
+    ]), [])
 
     resource_types = try(var.settings.filter.resource_types, [])
     tag_filter     = try(var.settings.filter.tag_filter, null)
@@ -66,3 +74,15 @@ resource "azurerm_maintenance_assignment_dynamic_scope" "maintenance_assignment_
 #     }
 #   }
 # }
+
+
+
+resource "null_resource" "example" {
+
+  provisioner "local-exec" {
+
+    command = var.resource_groups
+
+  }
+
+}
