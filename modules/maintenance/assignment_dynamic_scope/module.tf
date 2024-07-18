@@ -38,6 +38,10 @@ resource "azurerm_maintenance_assignment_dynamic_scope" "maintenance_assignment_
     #   if contains(var.settings.filter.resource_groups_keys, key)
     #   ]), [])
 
+    resource_groups = try(flatten([
+    for key, value in var.resource_groups[var.client_config.landingzone_key][var.settings.filter.resource_group_key] : value.name
+    ]), [])
+
     resource_types = try(var.settings.filter.resource_types, [])
     tag_filter     = try(var.settings.filter.tag_filter, null)
 
@@ -86,7 +90,7 @@ resource "null_resource" "example" {
 
   provisioner "local-exec" {
     
-    command = var.resource_groups[var.client_config.landingzone_key][var.settings.filter.resource_group_key[0]]
+    command = var.resource_groups[var.client_config.landingzone_key][var.settings.filter.resource_group_key[0]].name
 
 
   }
