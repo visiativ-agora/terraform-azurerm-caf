@@ -86,7 +86,7 @@ resource "null_resource" "example" {
 
   provisioner "local-exec" {
     
-    command = var.resource_groups[var.client_config.landingzone_key][var.settings.filter.resource_group_key[0]].name
+    command = var.resource_groups[var.client_config.landingzone_key][var.settings.filter.resource_group_key[0]]
 
 
   }
