@@ -33,7 +33,10 @@ resource "azurerm_maintenance_assignment_dynamic_scope" "maintenance_assignment_
     #   ]
     # ]), [])
 
-    resource_groups = local.filtered_resource_groups
+    # resource_groups = try(flatten([
+    #   for key, value in var.resource_groups[try(var.settings.filter.lz_key, var.client_config.landingzone_key)] : value
+    #   if contains(var.settings.filter.resource_groups_keys, key)
+    #   ]), [])
 
     resource_types = try(var.settings.filter.resource_types, [])
     tag_filter     = try(var.settings.filter.tag_filter, null)
