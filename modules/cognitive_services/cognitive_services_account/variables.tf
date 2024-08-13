@@ -18,6 +18,13 @@ variable "resource_group_name" {
   type        = string
 }
 
+variable "diagnostic_profiles" {
+  default = {}
+}
+variable "diagnostics" {
+  default = {}
+}
+
 variable "settings" {}
 
 variable "managed_identities" {
