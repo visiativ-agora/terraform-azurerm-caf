@@ -94,3 +94,25 @@ module "eventgrid_system_topic" {
 output "eventgrid_system_topic" {
   value = module.eventgrid_system_topic
 }
+module "eventgrid_system_event_subscription" {
+  source   = "./modules/messaging/eventgrid/eventgrid_system_event_subscription"
+  for_each = local.messaging.eventgrid_system_event_subscription
+
+  global_settings = local.global_settings
+  client_config   = local.client_config
+  settings        = each.value
+
+  remote_objects = merge(
+    local.remote_objects,
+    {
+      functions               = local.combined_objects_function_apps,
+      eventhubs               = local.combined_objects_event_hubs,
+      eventgrid_system_topics = local.combined_objects_eventgrid_system_topics,
+      hybrid_connections      = local.combined_objects_relay_hybrid_connection,
+      storage_account_queues  = local.combined_objects_storage_account_queues
+    }
+  )
+}
+output "eventgrid_system_event_subscription" {
+  value = module.eventgrid_system_event_subscription
+}
