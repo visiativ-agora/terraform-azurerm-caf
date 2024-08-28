@@ -266,6 +266,7 @@ locals {
     eventgrid_topic              = try(var.messaging.eventgrid_topic, {})
     eventgrid_event_subscription = try(var.messaging.eventgrid_event_subscription, {})
     eventgrid_domain_topic       = try(var.messaging.eventgrid_domain_topic, {})
+    eventgrid_system_topic       = try(var.messaging.eventgrid_system_topic, {})
     web_pubsubs                  = try(var.messaging.web_pubsubs, {})
     web_pubsub_hubs              = try(var.messaging.web_pubsub_hubs, {})
   }
