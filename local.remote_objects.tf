@@ -61,6 +61,8 @@ locals {
     ddos_services                                  = try(local.combined_objects_ddos_services, null)
     event_hub_auth_rules                           = try(local.combined_objects_event_hub_auth_rules, null)
     event_hub_namespaces                           = try(local.combined_objects_event_hub_namespaces, null)
+    eventgrid_topics                               = try(local.combined_objects_eventgrid_topics, null)
+    eventgrid_system_topics                        = try(local.combined_objects_eventgrid_system_topics, null)
     express_route_circuit_authorizations           = try(local.combined_objects_express_route_circuit_authorizations, null)
     express_route_circuit_peerings                 = try(local.combined_objects_express_route_circuit_peerings, null)
     express_route_circuits                         = try(local.combined_objects_express_route_circuits, null)
