@@ -1,6 +1,6 @@
 resource "azurecaf_name" "egt" {
   name          = var.settings.name
-  resource_type = "azurerm_eventgrid_system_topic"
+  resource_type = "azurerm_eventgrid_topic"
   prefixes      = var.global_settings.prefixes
   random_length = var.global_settings.random_length
   clean_input   = true
