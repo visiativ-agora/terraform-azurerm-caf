@@ -23,9 +23,7 @@ resource "azurerm_eventgrid_system_topic_event_subscription" "eges" {
     }
   }
 
-  #eventhub_endpoint - (Optional / Deprecated in favour of eventhub_endpoint_id)
-  eventhub_endpoint_id = can(var.settings.eventhub.id) ? var.settings.eventhub.id : can(var.remote_objects.eventhubs[try(var.settings.eventhub.lz_key, var.client_config.landingzone_key)][var.settings.eventhub.key].id) ? var.remote_objects.eventhubs[try(var.settings.eventhub.lz_key, var.client_config.landingzone_key)][var.settings.eventhub.key].id : null
-  #hybrid_connection_endpoint - (Optional / Deprecated in favour of hybrid_connection_endpoint_id)
+  eventhub_endpoint_id          = can(var.settings.eventhub.id) ? var.settings.eventhub.id : can(var.remote_objects.eventhubs[try(var.settings.eventhub.lz_key, var.client_config.landingzone_key)][var.settings.eventhub.key].id) ? var.remote_objects.eventhubs[try(var.settings.eventhub.lz_key, var.client_config.landingzone_key)][var.settings.eventhub.key].id : null
   hybrid_connection_endpoint_id = can(var.settings.hybrid_connection.id) ? var.settings.hybrid_connection.id : can(var.remote_objects.hybrid_connections[try(var.settings.hybrid_connection.lz_key, var.client_config.landingzone_key)][var.settings.hybrid_connection.key].id) ? var.remote_objects.hybrid_connections[try(var.settings.hybrid_connection.lz_key, var.client_config.landingzone_key)][var.settings.hybrid_connection.key].id : null
   service_bus_queue_endpoint_id = can(var.settings.servicebus_queues.id) ? var.settings.servicebus_queues.id : can(var.remote_objects.servicebus_queues[try(var.settings.servicebus_queues.lz_key, var.client_config.landingzone_key)][var.settings.servicebus_queues.key].id) ? var.remote_objects.servicebus_queues[try(var.settings.servicebus_queues.lz_key, var.client_config.landingzone_key)][var.settings.servicebus_queues.key].id : null
   service_bus_topic_endpoint_id = can(var.settings.servicebus_topic.id) ? var.settings.servicebus_topic.id : can(var.remote_objects.servicebus_topic[try(var.settings.servicebus_topic.lz_key, var.client_config.landingzone_key)][var.settings.servicebus_topic.key].id) ? var.remote_objects.servicebus_topic[try(var.settings.servicebus_topic.lz_key, var.client_config.landingzone_key)][var.settings.servicebus_topic.key].id : null
@@ -33,7 +31,7 @@ resource "azurerm_eventgrid_system_topic_event_subscription" "eges" {
   dynamic "storage_queue_endpoint" {
     for_each = try(var.settings.storage_queue_endpoint, null) != null ? [var.settings.storage_queue_endpoint] : []
     content {
-      storage_account_id                    = can(storage_queue_endpoint.value.eue_endpoint.storage_account.id) ? storage_queue_endpoint.value.eue_endpoint.storage_account.id : var.remote_objects.storage_accounts[try(storage_queue_endpoint.value.storage_account.lz_key, var.client_config.landingzone_key)][storage_queue_endpoint.value.storage_account.key].id
+      storage_account_id                    = can(storage_queue_endpoint.value.queue_endpoint.storage_account.id) ? storage_queue_endpoint.value.queue_endpoint.storage_account.id : var.remote_objects.storage_accounts[try(storage_queue_endpoint.value.storage_account.lz_key, var.client_config.landingzone_key)][storage_queue_endpoint.value.storage_account.key].id
       queue_name                            = can(storage_queue_endpoint.value.queue.name) ? storage_queue_endpoint.value.queue.name : var.remote_objects.storage_account_queues[try(storage_queue_endpoint.value.queue.lz_key, var.client_config.landingzone_key)][storage_queue_endpoint.value.queue.key].name
       queue_message_time_to_live_in_seconds = try(storage_queue_endpoint.value.queue_message_time_to_live_in_seconds, null)
     }
@@ -41,12 +39,12 @@ resource "azurerm_eventgrid_system_topic_event_subscription" "eges" {
   dynamic "webhook_endpoint" {
     for_each = try(var.settings.webhook_endpoint, null) != null ? [var.settings.webhook_endpoint] : []
     content {
-      url                               = try(webhook_endpoint.value.url, null)
-      base_url                          = try(webhook_endpoint.value.base_url, null)
-      max_events_per_batch              = try(webhook_endpoint.value.max_events_per_batch, null)
-      preferred_batch_size_in_kilobytes = try(webhook_endpoint.value.preferred_batch_size_in_kilobytes, null)
-      active_directory_tenant_id        = try(webhook_endpoint.value.active_directory_tenant_id, null)
-      active_directory_app_id_or_uri    = try(webhook_endpoint.value.active_directory_app_id_or_uri, null)
+      url                               = try(webhook_endpoint.url, null)
+      base_url                          = try(webhook_endpoint.base_url, null)
+      max_events_per_batch              = try(webhook_endpoint.max_events_per_batch, null)
+      preferred_batch_size_in_kilobytes = try(webhook_endpoint.preferred_batch_size_in_kilobytes, null)
+      active_directory_tenant_id        = try(webhook_endpoint.active_directory_tenant_id, null)
+      active_directory_app_id_or_uri    = try(webhook_endpoint.active_directory_app_id_or_uri, null)
     }
   }
   included_event_types = try(var.settings.included_event_types, null)
