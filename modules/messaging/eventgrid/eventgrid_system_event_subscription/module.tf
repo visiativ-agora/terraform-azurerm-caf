@@ -39,12 +39,12 @@ resource "azurerm_eventgrid_system_topic_event_subscription" "eges" {
   dynamic "webhook_endpoint" {
     for_each = try(var.settings.webhook_endpoint, null) != null ? [var.settings.webhook_endpoint] : []
     content {
-      url                               = try(webhook_endpoint.url, null)
-      base_url                          = try(webhook_endpoint.base_url, null)
-      max_events_per_batch              = try(webhook_endpoint.max_events_per_batch, null)
-      preferred_batch_size_in_kilobytes = try(webhook_endpoint.preferred_batch_size_in_kilobytes, null)
-      active_directory_tenant_id        = try(webhook_endpoint.active_directory_tenant_id, null)
-      active_directory_app_id_or_uri    = try(webhook_endpoint.active_directory_app_id_or_uri, null)
+      url                               = try(var.settings.webhook_endpoint.url, null)
+      base_url                          = try(var.settings.webhook_endpoint.base_url, null)
+      max_events_per_batch              = try(var.settings.webhook_endpoint.max_events_per_batch, null)
+      preferred_batch_size_in_kilobytes = try(var.settings.webhook_endpoint.preferred_batch_size_in_kilobytes, null)
+      active_directory_tenant_id        = try(var.settings.webhook_endpoint.active_directory_tenant_id, null)
+      active_directory_app_id_or_uri    = try(var.settings.webhook_endpoint.active_directory_app_id_or_uri, null)
     }
   }
   included_event_types = try(var.settings.included_event_types, null)
