@@ -37,7 +37,7 @@ app_service_plans = {
   }
 }
 
-function_apps = {
+windows_function_apps = {
   faaps1 = {
     name                 = "windows-test-azure-functions"
     resource_group_key   = "rg1"
