@@ -22,7 +22,8 @@ resource "azurerm_eventgrid_system_topic_event_subscription" "eges" {
   dynamic "azure_function_endpoint" {
     for_each = try(var.settings.azure_function_endpoint, null) != null ? [var.settings.azure_function_endpoint] : []
     content {
-      function_id                       = can(azure_function_endpoint.value.function_app.id) ? azure_function_endpoint.value.function_app.id : can(var.remote_objects.functions[try(azure_function_endpoint.value.function_app.lz_key, var.client_config.landingzone_key)][azure_function_endpoint.value.function_app.key].id) ? "${var.remote_objects.functions[try(azure_function_endpoint.value.function_app.lz_key, var.client_config.landingzone_key)][azure_function_endpoint.value.function_app.key].id}/functions/${azure_function_endpoint.value.function_name}" : null
+      # function_id                       = can(azure_function_endpoint.value.function_app.id) ? azure_function_endpoint.value.function_app.id : can(var.remote_objects.functions[try(azure_function_endpoint.value.function_app.lz_key, var.client_config.landingzone_key)][azure_function_endpoint.value.function_app.key].id) ? "${var.remote_objects.functions[try(azure_function_endpoint.value.function_app.lz_key, var.client_config.landingzone_key)][azure_function_endpoint.value.function_app.key].id}/functions/${azure_function_endpoint.value.function_name}" : null
+      function_id                       = can(azure_function_endpoint.value.function_app.id) ? azure_function_endpoint.value.function_app.id : can(var.remote_objects.functions[try(azure_function_endpoint.value.function_app.lz_key, var.client_config.landingzone_key)][azure_function_endpoint.value.function_app.key].id) ? var.remote_objects.functions[try(azure_function_endpoint.value.function_app.lz_key, var.client_config.landingzone_key)][azure_function_endpoint.value.function_app.key].id : null
       max_events_per_batch              = try(azure_function_endpoint.value.max_events_per_batch, null)
       preferred_batch_size_in_kilobytes = try(azure_function_endpoint.value.preferred_batch_size_in_kilobytes, null)
     }
@@ -47,6 +48,15 @@ resource "azurerm_eventgrid_system_topic_event_subscription" "eges" {
     }
   }
   included_event_types = try(var.settings.included_event_types, null)
+
+  dynamic "subject_filter " {
+    for_each = try(var.settings.subject_filter, null) != null ? [var.settings.subject_filter] : []
+    content {
+      subject_begins_with = try(subject_filter.value.subject_begins_with, null)
+      subject_ends_with   = try(subject_filter.value.subject_ends_with, null)
+      case_sensitive      = try(subject_filter.value.case_sensitive, null)
+    }
+  }
 
   dynamic "advanced_filter" {
     for_each = try(var.settings.advanced_filter, null) != null ? [var.settings.advanced_filter] : []
