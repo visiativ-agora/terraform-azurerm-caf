@@ -240,6 +240,4 @@ resource "azurerm_eventgrid_system_topic_event_subscription" "eges" {
   }
   labels                               = try(var.settings.labels, null)
   advanced_filtering_on_arrays_enabled = try(var.settings.advanced_filtering_on_arrays_enabled, null)
-
-  depends_on = [azurerm_storage_account.storageaccount ]
 }

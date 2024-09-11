@@ -60,7 +60,6 @@ module "eventgrid_event_subscription" {
 output "eventgrid_event_subscription" {
   value = module.eventgrid_event_subscription
 }
-
 module "eventgrid_domain_topic" {
   source   = "./modules/messaging/eventgrid/eventgrid_domain_topic"
   for_each = local.messaging.eventgrid_domain_topic
@@ -77,7 +76,6 @@ module "eventgrid_domain_topic" {
 output "eventgrid_domain_topic" {
   value = module.eventgrid_domain_topic
 }
-
 module "eventgrid_system_topic" {
   source   = "./modules/messaging/eventgrid/eventgrid_system_topic"
   for_each = local.messaging.eventgrid_system_topic
@@ -97,6 +95,7 @@ output "eventgrid_system_topic" {
 }
 module "eventgrid_system_event_subscription" {
   source   = "./modules/messaging/eventgrid/eventgrid_system_event_subscription"
+  depends_on = [azurerm_storage_account.storageaccount ]
   for_each = local.messaging.eventgrid_system_event_subscription
 
   global_settings = local.global_settings
