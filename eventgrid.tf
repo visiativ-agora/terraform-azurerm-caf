@@ -94,8 +94,7 @@ output "eventgrid_system_topic" {
   value = module.eventgrid_system_topic
 }
 module "eventgrid_system_event_subscription" {
-  source   = "./modules/messaging/eventgrid/eventgrid_system_event_subscription"
-  depends_on = [module.storage_accounts]
+  source   = "./modules/messaging/eventgrid/eventgrid_system_event_subscription"  
   for_each = local.messaging.eventgrid_system_event_subscription
 
   global_settings = local.global_settings
