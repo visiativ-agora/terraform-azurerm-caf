@@ -102,6 +102,7 @@ locals {
     wvd_host_pools                         = try(var.compute.wvd_host_pools, {})
     wvd_workspaces                         = try(var.compute.wvd_workspaces, {})
     virtual_machines                       = try(var.compute.virtual_machines, {})
+    virtual_machines_replication           = try(var.compute.virtual_machines_replication, {})
     virtual_machine_scale_sets             = try(var.compute.virtual_machine_scale_sets, {})
     runbooks                               = try(var.compute.runbooks, {})
   }
@@ -413,6 +414,7 @@ locals {
     azurerm_application_insights_web_test          = try(var.webapp.azurerm_application_insights_web_test, {})
     azurerm_application_insights_standard_web_test = try(var.webapp.azurerm_application_insights_standard_web_test, {})
     function_apps                                  = try(var.webapp.function_apps, {})
+    windows_function_apps                          = try(var.webapp.windows_function_apps, {})
     static_sites                                   = try(var.webapp.static_sites, {})
   }
 

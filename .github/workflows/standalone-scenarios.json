@@ -20,6 +20,7 @@
     "apim/118-api_management_platform_stv2",
     "app_config/100-simple",
     "app_config/101-private-link",
+    "app_config/102-dynamic-settings",
     "app_insights/100-all-attributes",
     "app_insights/100-simple",
     "app_insights/102-workspace-based-central-logs",
@@ -95,6 +96,9 @@
     "recovery_vault/105-asr-with-network-mapping",
     "recovery_vault/106-backupvault-with-sqldatabase-saphana",
     "recovery_vault/107-asr-diagnostics",
+    "recovery_vault/108-simple-asr-plan",
+    "recovery_vault/109-asr-with-cmk-and-msi",
+    "recovery_vault/110-asr-with-custom-encryption-key",
     "redis_cache/100-redis-standard",
     "redis_cache/101-redis-diagnostics",
     "redis_cache/102-redis-private",
@@ -137,6 +141,7 @@
     "webapps/function_app/101-function_app-private",
     "webapps/function_app/102-function_app-linux",
     "webapps/function_app/103-function_app-windows",
+    "webapps/windows_function_app/103-function_app-windows",
     "webapps/static_site/101-simple-static-web-app"
   ]
 }
