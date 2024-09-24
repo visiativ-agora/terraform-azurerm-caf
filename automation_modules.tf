@@ -1,6 +1,6 @@
 module "automation_powershell72_module" {
   source   = "./modules/automation/automation_module/automation_powershell72_module"
-  for_each = local.shared_services.automation_modules.automation_powershell72_module
+  for_each = local.shared_services.automation_powershell72_module   
 
   global_settings         = local.global_settings
   settings                = each.value
