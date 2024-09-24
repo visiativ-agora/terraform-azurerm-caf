@@ -3,7 +3,7 @@ resource "azurerm_automation_powershell72_module" "automation_powershell72_modul
   automation_account_id   = var.automation_account_id  
   tags                    = local.tags
   
-  module_link {
+  module_link = {
     uri  = var.settings.module_link.uri
     hash = try(var.settings.module_link.hash, null)
   }
