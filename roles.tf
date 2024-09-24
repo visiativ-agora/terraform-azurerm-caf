@@ -24,6 +24,8 @@ resource "azurerm_role_assignment" "for" {
   role_definition_id   = each.value.mode == "custom_role_mapping" ? module.custom_roles[each.value.role_definition_name].role_definition_resource_id : null
   role_definition_name = each.value.mode == "built_in_role_mapping" ? each.value.role_definition_name : null
   scope                = each.value.scope_lz_key == null ? local.services_roles[each.value.scope_resource_key][var.current_landingzone_key][each.value.scope_key_resource].id : local.services_roles[each.value.scope_resource_key][each.value.scope_lz_key][each.value.scope_key_resource].id
+  condition_version    = try(each.value.condition, null) == null ? "2.0" : null
+  condition            = try(each.value.condition, null)
 }
 
 resource "azurerm_role_assignment" "for_deferred" {
@@ -232,7 +234,6 @@ locals {
                     object_id_resource_type = object_id_key
                     object_id_key_resource  = try(object_id_key_resource.key, object_id_key_resource) #   "object_id_key_resource" = "aks_admins"
                     object_id_lz_key        = try(object_id_key_resource.lz_key, object_resources.lz_key, null)
-                    condition_version       = object_id_key_resource.condition == null ? "2.0" : null
                     condition               = try(object_id_key_resource.condition, null)
                   }
                 ]
