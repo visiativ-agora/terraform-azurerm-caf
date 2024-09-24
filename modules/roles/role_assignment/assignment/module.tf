@@ -5,9 +5,11 @@ resource "azurerm_role_assignment" "object_id" {
   }
 
   scope                = var.scope
-  role_definition_name = var.role_definition_name == null ? null : var.role_definition_name
-  role_definition_id   = var.role_definition_id == null ? null : var.role_definition_id
+  role_definition_name = try(var.role_definition_name, null)
+  role_definition_id   = try(var.role_definition_id, null)
   principal_id         = each.value == "logged_in_user" || each.value == "logged_in_aad_app" ? var.client_config.object_id : each.value
+  condition_version    = "2.0"
+  condition            = try(each.value.condition, null)
 }
 
 resource "azurerm_role_assignment" "azuread_apps" {
@@ -16,9 +18,11 @@ resource "azurerm_role_assignment" "azuread_apps" {
   }
 
   scope                = var.scope
-  role_definition_name = var.role_definition_name == null ? null : var.role_definition_name
-  role_definition_id   = var.role_definition_id == null ? null : var.role_definition_id
+  role_definition_name = try(var.role_definition_name, null)
+  role_definition_id   = try(var.role_definition_id, null)
   principal_id         = var.azuread_apps[each.key].azuread_service_principal.object_id
+  condition_version    = "2.0"
+  condition            = try(each.value.condition, null)
 }
 
 resource "azurerm_role_assignment" "azuread_group" {
@@ -27,9 +31,11 @@ resource "azurerm_role_assignment" "azuread_group" {
   }
 
   scope                = var.scope
-  role_definition_name = var.role_definition_name == null ? null : var.role_definition_name
-  role_definition_id   = var.role_definition_id == null ? null : var.role_definition_id
+  role_definition_name = try(var.role_definition_name, null)
+  role_definition_id   = try(var.role_definition_id, null)
   principal_id         = var.azuread_groups[each.key].id
+  condition_version    = "2.0"
+  condition            = try(each.value.condition, null)
 }
 
 resource "azurerm_role_assignment" "msi" {
@@ -38,7 +44,9 @@ resource "azurerm_role_assignment" "msi" {
   }
 
   scope                = var.scope
-  role_definition_name = var.role_definition_name == null ? null : var.role_definition_name
-  role_definition_id   = var.role_definition_id == null ? null : var.role_definition_id
+  role_definition_name = try(var.role_definition_name, null)
+  role_definition_id   = try(var.role_definition_id, null)
   principal_id         = var.managed_identities[each.key].principal_id
+  condition_version    = "2.0"
+  condition            = try(each.value.condition, null)
 }
