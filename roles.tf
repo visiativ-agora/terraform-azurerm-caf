@@ -232,6 +232,8 @@ locals {
                     object_id_resource_type = object_id_key
                     object_id_key_resource  = try(object_id_key_resource.key, object_id_key_resource) #   "object_id_key_resource" = "aks_admins"
                     object_id_lz_key        = try(object_id_key_resource.lz_key, object_resources.lz_key, null)
+                    condition_version       = object_id_key_resource.condition == null ? "2.0" : null
+                    condition               = try(object_id_key_resource.condition, null)
                   }
                 ]
               ] if role_definition_name != "lz_key"
