@@ -60,8 +60,8 @@ resource "azurerm_site_recovery_replicated_vm" "replication" {
   )
 
   managed_disk {
-    # disk_id = format("/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Compute/disks/%s", var.client_config.subscription_id, lower(var.virtual_machine_os_disk.resource_group_name), lower(var.virtual_machine_os_disk.name))
-    disk_id = var.virtual_machine_os_disk.id
+    disk_id = format("/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Compute/disks/%s", var.client_config.subscription_id, lower(var.virtual_machine_os_disk.resource_group_name), lower(var.virtual_machine_os_disk.name))
+    # disk_id = var.virtual_machine_os_disk.id
 
     staging_storage_account_id = coalesce(
       try(var.storage_accounts[var.client_config.landingzone_key][var.settings.replication.staging_storage_account_key].id, null),
@@ -71,8 +71,8 @@ resource "azurerm_site_recovery_replicated_vm" "replication" {
       try(var.resource_groups[var.client_config.landingzone_key][var.settings.replication.target.resource_group_key].id, null),
       try(var.recovery_vaults[var.settings.replication.target.resource_group.lz_key][var.settings.replication.resource_group.key].id, null)
     )
-    target_disk_type         = try(var.settings.replication.target.os_disk_storage_type, var.virtual_machine_os_disk.storage_account_type) # When I retrieve the storage account type, the plan detects a change and rebuilds the replication item. If anyone has an idea how to solve this problem
-    target_replica_disk_type = try(var.settings.replication.target.os_disk_replica_storage_type, var.settings.replication.target.os_disk_storage_type, var.virtual_machine_os_disk.storage_account_type)
+    target_disk_type         = lookup(var.settings.replication.target, "os_disk_storage_type", var.virtual_machine_os_disk.storage_account_type) # When I retrieve the storage account type, the plan detects a change and rebuilds the replication item. If anyone has an idea how to solve this problem
+    target_replica_disk_type = lookup(var.settings.replication.target, "os_disk_replica_storage_type", lookup(var.settings.replication.target, "os_disk_storage_type", var.virtual_machine_os_disk.storage_account_type))
 
     target_disk_encryption_set_id = try(var.virtual_machine_os_disk.disk_encryption_set_id, null) == null || try(var.virtual_machine_os_disk.disk_encryption_set_id, "") == "" ? null : var.virtual_machine_os_disk.disk_encryption_set_id
   }
