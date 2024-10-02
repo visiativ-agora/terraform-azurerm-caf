@@ -60,7 +60,8 @@ resource "azurerm_site_recovery_replicated_vm" "replication" {
   )
 
   managed_disk {
-    disk_id = format("/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Compute/disks/%s", var.client_config.subscription_id, lower(var.virtual_machine_os_disk.resource_group_name), lower(var.virtual_machine_os_disk.name))
+    # disk_id = format("/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Compute/disks/%s", var.client_config.subscription_id, lower(var.virtual_machine_os_disk.resource_group_name), lower(var.virtual_machine_os_disk.name))
+    disk_id = var.virtual_machine_os_disk.id
 
     staging_storage_account_id = coalesce(
       try(var.storage_accounts[var.client_config.landingzone_key][var.settings.replication.staging_storage_account_key].id, null),
