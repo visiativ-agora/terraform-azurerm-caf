@@ -17,11 +17,12 @@ resource "azurerm_security_center_subscription_pricing" "pricing" {
   # StorageAccounts
   # VirtualMachines
 
+  # extensions list : https://learn.microsoft.com/en-us/rest/api/defenderforcloud/pricings/get?view=rest-defenderforcloud-2024-01-01&tabs=HTTP#extension
   dynamic "extension" {
     for_each = coalesce(var.extensions, {})
     content {
-      name                            = each.value.name
-      additional_extension_properties = try(each.value.additional_extension_properties, null)
+      name                            = extension.name
+      additional_extension_properties = try(extension.additional_extension_properties, null)
     }
   }
 }
