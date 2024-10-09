@@ -1,5 +1,6 @@
 resource "azurerm_security_center_subscription_pricing" "pricing" {
   tier          = var.tier
+  subplan       = try(var.subplan, null)
   resource_type = var.resource_type
   # Api
   # AppServices
