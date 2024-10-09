@@ -21,8 +21,8 @@ resource "azurerm_security_center_subscription_pricing" "pricing" {
   dynamic "extension" {
     for_each = coalesce(var.extensions, {})
     content {
-      name                            = extension.name
-      additional_extension_properties = try(extension.additional_extension_properties, null)
+      name                            = extension.value.name
+      additional_extension_properties = try(extension.value.additional_extension_properties, null)
     }
   }
 }
