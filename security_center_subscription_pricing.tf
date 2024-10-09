@@ -1,4 +1,4 @@
-module "sentinel_automation_rules" {
+module "security_center_subscription_pricings" {
   source   = "./modules/security/security_center/subscription_pricing"
   for_each = try(local.security.security_center_subscription_pricings, {})
 
