@@ -1,11 +1,12 @@
 locals {
-  management_locks = flatten([
-    for resource_type, resources in var.management_locks : [
-      for resource in resources : merge(resource, {
+  management_locks = merge(flatten([
+    for resource_type, resources in var.management_locks : {
+      for key, resource in resources : key => merge(resource, {
         resource_type = resource_type,
       })
-    ] if resource_type != "ids"
-  ])
+    } if resource_type != "ids"
+  ])...)
+
 }
 
 module "management_locks" {
