@@ -16,9 +16,9 @@ module "management_locks" {
   client_config   = local.client_config
   remote_objects  = local.remote_objects
 
-  name            = each.name
-  resource_type   = each.resource_type
-  resource_lz_key = try(each.lz_key, var.client_config.landingzone_key)
+  name            = each.value.name
+  resource_type   = each.value.resource_type
+  resource_lz_key = try(each.value.lz_key, var.client_config.landingzone_key)
   resource_key    = each.key
   level           = each.value.level
   notes           = try(each.value.notes, null)
