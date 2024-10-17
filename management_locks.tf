@@ -20,7 +20,7 @@ module "management_locks" {
   name            = each.value.name
   resource_type   = each.value.resource_type
   resource_lz_key = try(each.value.lz_key, local.client_config.landingzone_key)
-  resource_key    = each.key
+  resource_key    = each.value.key
   level           = each.value.level
   notes           = try(each.value.notes, null)
 }
