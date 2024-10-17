@@ -24,6 +24,6 @@ variable "resource_id" {
   default = ""
 }
 variable "level" {}
-variable "level" {
+variable "notes" {
   default = null
 }
