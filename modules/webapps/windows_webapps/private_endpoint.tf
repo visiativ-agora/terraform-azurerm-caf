@@ -2,7 +2,7 @@ module "private_endpoint" {
   source   = "../../networking/private_endpoint"
   for_each = var.private_endpoints
 
-  resource_id         = azurerm_windows_web_app.windows_web_apps.id
+  resource_id         = azurerm_windows_web_app.windows_app_services.id
   name                = each.value.name
   location            = local.location
   resource_group_name = local.resource_group_name
