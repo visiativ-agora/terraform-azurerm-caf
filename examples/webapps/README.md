@@ -29,8 +29,9 @@ resource_to_be_created = {
 Under the webapps category you can create the following resources, with their examples:
 
 | Technology                    | Examples Directory                                                                                                        |
-|-------------------------------|---------------------------------------------------------------------------------------------------------------------------|
+|-----------------------------|-------------------------------------------------------------------------------------------------------------------------|
 | Azure App Service             | [GitHub repository](https://github.com/aztfmod/terraform-azurerm-caf/tree/master/examples/webapps/appservice/)            |
 | Azure App Service Environment | [GitHub repository](https://github.com/aztfmod/terraform-azurerm-caf/tree/master/examples/webapps/appservice-environment) |
 | Azure Functions               | [GitHub repository](https://github.com/aztfmod/terraform-azurerm-caf/tree/master/examples/webapps/function_app)           |
+| Azure Linux_Functions         | [GitHub repository](https://github.com/aztfmod/terraform-azurerm-caf/tree/master/examples/webapps/linux_function_app)     |
 | Azure Windows_Functions       | [GitHub repository](https://github.com/aztfmod/terraform-azurerm-caf/tree/master/examples/webapps/windows_function_app)   |
