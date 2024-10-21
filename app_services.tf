@@ -51,10 +51,10 @@ resource "azurerm_app_service_virtual_network_swift_connection" "vnet_config" {
 }
 
 
-module "windows_web_apps" {
+module "windows_app_services" {
   source                              = "./modules/webapps/windows_webapps"
   depends_on                          = [module.networking]
-  for_each                            = local.webapp.windows_web_apps
+  for_each                            = local.webapp.windows_app_services
   name                                = each.value.name
   client_config                       = local.client_config
   app_service_plan_id                 = can(each.value.app_service_plan_id) ? each.value.app_service_plan_id : local.combined_objects_app_service_plans[try(each.value.lz_key, local.client_config.landingzone_key)][each.value.app_service_plan_key].id
@@ -77,14 +77,14 @@ module "windows_web_apps" {
   azuread_service_principal_passwords = local.combined_objects_azuread_service_principal_passwords
 }
 
-output "windows_web_apps" {
-  value = module.windows_web_apps
+output "windows_app_services" {
+  value = module.windows_app_services
 }
 
-module "linux_web_apps" {
+module "linux_app_services" {
   source                              = "./modules/webapps/linux_webapps"
   depends_on                          = [module.networking]
-  for_each                            = local.webapp.linux_web_apps
+  for_each                            = local.webapp.linux_app_services
   name                                = each.value.name
   client_config                       = local.client_config
   app_service_plan_id                 = can(each.value.app_service_plan_id) ? each.value.app_service_plan_id : local.combined_objects_app_service_plans[try(each.value.lz_key, local.client_config.landingzone_key)][each.value.app_service_plan_key].id
@@ -106,6 +106,6 @@ module "linux_web_apps" {
   azuread_applications                = local.combined_objects_azuread_applications
   azuread_service_principal_passwords = local.combined_objects_azuread_service_principal_passwords
 }
-output "linux_web_apps" {
-  value = module.linux_web_apps
+output "linux_app_services" {
+  value = module.linux_app_services
 }

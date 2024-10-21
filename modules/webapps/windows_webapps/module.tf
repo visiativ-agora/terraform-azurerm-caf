@@ -1,5 +1,5 @@
 
-resource "azurecaf_name" "windows_web_apps" {
+resource "azurecaf_name" "windows_app_services" {
   name          = var.name
   resource_type = "azurerm_app_service"
   prefixes      = var.global_settings.prefixes
@@ -10,8 +10,8 @@ resource "azurecaf_name" "windows_web_apps" {
 }
 
 
-resource "azurerm_windows_web_app" "windows_web_apps" {
-  name                = azurecaf_name.windows_web_apps.result
+resource "azurerm_windows_web_app" "windows_app_services" {
+  name                = azurecaf_name.windows_app_services.result
   location            = local.location
   resource_group_name = local.resource_group_name
   service_plan_id     = var.app_service_plan_id
