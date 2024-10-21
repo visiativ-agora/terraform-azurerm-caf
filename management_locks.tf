@@ -6,7 +6,6 @@ locals {
       })
     } if resource_type != "ids"
   ])...)
-
 }
 
 module "management_locks" {
