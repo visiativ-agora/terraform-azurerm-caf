@@ -22,13 +22,15 @@ resource "azurerm_linux_web_app" "linux_app_services" {
   client_certificate_exclusion_paths = lookup(var.settings, "client_certificate_mode", null)
   enabled                       = lookup(var.settings, "enabled", true)
   https_only                    = lookup(var.settings, "https_only", null)
-  public_network_access_enabled = lookup(var.settings, "public_network_access_enabled", null)  
-  # virtual_network_subnet_id = try(coalesce(
-  #   try(var.vnets[try(var.settings.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][var.settings.virtual_network_subnet.vnet_key].subnets[var.settings.virtual_network_subnet.subnet_key].id, null),
-  #   try(var.virtual_subnets[try(var.settings.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][var.settings.virtual_network_subnet.subnet_key].id, null),
+  public_network_access_enabled = lookup(var.settings, "public_network_access_enabled", null)
+  virtual_network_subnet_id = try(var.vnets[try(var.settings.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][var.settings.virtual_network_subnet.vnet_key].subnets[var.settings.virtual_network_subnet.subnet_key].id, var.settings.virtual_network_subnet_id, null)
+  # virtual_network_subnet_id = coalesce(
+  #   try(var.vnets[lookup(var.settings.virtual_network_subnet, "lz_key", var.client_config.landingzone_key)][lookup(var.settings.virtual_network_subnet, "vnet_key")].subnets[lookup(var.settings.virtual_network_subnet, "subnet_key")].id, null),
+  #   try(var.virtual_subnets[lookup(var.settings.virtual_network_subnet, "lz_key", var.client_config.landingzone_key)][lookup(var.settings.virtual_network_subnet, "subnet_key")].id, null),
   #   try(var.settings.virtual_network_subnet_id, null),
   #   "default-subnet-id"  # Add a default value to ensure coalesce always returns a non-null value
-  # ))
+  # )
+
 
   app_settings = var.app_settings
   key_vault_reference_identity_id = can(var.settings.key_vault_reference_identity.key) ? var.combined_objects.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.key_vault_reference_identity.key].id : try(var.settings.key_vault_reference_identity.id, null)
