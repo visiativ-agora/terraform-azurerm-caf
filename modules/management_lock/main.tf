@@ -4,6 +4,6 @@ resource "azurerm_management_lock" "lock" {
     var.resource_id,
     var.remote_objects[var.resource_type][var.resource_lz_key][var.resource_key].id
   )
-  lock_level = var.level
+  lock_level = var.lock_level
   notes      = var.notes
 }

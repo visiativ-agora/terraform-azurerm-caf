@@ -23,7 +23,7 @@ variable "resource_key" {
 variable "resource_id" {
   default = ""
 }
-variable "level" {}
+variable "lock_level" {}
 variable "notes" {
   default = null
 }
