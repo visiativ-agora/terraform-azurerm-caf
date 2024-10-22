@@ -56,7 +56,11 @@ resource "azurerm_app_service_virtual_network_swift_connection" "vnet_config" {
     if try(value.vnet_integration, null) != null
   }
 
-  app_service_id = coalesce(module.app_services[each.key].id, null)
+   app_service_id = coalesce(
+    try(module.app_services[each.key].id, null),
+    try(module.windows_app_services[each.key].id, null),
+    try(module.linux_app_services[each.key].id, null)
+  )
   subnet_id      = coalesce(local.combined_objects_networking[try(each.value.vnet_integration.lz_key, local.client_config.landingzone_key)][each.value.vnet_integration.vnet_key].subnets[each.value.vnet_integration.subnet_key].id, null)
 }
 
