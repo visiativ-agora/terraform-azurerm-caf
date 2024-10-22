@@ -24,13 +24,6 @@ resource "azurerm_linux_web_app" "linux_app_services" {
   https_only                    = lookup(var.settings, "https_only", null)
   public_network_access_enabled = lookup(var.settings, "public_network_access_enabled", null)
   virtual_network_subnet_id = try(var.vnets[try(var.settings.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][var.settings.virtual_network_subnet.vnet_key].subnets[var.settings.virtual_network_subnet.subnet_key].id, var.settings.virtual_network_subnet_id, null)
-  # virtual_network_subnet_id = coalesce(
-  #   try(var.vnets[lookup(var.settings.virtual_network_subnet, "lz_key", var.client_config.landingzone_key)][lookup(var.settings.virtual_network_subnet, "vnet_key")].subnets[lookup(var.settings.virtual_network_subnet, "subnet_key")].id, null),
-  #   try(var.virtual_subnets[lookup(var.settings.virtual_network_subnet, "lz_key", var.client_config.landingzone_key)][lookup(var.settings.virtual_network_subnet, "subnet_key")].id, null),
-  #   try(var.settings.virtual_network_subnet_id, null),
-  #   "default-subnet-id"  # Add a default value to ensure coalesce always returns a non-null value
-  # )
-
 
   app_settings = var.app_settings
   key_vault_reference_identity_id = can(var.settings.key_vault_reference_identity.key) ? var.combined_objects.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.key_vault_reference_identity.key].id : try(var.settings.key_vault_reference_identity.id, null)
@@ -104,11 +97,12 @@ resource "azurerm_linux_web_app" "linux_app_services" {
           action                    = lookup(ip_restriction.value, "action", null)
           ip_address                = lookup(ip_restriction.value, "ip_address", null)
           service_tag               = lookup(ip_restriction.value, "service_tag", null)
-          virtual_network_subnet_id = try(coalesce(
-            try(var.vnets[try(ip_restriction.value.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][ip_restriction.value.virtual_network_subnet.vnet_key].subnets[ip_restriction.value.virtual_network_subnet.subnet_key].id, null),
-            try(var.virtual_subnets[try(ip_restriction.value.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][ip_restriction.value.virtual_network_subnet.subnet_key].id, null),
-            try(ip_restriction.value.virtual_network_subnet_id, null))
-          )
+          virtual_network_subnet_id = can(ip_restriction.value.virtual_network_subnet_id) || can(ip_restriction.value.virtual_network_subnet.id) || can(ip_restriction.value.virtual_network_subnet.subnet_key) == false ? try(ip_restriction.value.virtual_network_subnet_id, ip_restriction.value.virtual_network_subnet.id, null) : var.combined_objects.networking[try(ip_restriction.value.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][ip_restriction.value.virtual_network_subnet.vnet_key].subnets[ip_restriction.value.virtual_network_subnet.subnet_key].id
+          # virtual_network_subnet_id = try(coalesce(
+          #   try(var.vnets[try(ip_restriction.value.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][ip_restriction.value.virtual_network_subnet.vnet_key].subnets[ip_restriction.value.virtual_network_subnet.subnet_key].id, null),
+          #   try(var.virtual_subnets[try(ip_restriction.value.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][ip_restriction.value.virtual_network_subnet.subnet_key].id, null),
+          #   try(ip_restriction.value.virtual_network_subnet_id, null))
+          # )
           name                      = lookup(ip_restriction.value, "name", null)
           priority                  = lookup(ip_restriction.value, "priority", null)
           
@@ -131,11 +125,12 @@ resource "azurerm_linux_web_app" "linux_app_services" {
         content {
           ip_address                = lookup(scm_ip_restriction.value, "ip_address", null)
           service_tag               = lookup(scm_ip_restriction.value, "service_tag", null)
-          virtual_network_subnet_id = try(coalesce(
-            try(var.vnets[try(scm_ip_restriction.value.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][scm_ip_restriction.value.virtual_network_subnet.vnet_key].subnets[scm_ip_restriction.value.virtual_network_subnet.subnet_key].id, null),
-            try(var.virtual_subnets[try(scm_ip_restriction.value.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][scm_ip_restriction.value.virtual_network_subnet.subnet_key].id, null),
-            try(scm_ip_restriction.value.virtual_network_subnet_id, null))
-          )
+          virtual_network_subnet_id = can(scm_ip_restriction.value.virtual_network_subnet_id) ? scm_ip_restriction.value.virtual_network_subnet_id : can(scm_ip_restriction.value.virtual_network_subnet.id) ? scm_ip_restriction.value.virtual_network_subnet.id : can(scm_ip_restriction.value.virtual_network_subnet.subnet_key) ? var.combined_objects.networking[try(scm_ip_restriction.value.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][scm_ip_restriction.value.virtual_network_subnet.vnet_key].subnets[scm_ip_restriction.value.virtual_network_subnet.subnet_key].id : null
+          # virtual_network_subnet_id = try(coalesce(
+          #   try(var.vnets[try(scm_ip_restriction.value.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][scm_ip_restriction.value.virtual_network_subnet.vnet_key].subnets[scm_ip_restriction.value.virtual_network_subnet.subnet_key].id, null),
+          #   try(var.virtual_subnets[try(scm_ip_restriction.value.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][scm_ip_restriction.value.virtual_network_subnet.subnet_key].id, null),
+          #   try(scm_ip_restriction.value.virtual_network_subnet_id, null))
+          # )
           name                      = lookup(scm_ip_restriction.value, "name", null)
           priority                  = lookup(scm_ip_restriction.value, "priority", null)
           action                    = lookup(scm_ip_restriction.value, "action", null)

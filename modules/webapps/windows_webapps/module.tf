@@ -22,11 +22,7 @@ resource "azurerm_windows_web_app" "windows_app_services" {
   enabled                       = lookup(var.settings, "enabled", true)
   https_only                    = lookup(var.settings, "https_only", null)
   public_network_access_enabled = lookup(var.settings, "public_network_access_enabled", null)
-  virtual_network_subnet_id = try(coalesce(
-    try(var.vnets[try(var.settings.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][var.settings.virtual_network_subnet.vnet_key].subnets[var.settings.virtual_network_subnet.subnet_key].id, null),
-    try(var.virtual_subnets[try(var.settings.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][var.settings.virtual_network_subnet.subnet_key].id, null),
-    try(var.settings.virtual_network_subnet_id, null))
-  )
+  virtual_network_subnet_id = try(var.vnets[try(var.settings.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][var.settings.virtual_network_subnet.vnet_key].subnets[var.settings.virtual_network_subnet.subnet_key].id, var.settings.virtual_network_subnet_id, null)
   app_settings = var.app_settings
 
   dynamic "identity" {
