@@ -37,8 +37,9 @@ resource "azurerm_linux_function_app" "linux_function_app" {
         #python_version - (Optional) The version of Python to run. Possible values are 3.11, 3.10, 3.9, 3.8 and 3.7.
         #powershell_core_version - (Optional) The version of PowerShell Core to run. Possible values are 7, and 7.2.
         #use_custom_runtime - (Optional) Should the Linux Function App use a custom runtime?
-        dynamic "docker" {
-          for_each = local.site_config.application_stack.docker != null ? [1] : []
+        dynamic "docker" {         
+          for_each = lookup(local.site_config.application_stack, "docker", {}) != {} ? [1] : []
+          
           content {
             registry_url      = local.site_config.application_stack.docker.registry_url
             image_name        = local.site_config.application_stack.docker.image_name
