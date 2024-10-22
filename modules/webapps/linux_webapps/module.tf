@@ -30,15 +30,6 @@ resource "azurerm_linux_web_app" "linux_app_services" {
   #   "default-subnet-id"  # Add a default value to ensure coalesce always returns a non-null value
   # ))
 
-  # Debugging output
-  provisioner "local-exec" {
-    command = <<EOT
-      echo "vnets: ${jsonencode(var.vnets)}"
-      echo "virtual_subnets: ${jsonencode(var.virtual_subnets)}"
-      echo "settings: ${jsonencode(var.settings)}"
-      echo "client_config: ${jsonencode(var.client_config)}"
-    EOT
-  }
   app_settings = var.app_settings
   key_vault_reference_identity_id = can(var.settings.key_vault_reference_identity.key) ? var.combined_objects.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.key_vault_reference_identity.key].id : try(var.settings.key_vault_reference_identity.id, null)
 
@@ -488,3 +479,13 @@ resource "azurerm_linux_web_app" "linux_app_services" {
 }
 
 
+  resource "null_resource" "example" {
+    provisioner "local-exec" {
+      command = <<EOT
+        echo "vnets: ${jsonencode(var.vnets)}"
+        echo "virtual_subnets: ${jsonencode(var.virtual_subnets)}"
+        echo "settings: ${jsonencode(var.settings)}"
+        echo "client_config: ${jsonencode(var.client_config)}"
+      EOT
+    }
+  }
