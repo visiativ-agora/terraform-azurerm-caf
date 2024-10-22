@@ -21,17 +21,17 @@ variable "app_settings" {
   type    = map(any)
   default = {}
 }
-variable "app_service_plan_id" {
-}
+variable "app_service_plan_id" {}
 
+variable "remote_objects" {
+  default = null
+}
 
 variable "connection_string" {
   default = {}
 }
 
-variable "virtual_subnets" {
-
-}
+variable "virtual_subnets" {}
 
 variable "storage_accounts" {
   default = {}
