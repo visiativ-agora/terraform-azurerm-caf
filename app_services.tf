@@ -109,15 +109,3 @@ module "linux_app_services" {
 output "linux_app_services" {
   value = module.linux_app_services
 }
-
-# Tested with :  AzureRM version 2.55.0
-# Ref : https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/
-resource "azurerm_app_service_virtual_network_swift_connection" "vnet_config_linux" {
-  for_each = {
-    for key, value in local.webapp.linux_app_services : key => value
-    if try(value.vnet_integration, null) != null
-  }
-
-  app_service_id = module.linux_app_services[each.key].id
-  subnet_id      = local.combined_objects_networking[try(each.value.vnet_integration.lz_key, local.client_config.landingzone_key)][each.value.vnet_integration.vnet_key].subnets[each.value.vnet_integration.subnet_key].id
-}
