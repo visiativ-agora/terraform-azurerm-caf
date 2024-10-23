@@ -446,7 +446,7 @@ resource "azurerm_linux_function_app" "linux_function_app" {
 # }
 
 resource "azurerm_app_service_virtual_network_swift_connection" "vnet_config" {
-  depends_on     = [azurerm_function_app.linux_function_app]
+  depends_on     = [azurerm_linux_function_app.linux_function_app]
   count          = lookup(var.settings, "subnet_key", null) == null && lookup(var.settings, "subnet_id", null) == null ? 0 : 1
   app_service_id = azurerm_linux_function_app.linux_function_app.id
   subnet_id = coalesce(
