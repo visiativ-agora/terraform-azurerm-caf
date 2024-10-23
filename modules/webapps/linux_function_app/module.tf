@@ -18,15 +18,15 @@ resource "azurerm_linux_function_app" "linux_function_app" {
   name                = azurecaf_name.plan.result
   resource_group_name = local.resource_group_name
   service_plan_id     = var.service_plan_id
-  # virtual_network_subnet_id = coalesce(
-  #   try(var.settings.virtual_network_subnet_id, null),
-  #   try(var.vnets[try(var.settings.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][var.settings.virtual_network_subnet.vnet_key].subnets[var.settings.virtual_network_subnet.subnet_key].id, null)
-  # )
-  virtual_network_subnet_id = try(coalesce(
-    try(var.vnets[try(var.settings.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][var.settings.virtual_network_subnet.vnet_key].subnets[var.settings.virtual_network_subnet.subnet_key].id, null),
-    try(var.virtual_subnets[try(var.settings.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][var.settings.virtual_network_subnet.subnet_key].id, null),
-    try(var.settings.virtual_network_subnet_id, null))
+  virtual_network_subnet_id = coalesce(
+    try(var.settings.virtual_network_subnet_id, null),
+    try(var.vnets[try(var.settings.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][var.settings.virtual_network_subnet.vnet_key].subnets[var.settings.virtual_network_subnet.subnet_key].id, null)
   )
+  # virtual_network_subnet_id = try(coalesce(
+  #   try(var.vnets[try(var.settings.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][var.settings.virtual_network_subnet.vnet_key].subnets[var.settings.virtual_network_subnet.subnet_key].id, null),
+  #   try(var.virtual_subnets[try(var.settings.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][var.settings.virtual_network_subnet.subnet_key].id, null),
+  #   try(var.settings.virtual_network_subnet_id, null))
+  # )
   
 
   site_config {
