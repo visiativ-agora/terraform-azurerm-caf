@@ -56,7 +56,6 @@ variable "combined_objects" {
 # variable "storage_accounts" {
 #   default = {}
 # }
-variable "vnet_integration" {}
 
 variable "diagnostic_profiles" {
   default = {}
