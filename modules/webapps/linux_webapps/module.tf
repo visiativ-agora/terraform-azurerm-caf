@@ -23,7 +23,7 @@ resource "azurerm_linux_web_app" "linux_app_services" {
   enabled                       = lookup(var.settings, "enabled", true)
   https_only                    = lookup(var.settings, "https_only", null)
   public_network_access_enabled = lookup(var.settings, "public_network_access_enabled", null)
-  virtual_network_subnet_id = try(var.vnets[try(var.settings.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][var.settings.virtual_network_subnet.vnet_key].subnets[var.settings.virtual_network_subnet.subnet_key].id, var.settings.virtual_network_subnet_id, null)
+  virtual_network_subnet_id     = try(var.vnets[try(var.settings.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][var.settings.virtual_network_subnet.vnet_key].subnets[var.settings.virtual_network_subnet.subnet_key].id, var.settings.virtual_network_subnet_id, null)
 
   app_settings = var.app_settings
   key_vault_reference_identity_id = can(var.settings.key_vault_reference_identity.key) ? var.combined_objects.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.key_vault_reference_identity.key].id : try(var.settings.key_vault_reference_identity.id, null)
