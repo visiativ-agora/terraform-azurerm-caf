@@ -435,8 +435,7 @@ resource "azurerm_linux_function_app" "linux_function_app" {
   storage_account_name          = try(var.storage_account_name, null)
   storage_key_vault_secret_id   = try(var.settings.storage_key_vault_secret_id, null)
   storage_uses_managed_identity = try(var.settings.storage_uses_managed_identity, null)
-  tags                          = merge(local.tags, try(var.settings.tags, {}))
-  virtual_network_subnet_id     = try(var.settings.virtual_network_subnet_id, null)
+  tags                          = merge(local.tags, try(var.settings.tags, {}))  
   zip_deploy_file               = try(var.settings.zip_deploy_file, null)
 }
 
