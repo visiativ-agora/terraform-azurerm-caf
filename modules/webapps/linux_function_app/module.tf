@@ -18,6 +18,12 @@ resource "azurerm_linux_function_app" "linux_function_app" {
   name                = azurecaf_name.plan.result
   resource_group_name = local.resource_group_name
   service_plan_id     = var.service_plan_id
+  virtual_network_subnet_id = coalesce(
+    try(var.settings.virtual_network_subnet_id, null),
+    try(var.vnets[try(var.settings.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][var.settings.virtual_network_subnet.vnet_key].subnets[var.settings.virtual_network_subnet.subnet_key].id, null)
+  )
+  
+
   site_config {
     always_on                              = lookup(local.site_config, "always_on", null)
     api_definition_url                     = lookup(local.site_config, "api_definition_url", null)
@@ -445,12 +451,12 @@ resource "azurerm_linux_function_app" "linux_function_app" {
 #   )
 # }
 
-resource "azurerm_app_service_virtual_network_swift_connection" "vnet_config" {
-  depends_on     = [azurerm_linux_function_app.linux_function_app]
-  count          = lookup(var.settings, "subnet_key", null) == null && lookup(var.settings, "subnet_id", null) == null ? 0 : 1
-  app_service_id = azurerm_linux_function_app.linux_function_app.id
-  subnet_id = coalesce(
-    try(var.remote_objects.subnets[var.settings.subnet_key].id, null),
-    try(var.settings.subnet_id, null)
-  )
-}
+# resource "azurerm_app_service_virtual_network_swift_connection" "vnet_config" {
+#   depends_on     = [azurerm_linux_function_app.linux_function_app]
+#   count          = lookup(var.settings, "subnet_key", null) == null && lookup(var.settings, "subnet_id", null) == null ? 0 : 1
+#   app_service_id = azurerm_linux_function_app.linux_function_app.id
+#   subnet_id = coalesce(
+#     try(var.remote_objects.subnets[var.settings.subnet_key].id, null),
+#     try(var.settings.subnet_id, null)
+#   )
+# }
