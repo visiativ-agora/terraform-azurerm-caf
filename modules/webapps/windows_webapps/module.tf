@@ -184,7 +184,7 @@ resource "azurerm_windows_web_app" "windows_web_apps" {
     }
   }
 
-  local.app_settings
+  app_settings = local.app_settings
 
   dynamic "connection_string" {
     for_each = var.connection_string
