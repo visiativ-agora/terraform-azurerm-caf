@@ -23,7 +23,6 @@ resource "azurerm_windows_web_app" "windows_web_apps" {
   https_only                    = lookup(var.settings, "https_only", null)
   public_network_access_enabled = lookup(var.settings, "public_network_access_enabled", null)
 
-  app_settings = var.app_settings
   key_vault_reference_identity_id = can(var.settings.key_vault_reference_identity.key) ? var.combined_objects.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.key_vault_reference_identity.key].id : try(var.settings.key_vault_reference_identity.id, null)
 
   dynamic "identity" {
