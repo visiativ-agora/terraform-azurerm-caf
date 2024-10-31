@@ -83,6 +83,7 @@ linux_web_apps = {
           java_server = "JAVA"
           java_version = "11"
         }
+        ip_restriction_default_action = "Deny"
         ip_restriction = [
           {
             name = "demo-iprestriction"

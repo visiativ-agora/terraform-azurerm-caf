@@ -83,6 +83,7 @@ windows_web_apps = {
           current_stack = "dotnetcore"
           dotnet_core_version = "v4.0"
         }
+        ip_restriction_default_action = "Deny"
         ip_restriction = [
           {
             name = "demo-iprestriction"
