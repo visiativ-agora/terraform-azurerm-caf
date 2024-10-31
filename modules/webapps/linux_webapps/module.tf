@@ -61,6 +61,7 @@ resource "azurerm_linux_web_app" "linux_web_apps" {
       vnet_route_all_enabled                        = lookup(var.settings.site_config, "vnet_route_all_enabled", null)
       worker_count                                  = lookup(var.settings.site_config, "worker_count", null)
       auto_heal_enabled                             = lookup(var.settings.site_config, "aut_heal_setting", null)
+      ip_restriction_default_action                 = lookup(var.settings.site_config, "ip_restriction_default_action", null)
 
       dynamic "application_stack" {
         for_each = lookup(var.settings.site_config, "application_stack", {}) != {} ? [1] : []
@@ -99,7 +100,7 @@ resource "azurerm_linux_web_app" "linux_web_apps" {
           virtual_network_subnet_id = can(ip_restriction.value.virtual_network_subnet_id) || can(ip_restriction.value.virtual_network_subnet.id) || can(ip_restriction.value.virtual_network_subnet.subnet_key) == false ? try(ip_restriction.value.virtual_network_subnet_id, ip_restriction.value.virtual_network_subnet.id, null) : var.combined_objects.networking[try(ip_restriction.value.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][ip_restriction.value.virtual_network_subnet.vnet_key].subnets[ip_restriction.value.virtual_network_subnet.subnet_key].id
           name                      = lookup(ip_restriction.value, "name", null)
           priority                  = lookup(ip_restriction.value, "priority", null)
-          
+
 
           dynamic "headers" {
             for_each = try(ip_restriction.headers, {})
@@ -135,8 +136,8 @@ resource "azurerm_linux_web_app" "linux_web_apps" {
             }
           }
         }
-      }      
-      
+      }
+
       dynamic "auto_heal_setting" {
         for_each = lookup(var.settings.site_config, "auto_heal_setting", {}) != {} ? [1] : []
         content {

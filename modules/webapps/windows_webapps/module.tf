@@ -59,6 +59,7 @@ resource "azurerm_windows_web_app" "windows_web_apps" {
       vnet_route_all_enabled                        = lookup(var.settings.site_config, "vnet_route_all_enabled", null)
       worker_count                                  = lookup(var.settings.site_config, "worker_count", null)
       auto_heal_enabled                             = lookup(var.settings.site_config, "aut_heal_setting", null)
+      ip_restriction_default_action                 = lookup(var.settings.site_config, "ip_restriction_default_action", null)
 
       dynamic "application_stack" {
         for_each = lookup(var.settings.site_config, "application_stack", {}) != {} ? [1] : []
