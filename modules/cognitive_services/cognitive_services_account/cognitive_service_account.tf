@@ -27,23 +27,37 @@ resource "azurerm_cognitive_account" "service" {
     }
   }
 
+  # dynamic "network_acls" {
+  #   for_each = try(var.settings.network_acls, null)
+  #   content {
+  #     default_action = network_acls.value.default_action
+  #     ip_rules       = try(network_acls.value.ip_rules, null)
+
+  #     dynamic "virtual_network_rules" {
+  #       # for_each = try(network_acls.value.virtual_network_rules, {})
+  #       for_each = try(var.settings.network_acls.subnets, {})
+  #       content {
+  #         # subnet_id = try(var.settings.network_acls.subnets.subnet_id, null) == null ? null : [for key, value in var.settings.network_acls.subnets : can(value.subnet_id) ? value.subnet_id : var.vnets[try(value.lz_key, var.client_config.landingzone_key)][value.vnet_key].subnets[value.subnet_key].id]
+  #         subnet_id = can(virtual_network_rules.value.subnet_id) ? virtual_network_rules.value.subnet_id : var.vnets[try(virtual_network_rules.value.lz_key, var.client_config.landingzone_key)][virtual_network_rules.value.vnet_key].subnets[virtual_network_rules.value.subnet_key].id
+  #       }
+  #     }
+  #   }
+  # }
+
   dynamic "network_acls" {
-    for_each = try(var.settings.network_acls, null)
+    for_each = [var.settings.network_acls]  # Utilisation de liste pour passer un seul élément
     content {
       default_action = network_acls.value.default_action
       ip_rules       = try(network_acls.value.ip_rules, null)
 
       dynamic "virtual_network_rules" {
-        # for_each = try(network_acls.value.virtual_network_rules, {})
-        for_each = try(var.settings.network_acls.subnets, {})
+        for_each = try(network_acls.value.subnets, {})
         content {
-          # subnet_id = try(var.settings.network_acls.subnets.subnet_id, null) == null ? null : [for key, value in var.settings.network_acls.subnets : can(value.subnet_id) ? value.subnet_id : var.vnets[try(value.lz_key, var.client_config.landingzone_key)][value.vnet_key].subnets[value.subnet_key].id]
           subnet_id = can(virtual_network_rules.value.subnet_id) ? virtual_network_rules.value.subnet_id : var.vnets[try(virtual_network_rules.value.lz_key, var.client_config.landingzone_key)][virtual_network_rules.value.vnet_key].subnets[virtual_network_rules.value.subnet_key].id
         }
       }
     }
   }
-
   # dynamic "network_acls" {
   #   for_each = can(var.settings.network_acls) ? [var.settings.network_acls] : []
   #   content {
