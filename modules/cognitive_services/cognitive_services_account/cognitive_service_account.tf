@@ -28,9 +28,7 @@ resource "azurerm_cognitive_account" "service" {
   }
 
   dynamic "network_acls" {
-    # for_each = can(var.settings.network_acls) ? [var.settings.network_acls] : []
-    # for_each = lookup(var.settings, "network_acls", {}) != {} ? [var.settings.network_acls] : []
-    for_each = try(var.settings.network_acls, null) != null ? [var.settings.network_acls] : []
+    for_each = try(var.settings.network_acls, null)
     content {
       default_action = network_acls.value.default_action
       ip_rules       = try(network_acls.value.ip_rules, null)
