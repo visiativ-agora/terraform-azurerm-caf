@@ -1,6 +1,7 @@
 resource "azurerm_cdn_frontdoor_origin" "this" {
   name                           = var.settings.name
   cdn_frontdoor_origin_group_id  = var.cdn_frontdoor_origin_group_id
+  enabled                        = try(var.settings.enabled, null)
   certificate_name_check_enabled = try(var.settings.certificate_name_check_enabled, null)
   host_name                      = var.settings.host_name
   http_port                      = try(var.settings.http_port, null)
