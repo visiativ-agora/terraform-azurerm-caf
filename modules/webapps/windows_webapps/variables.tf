@@ -87,3 +87,11 @@ variable "subnet_id" {}
 variable "virtual_subnets" {}
 
 variable "vnets" {}
+
+variable "diagnostic_profiles" {
+  default = {}
+}
+
+variable "diagnostics" {
+  default = null
+}
