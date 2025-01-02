@@ -17,3 +17,7 @@ output "server_name" {
 output "server_fqdn" {
   value = local.server_name
 }
+
+output "job_agent_id" {
+  value = azurerm_mssql_job_agent.mssqljobagent.id
+}
