@@ -36,7 +36,7 @@ resource "azurerm_cognitive_account" "service" {
       dynamic "virtual_network_rules" {
         for_each = try(network_acls.value.subnets, {})
         content {
-          subnet_id = can(virtual_network_rules.value.subnet_id) || can(virtual_network_rules.value.virtual_subnet_key) ? try(virtual_network_rules.value.subnet_id, var.virtual_subnets[try(virtual_network_rules.value.lz_key, var.client_config.landingzone_key)][virtual_network_rules.value.virtual_subnet_key].id) : var.vnets[try(virtual_network_rules.value.lz_key, var.client_config.landingzone_key)][virtual_network_rules.value.vnet_key].subnets[virtual_network_rules.value.subnet_key].id
+          subnet_id                            = can(virtual_network_rules.value.subnet_id) || can(virtual_network_rules.value.virtual_subnet_key) ? try(virtual_network_rules.value.subnet_id, var.virtual_subnets[try(virtual_network_rules.value.lz_key, var.client_config.landingzone_key)][virtual_network_rules.value.virtual_subnet_key].id) : var.vnets[try(virtual_network_rules.value.lz_key, var.client_config.landingzone_key)][virtual_network_rules.value.vnet_key].subnets[virtual_network_rules.value.subnet_key].id
           ignore_missing_vnet_service_endpoint = try(virtual_network_rules.value.ignore_missing_vnet_service_endpoint, null)
         }
       }

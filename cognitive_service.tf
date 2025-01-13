@@ -16,7 +16,7 @@ module "cognitive_services_account" {
   private_dns         = local.combined_objects_private_dns
   diagnostics         = local.combined_diagnostics
   diagnostic_profiles = try(each.value.diagnostic_profiles, {})
-  managed_identities = local.combined_objects_managed_identities
+  managed_identities  = local.combined_objects_managed_identities
 }
 
 output "cognitive_services_account" {
