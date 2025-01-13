@@ -33,23 +33,31 @@ resource "azurerm_cognitive_account" "service" {
       default_action = network_acls.value.default_action
       ip_rules       = try(network_acls.value.ip_rules, null)
 
-      # to support migration from 2.99.0 to 3.7.0
       dynamic "virtual_network_rules" {
-        for_each = can(network_acls.value.virtual_network_subnet_ids) ? toset(network_acls.value.virtual_network_subnet_ids) : []
-
+        for_each = try(network_acls.value.subnets, {})
         content {
-          subnet_id = virtual_network_rules.value
-        }
-      }
-
-      dynamic "virtual_network_rules" {
-        for_each = try(network_acls.value.virtual_network_rules, {})
-
-        content {
-          subnet_id                            = virtual_network_rules.value.subnet_id
+          subnet_id = can(virtual_network_rules.value.subnet_id) || can(virtual_network_rules.value.virtual_subnet_key) ? try(virtual_network_rules.value.subnet_id, var.virtual_subnets[try(virtual_network_rules.value.lz_key, var.client_config.landingzone_key)][virtual_network_rules.value.virtual_subnet_key].id) : var.vnets[try(virtual_network_rules.value.lz_key, var.client_config.landingzone_key)][virtual_network_rules.value.vnet_key].subnets[virtual_network_rules.value.subnet_key].id
           ignore_missing_vnet_service_endpoint = try(virtual_network_rules.value.ignore_missing_vnet_service_endpoint, null)
         }
       }
+
+      # # to support migration from 2.99.0 to 3.7.0
+      # dynamic "virtual_network_rules" {
+      #   for_each = can(network_acls.value.virtual_network_subnet_ids) ? toset(network_acls.value.virtual_network_subnet_ids) : []
+
+      #   content {
+      #     subnet_id = virtual_network_rules.value
+      #   }
+      # }
+
+      # dynamic "virtual_network_rules" {
+      #   for_each = try(network_acls.value.virtual_network_rules, {})
+
+      #   content {
+      #     subnet_id                            = virtual_network_rules.value.subnet_id
+      #     ignore_missing_vnet_service_endpoint = try(virtual_network_rules.value.ignore_missing_vnet_service_endpoint, null)
+      #   }
+      # }
     }
   }
 }
