@@ -1,5 +1,5 @@
 data "azurerm_key_vault_secret" "sql_admin_password2" {
-  count        = try(var.settings.sql_users, null) == null ? 0 : 1
+  count        = try(var.settings.db_permissions, null) == null ? 0 : 1
   name         = can(var.settings.keyvault_secret_name) ? var.settings.keyvault_secret_name : format("%s-password", var.mssql_servers[try(var.settings.lz_key, var.client_config.landingzone_key)][var.settings.mssql_server_key].name)
   key_vault_id = try(var.keyvault_id, null)
 }
