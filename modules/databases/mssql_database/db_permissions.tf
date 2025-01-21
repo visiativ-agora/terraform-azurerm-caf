@@ -1,8 +1,8 @@
-data "azurerm_key_vault_secret" "sql_admin_password" {
-  count        = try(var.settings.sql_users, null) == null ? 0 : 1
-  name         = can(var.settings.keyvault_secret_name) ? var.settings.keyvault_secret_name : format("%s-password", var.mssql_servers[try(var.settings.lz_key, var.client_config.landingzone_key)][var.settings.mssql_server_key].name)
-  key_vault_id = try(var.keyvault_id, null)
-}
+# data "azurerm_key_vault_secret" "sql_admin_password" {
+#   count        = try(var.settings.sql_users, null) == null ? 0 : 1
+#   name         = can(var.settings.keyvault_secret_name) ? var.settings.keyvault_secret_name : format("%s-password", var.mssql_servers[try(var.settings.lz_key, var.client_config.landingzone_key)][var.settings.mssql_server_key].name)
+#   key_vault_id = try(var.keyvault_id, null)
+# }
 
 resource "null_resource" "set_db_permissions" {
   for_each = local.db_permissions
