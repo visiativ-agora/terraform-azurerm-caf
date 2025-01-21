@@ -10,7 +10,7 @@ SET @dbusernames = $(DBUSERNAMES)
   BEGIN
     SET @username = left(@dbusernames, charindex(',', @dbusernames+',')-1)
 
-    SET @create_user_cmd='CREATE USER [' + @username + '] FROM EXTERNAL PROVIDER'
+    SET @create_user_cmd = N'CREATE USER [' + @username + '] FROM EXTERNAL PROVIDER;'
 
     -- User creation
     IF NOT EXISTS (SELECT NAME FROM sys.database_principals WHERE NAME = @username)
@@ -26,7 +26,7 @@ SET @dbusernames = $(DBUSERNAMES)
     WHILE len(@dbroles) > 0
       BEGIN
         SET @dbrolename = left(@dbroles, charindex(',', @dbroles + ',')-1)
-        SET @alter_role_cmd = 'ALTER ROLE ' + @dbrolename + ' ADD MEMBER [' + @username + ']'
+        SET @add_role_cmd = N'ALTER ROLE [' + @dbrolename + '] ADD MEMBER [' + @username + '];'
 
         EXEC(@alter_role_cmd)
         PRINT 'Added role ' +@dbrolename + ' to user ' + @username
