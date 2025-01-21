@@ -9,7 +9,7 @@ resource "null_resource" "set_db_permissions" {
 
   triggers = {
     db_usernames = join(",", each.value.db_usernames)
-    db_roles     = join(",", each.value.db_roles)
+    db_roles     = each.value.db_roles
   }
 
   provisioner "local-exec" {
