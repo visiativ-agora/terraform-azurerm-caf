@@ -1,16 +1,11 @@
-# data "azurerm_key_vault_secret" "sql_admin_password" {
-#   count        = try(var.settings.sql_users, null) == null ? 0 : 1
-#   name         = can(var.settings.keyvault_secret_name) ? var.settings.keyvault_secret_name : format("%s-password", var.mssql_servers[try(var.settings.lz_key, var.client_config.landingzone_key)][var.settings.mssql_server_key].name)
-#   key_vault_id = try(var.keyvault_id, null)
-# }
+data "azurerm_key_vault_secret" "sql_admin_password2" {
+  count        = try(var.settings.sql_users, null) == null ? 0 : 1
+  name         = can(var.settings.keyvault_secret_name) ? var.settings.keyvault_secret_name : format("%s-password", var.mssql_servers[try(var.settings.lz_key, var.client_config.landingzone_key)][var.settings.mssql_server_key].name)
+  key_vault_id = try(var.keyvault_id, null)
+}
 
 resource "null_resource" "set_db_permissions" {
   for_each = try(var.settings.db_permissions, {})
-
-  triggers = {
-    db_usernames = join(",", each.value.db_usernames)
-    db_roles     = each.value.db_roles
-  }
 
   provisioner "local-exec" {
     command     = format("%s/scripts/set_db_permissions.sh", path.module)
@@ -21,9 +16,9 @@ resource "null_resource" "set_db_permissions" {
       SQLCMDSERVER = local.server_name
       SQLCMDDBNAME = azurerm_mssql_database.mssqldb.name
       DBADMINUSER  = var.mssql_servers[try(var.settings.lz_key, var.client_config.landingzone_key)][var.settings.mssql_server_key].administrator_login
-      DBADMINPWD   = data.azurerm_key_vault_secret.sql_admin_password[0].value
-      DBUSERNAMES  = format("'%s'", join(",", each.value.db_usernames))
-      DBROLES      = format("'%s'", join(",", each.value.db_roles))
+      DBADMINPWD   = data.azurerm_key_vault_secret.sql_admin_password2[0].value
+      DBUSERNAMES  = each.value.name
+      DBROLES      = each.value.role
       SQLFILEPATH  = format("%s/scripts/set_db_permissions.sql", path.module)
     }
   }
