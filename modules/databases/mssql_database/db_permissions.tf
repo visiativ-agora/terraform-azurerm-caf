@@ -5,6 +5,7 @@ data "azurerm_key_vault_secret" "sql_admin_password2" {
 }
 
 resource "null_resource" "set_db_permissions" {
+  depends_on = [azurerm_mssql_database.mssqldb]
   for_each = try(var.settings.db_permissions, {})
 
   provisioner "local-exec" {
@@ -17,8 +18,8 @@ resource "null_resource" "set_db_permissions" {
       SQLCMDDBNAME = azurerm_mssql_database.mssqldb.name
       DBADMINUSER  = var.mssql_servers[try(var.settings.lz_key, var.client_config.landingzone_key)][var.settings.mssql_server_key].administrator_login
       DBADMINPWD   = data.azurerm_key_vault_secret.sql_admin_password2[0].value
-      DBUSERNAMES  = each.value.name
-      DBROLES      = each.value.role
+      DBUSERNAMES  = join(",", each.value.db_usernames)
+      DBROLES      = each.value.db_roles
       SQLFILEPATH  = format("%s/scripts/set_db_permissions.sql", path.module)
     }
   }
