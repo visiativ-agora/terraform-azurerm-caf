@@ -5,7 +5,7 @@
 # }
 
 resource "null_resource" "set_db_permissions" {
-  for_each = local.db_permissions
+  for_each = try(var.settings.db_permissions, {})
 
   triggers = {
     db_usernames = join(",", each.value.db_usernames)
@@ -34,11 +34,11 @@ resource "null_resource" "set_db_permissions" {
 #   for_each = local.db_permissions
 
 #   triggers = {
-#     db_usernames = join(",", each.value.db_usernames)
+#     for_each           = try(var.settings.db_permissions, {})
 #     sql_server_name    = local.server_name    
 #     db_admin_user      = var.mssql_servers[try(var.settings.lz_key, var.client_config.landingzone_key)][var.settings.mssql_server_key].administrator_login
 #     db_admin_password  = data.azurerm_key_vault_secret.sql_admin_password[0].value
-#     sql_filepath = format("%s/scripts/delete_db_permissions.sql", path.module)
+#     sql_filepath       = format("%s/scripts/delete_db_permissions.sql", path.module)
 #   }
 
 #   provisioner "local-exec" {
