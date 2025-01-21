@@ -3,12 +3,15 @@ terraform {
     azurecaf = {
       source = "aztfmod/azurecaf"
     }
+    azapi = {
+      source = "azure/azapi"
+    }
   }
-
 }
 
 locals {
   server_name = "${var.server_name}${var.cloud.sqlServerHostname}"
+  location = var.location
 
   module_tag = {
     "module" = basename(abspath(path.module))

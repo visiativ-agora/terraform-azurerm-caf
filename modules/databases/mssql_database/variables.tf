@@ -26,3 +26,16 @@ variable "diagnostic_profiles" {
 variable "diagnostics" {
   default = null
 }
+variable "resource_group_name" {}
+variable "vnets" {}
+variable "private_dns" {
+  default = {}
+}
+variable "private_endpoints" {}
+
+variable "client_config" {
+  description = "Client configuration object (see module README.md)."
+}
+variable "mssql_servers" {}
+
+variable "keyvault_id" {}
