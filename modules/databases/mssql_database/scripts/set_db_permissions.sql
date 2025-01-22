@@ -5,10 +5,12 @@ DECLARE @dbroles VARCHAR(100), @dbrolename VARCHAR(100), @alter_role_cmd VARCHAR
 
 -- to be passed from sqlcmd -v
 SET @dbusernames = $(DBUSERNAMES)
+  PRINT @dbusernames
 
   WHILE len(@dbusernames) > 0
   BEGIN
     SET @username = left(@dbusernames, charindex(',', @dbusernames+',')-1)
+    PRINT @username
 
     SET @create_user_cmd = N'CREATE USER [' + @username + '] FROM EXTERNAL PROVIDER;'
 
