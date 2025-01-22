@@ -1,6 +1,6 @@
 :on error exit
 
-DECLARE @dbusernames VARCHAR(300), @username VARCHAR(100), @create_user_cmd VARCHAR(200), @check_user_cmd VARCHAR(200)
+DECLARE @dbusernames VARCHAR(300), @username VARCHAR(100), @create_user_cmd VARCHAR(200)
 DECLARE @dbroles VARCHAR(100), @dbrolename VARCHAR(100), @alter_role_cmd VARCHAR(100)
 
 -- to be passed from sqlcmd -v
@@ -26,7 +26,7 @@ SET @dbusernames = $(DBUSERNAMES)
     WHILE len(@dbroles) > 0
       BEGIN
         SET @dbrolename = left(@dbroles, charindex(',', @dbroles + ',')-1)
-        SET @add_role_cmd = N'ALTER ROLE [' + @dbrolename + '] ADD MEMBER [' + @username + '];'
+        SET @alter_role_cmd = N'ALTER ROLE [' + @dbrolename + '] ADD MEMBER [' + @username + '];'
 
         EXEC(@alter_role_cmd)
         PRINT 'Added role ' +@dbrolename + ' to user ' + @username
