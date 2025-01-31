@@ -127,18 +127,18 @@ resource "azapi_resource" "mssql_job_agents_targetgroups" {
   response_export_values    = ["properties.outputs"]
 }
 
-resource "azapi_resource" "mssql_job_agents_private_endpoint" {
-  for_each = try(var.private_endpoints, {})
+# resource "azapi_resource" "mssql_job_agents_private_endpoint" {
+#   for_each = try(var.private_endpoints, {})
 
-  type      = "Microsoft.Sql/servers/jobAgents/privateEndpoints@2024-05-01-preview"
-  name      = each.value.name
-  parent_id = azapi_resource.mssql_job_agents["job_agent"].id
+#   type      = "Microsoft.Sql/servers/jobAgents/privateEndpoints@2024-05-01-preview"
+#   name      = each.value.name
+#   parent_id = azapi_resource.mssql_job_agents["job_agent"].id
 
-  body = jsonencode({
-    properties = {
-      targetServerAzureResourceId = var.mssql_servers[try(var.settings.lz_key, var.client_config.landingzone_key)][var.settings.mssql_server_key].id
-    }
-  })
-  schema_validation_enabled = false
-  response_export_values    = ["properties.privateEndpointConnections"]
-}
+#   body = jsonencode({
+#     properties = {
+#       targetServerAzureResourceId = var.mssql_servers[try(var.settings.lz_key, var.client_config.landingzone_key)][var.settings.mssql_server_key].id
+#     }
+#   })
+#   schema_validation_enabled = false
+#   response_export_values    = ["properties.privateEndpointConnections"]
+# }
