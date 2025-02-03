@@ -147,6 +147,7 @@ resource "azapi_resource" "mssql_job_agents_private_endpoint" {
 
 resource "time_sleep" "wait_for_private_endpoint" {
   create_duration = "1m"
+  depends_on = [ azapi_resource.mssql_job_agents ]
 }
 
 locals {
@@ -155,7 +156,7 @@ locals {
 
   private_endpoint_connexion_name = local.connections == [] ? null : element([
     for connection in local.connections : connection.name
-    if endswith(connection.name, var.job_private_endpoint_name)
+    if var.job_private_endpoint_name != null && endswith(connection.name, var.job_private_endpoint_name)
     ], 0
   )
 }
