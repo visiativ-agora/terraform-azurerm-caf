@@ -168,7 +168,7 @@ locals {
     local.connections == null || length(local.connections) == 0 ? null :
  
     element([
-      for connection in local.connections : connection.name
+      for connection in local.connections : connection.id
       # if var.job_private_endpoint_name != null && endswith(connection.name, var.job_private_endpoint_name)
     ], 0)
 
