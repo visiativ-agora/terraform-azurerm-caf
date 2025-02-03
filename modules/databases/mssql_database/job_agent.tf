@@ -173,7 +173,7 @@ data "azapi_resource" "sql_server" {
 # Ressource pour approuver automatiquement les connexions de points de terminaison privés
 
 resource "azapi_update_resource" "approve_private_endpoint" {
-  for_each = try(var.settings.job.private_endpoints, {})
+  count = try(var.settings.job.private_endpoint_name, null) == null ? 0 : 1
 
   type      = "Microsoft.Sql/servers/privateEndpointConnections@2024-05-01-preview"
   name      = local.private_endpoint_connexion_name
