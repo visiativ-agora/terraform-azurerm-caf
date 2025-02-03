@@ -21,7 +21,7 @@ module "mssql_databases" {
   location                  = can(local.global_settings.regions[each.value.region]) || can(each.value.region) ? try(local.global_settings.regions[each.value.region], each.value.region) : local.combined_objects_resource_groups[try(each.value.resource_group.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group.key, each.value.resource_group_key)].location
   base_tags                 = local.global_settings.inherit_tags
   vnets                     = local.combined_objects_networking
-  job_private_endpoint_name = try(each.value.job.private_endpoint, {})
+  job_private_endpoint_name = try(each.value.job.private_endpoint_name, null)
   private_dns               = local.combined_objects_private_dns
   resource_group            = local.combined_objects_resource_groups[try(each.value.resource_group.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group_key, each.value.resource_group.key)]
   resource_group_name       = module.mssql_servers[each.value.resource_group_key].resource_group_name
