@@ -148,7 +148,7 @@ resource "time_sleep" "wait_for_private_endpoint" {
 
 locals {
 
-  connections = jsondecode(data.azapi_resource.sql_server.output.properties.privateEndpointConnections)
+  connections = jsondecode(data.azapi_resource.sql_server.output).properties.privateEndpointConnections
 
   private_endpoint_connexion_name = local.connections == [] ? null : element([
     for connection in local.connections : connection.name
