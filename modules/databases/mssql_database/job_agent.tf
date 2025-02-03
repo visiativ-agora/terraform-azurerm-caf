@@ -166,14 +166,12 @@ locals {
 
   private_endpoint_connection_name = (
     local.connections == null || length(local.connections) == 0 ? null :
-    try(
-      element([
-        for connection in local.connections :
-        connection.name
-        # if var.job_private_endpoint_name != null && endswith(connection.name, var.job_private_endpoint_name)
-      ], 0),
-      "test"
-    )
+ 
+    element([
+      for connection in local.connections : connection.name
+      # if var.job_private_endpoint_name != null && endswith(connection.name, var.job_private_endpoint_name)
+    ], 0)
+
   )
 
   # private_endpoint_connection_name = (
