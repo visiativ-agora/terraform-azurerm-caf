@@ -1,6 +1,7 @@
 resource "azapi_resource" "mssql_job_agents" {
-  for_each = try(var.settings.job, null) != null ? { "job_agent" = var.settings.job } : {}
-
+  # for_each = try(var.settings.job, null) != null ? { "job_agent" = var.settings.job } : {}
+  count = try(var.settings.job, null) == null ? 0 : 1
+  
   type      = "Microsoft.Sql/servers/jobAgents@2024-05-01-preview"
   name      = var.settings.job.name
   location  = var.location
@@ -36,7 +37,7 @@ resource "azapi_resource" "mssql_job_agents_jobs" {
 
   type      = "Microsoft.Sql/servers/jobAgents/jobs@2024-05-01-preview"
   name      = each.value.name
-  parent_id = azapi_resource.mssql_job_agents["job_agent"].id
+  parent_id = azapi_resource.mssql_job_agents.0.id
   body = jsonencode({
     properties = {
       description = try(each.value.description, null)
@@ -108,7 +109,7 @@ resource "azapi_resource" "mssql_job_agents_targetgroups" {
 
   type      = "Microsoft.Sql/servers/jobAgents/targetGroups@2024-05-01-preview"
   name      = each.value.tg_value.name
-  parent_id = azapi_resource.mssql_job_agents["job_agent"].id
+  parent_id = azapi_resource.mssql_job_agents.0.id
 
   body = jsonencode({
     properties = {
@@ -130,7 +131,7 @@ resource "azapi_resource" "mssql_job_agents_targetgroups" {
 resource "azapi_resource" "mssql_job_agents_private_endpoint" {
   type      = "Microsoft.Sql/servers/jobAgents/privateEndpoints@2024-05-01-preview"
   name      = var.job_private_endpoint_name
-  parent_id = azapi_resource.mssql_job_agents["job_agent"].id
+  parent_id = azapi_resource.mssql_job_agents.0.id
 
   body = jsonencode({
     properties = {
