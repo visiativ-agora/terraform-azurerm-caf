@@ -172,7 +172,7 @@ locals {
         connection.name
         if var.job_private_endpoint_name != null && endswith(connection.name, var.job_private_endpoint_name)
       ], 0),
-      null
+      "test"
     )
   )
 }
