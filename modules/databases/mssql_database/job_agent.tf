@@ -176,16 +176,16 @@ locals {
     )
   )
 
-  private_endpoint_connection_name = (
-    local.connections == null || length(local.connections) == 0 ? null :
-    try(
-      element([
-        for connection in local.connections :
-        connection.name
-      ], 0),
-      null
-    )
-  )
+  # private_endpoint_connection_name = (
+  #   local.connections == null || length(local.connections) == 0 ? null :
+  #   try(
+  #     element([
+  #       for connection in local.connections :
+  #       connection.name
+  #     ], 0),
+  #     null
+  #   )
+  # )
 }
 
 # Data source pour récupérer les informations sur le serveur SQL
