@@ -166,9 +166,9 @@ locals {
 
   private_endpoint_connection_name = (
     local.connections == null || length(local.connections) == 0 ? null :
- 
+
     element([
-      for connection in local.connections : connection.id
+      for connection in local.connections : connection.properties.privateEndpoint.id
       if var.job_private_endpoint_name != null && endswith(connection.id, var.job_private_endpoint_name)
     ], 0)
 
