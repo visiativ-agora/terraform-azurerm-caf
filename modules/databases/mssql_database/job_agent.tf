@@ -174,6 +174,7 @@ resource "azapi_update_resource" "approve_private_endpoint" {
 
   type = "Microsoft.Sql/servers/privateEndpointConnections@2024-05-01-preview"
   name = local.private_endpoint_connexion_name
+  parent_id = var.mssql_servers[try(var.settings.lz_key, var.client_config.landingzone_key)][var.settings.mssql_server_key].id
 
   body = jsonencode({
     properties = {
