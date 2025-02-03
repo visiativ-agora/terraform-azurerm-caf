@@ -150,14 +150,30 @@ resource "time_sleep" "wait_for_private_endpoint" {
   depends_on = [ azapi_resource.mssql_job_agents ]
 }
 
-locals {
+# locals {
 
+#   connections = jsondecode(data.azapi_resource.sql_server.output).properties.privateEndpointConnections
+
+#   private_endpoint_connexion_name = local.connections == [] ? null : element([
+#     for connection in local.connections : connection.name
+#     if var.job_private_endpoint_name != null && endswith(connection.name, var.job_private_endpoint_name)
+#     ], 0
+#   )
+# }
+
+locals {
   connections = jsondecode(data.azapi_resource.sql_server.output).properties.privateEndpointConnections
 
-  private_endpoint_connexion_name = local.connections == [] ? null : element([
-    for connection in local.connections : connection.name
-    if var.job_private_endpoint_name != null && endswith(connection.name, var.job_private_endpoint_name)
-    ], 0
+  private_endpoint_connection_name = (
+    local.connections == null || length(local.connections) == 0 ? null :
+    try(
+      element([
+        for connection in local.connections :
+        connection.name
+        if var.job_private_endpoint_name != null && endswith(connection.name, var.job_private_endpoint_name)
+      ], 0),
+      null
+    )
   )
 }
 
