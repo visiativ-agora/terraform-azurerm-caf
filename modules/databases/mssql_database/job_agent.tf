@@ -127,18 +127,66 @@ resource "azapi_resource" "mssql_job_agents_targetgroups" {
   response_export_values    = ["properties.outputs"]
 }
 
-# resource "azapi_resource" "mssql_job_agents_private_endpoint" {
-#   for_each = try(var.private_endpoints, {})
+resource "azapi_resource" "mssql_job_agents_private_endpoint" {
+  type      = "Microsoft.Sql/servers/jobAgents/privateEndpoints@2024-05-01-preview"
+  name      = var.job_private_endpoint_name
+  parent_id = azapi_resource.mssql_job_agents["job_agent"].id
 
-#   type      = "Microsoft.Sql/servers/jobAgents/privateEndpoints@2024-05-01-preview"
-#   name      = each.value.name
-#   parent_id = azapi_resource.mssql_job_agents["job_agent"].id
+  body = jsonencode({
+    properties = {
+      targetServerAzureResourceId = var.mssql_servers[try(var.settings.lz_key, var.client_config.landingzone_key)][var.settings.mssql_server_key].id
+    }
+  })
+  schema_validation_enabled = false
+  response_export_values    = ["properties.privateEndpointConnections"]
+}
 
-#   body = jsonencode({
-#     properties = {
-#       targetServerAzureResourceId = var.mssql_servers[try(var.settings.lz_key, var.client_config.landingzone_key)][var.settings.mssql_server_key].id
-#     }
-#   })
-#   schema_validation_enabled = false
-#   response_export_values    = ["properties.privateEndpointConnections"]
-# }
+resource "time_sleep" "wait_for_private_endpoint" {
+  create_duration = "1m"
+}
+
+
+locals {
+
+  connections = data.azapi_resource.sql_server.output.properties.privateEndpointConnections
+
+  private_endpoint_connexion_name = local.connections == [] ? null : element([
+    for connection in local.connections : connection.name
+    if endswith(connection.name, var.job_private_endpoint_name)
+    ], 0
+  )
+}
+
+# Data source pour récupérer les informations sur le serveur SQL
+data "azapi_resource" "sql_server" {
+
+  type                   = "Microsoft.Sql/servers@2024-05-01-preview"
+  resource_id            = var.mssql_servers[try(var.settings.lz_key, var.client_config.landingzone_key)][var.settings.mssql_server_key].id
+  response_export_values = ["properties.privateEndpointConnections"]
+
+  depends_on = [time_sleep.wait_for_private_endpoint]
+}
+
+# Ressource pour approuver automatiquement les connexions de points de terminaison privés
+
+resource "azapi_update_resource" "approve_private_endpoint" {
+  for_each = try(var.settings.job.private_endpoints, {})
+
+  type = "Microsoft.Sql/servers/privateEndpointConnections@2024-05-01-preview"
+  name = local.private_endpoint_connexion_name
+
+  body = jsonencode({
+    properties = {
+      privateLinkServiceConnectionState = {
+        status      = "Approved"
+        description = "Approved by Terraform"
+      }
+    }
+  })
+
+  lifecycle {
+    ignore_changes = all
+  }
+}
+
+
