@@ -169,7 +169,7 @@ locals {
  
     element([
       for connection in local.connections : connection.id
-      # if var.job_private_endpoint_name != null && endswith(connection.name, var.job_private_endpoint_name)
+      if var.job_private_endpoint_name != null && endswith(connection.id, var.job_private_endpoint_name)
     ], 0)
 
   )
