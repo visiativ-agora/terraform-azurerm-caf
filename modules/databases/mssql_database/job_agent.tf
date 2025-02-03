@@ -183,8 +183,9 @@ data "azapi_resource" "sql_server" {
   type                   = "Microsoft.Sql/servers@2024-05-01-preview"
   resource_id            = var.mssql_servers[try(var.settings.lz_key, var.client_config.landingzone_key)][var.settings.mssql_server_key].id
   response_export_values = ["properties.privateEndpointConnections"]
+  depends_on = [ privateEndpointConnections ]
 
-  depends_on = [time_sleep.wait_for_private_endpoint]
+  # depends_on = [time_sleep.wait_for_private_endpoint]
 }
 
 # Ressource pour approuver automatiquement les connexions de points de terminaison privés
