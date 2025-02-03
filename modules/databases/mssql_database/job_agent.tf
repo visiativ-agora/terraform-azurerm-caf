@@ -139,12 +139,12 @@ resource "azapi_resource" "mssql_job_agents_private_endpoint" {
   })
   schema_validation_enabled = false
   response_export_values    = ["properties.privateEndpointConnections"]
+  depends_on = [ azapi_resource.mssql_job_agents ]
 }
 
 resource "time_sleep" "wait_for_private_endpoint" {
   create_duration = "1m"
 }
-
 
 locals {
 
