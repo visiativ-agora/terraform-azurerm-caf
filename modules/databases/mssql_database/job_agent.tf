@@ -1,7 +1,7 @@
 resource "azapi_resource" "mssql_job_agents" {
   # for_each = try(var.settings.job, null) != null ? { "job_agent" = var.settings.job } : {}
   count = try(var.settings.job, null) == null ? 0 : 1
-  
+
   type      = "Microsoft.Sql/servers/jobAgents@2024-05-01-preview"
   name      = var.settings.job.name
   location  = var.location
@@ -129,6 +129,8 @@ resource "azapi_resource" "mssql_job_agents_targetgroups" {
 }
 
 resource "azapi_resource" "mssql_job_agents_private_endpoint" {
+  count = try(var.settings.job.private_endpoint_name, null) == null ? 0 : 1
+
   type      = "Microsoft.Sql/servers/jobAgents/privateEndpoints@2024-05-01-preview"
   name      = var.job_private_endpoint_name
   parent_id = azapi_resource.mssql_job_agents.0.id
@@ -140,7 +142,7 @@ resource "azapi_resource" "mssql_job_agents_private_endpoint" {
   })
   schema_validation_enabled = false
   response_export_values    = ["properties.privateEndpointConnections"]
-  depends_on = [ azapi_resource.mssql_job_agents ]
+  depends_on                = [azapi_resource.mssql_job_agents]
 }
 
 resource "time_sleep" "wait_for_private_endpoint" {
@@ -173,8 +175,8 @@ data "azapi_resource" "sql_server" {
 resource "azapi_update_resource" "approve_private_endpoint" {
   for_each = try(var.settings.job.private_endpoints, {})
 
-  type = "Microsoft.Sql/servers/privateEndpointConnections@2024-05-01-preview"
-  name = local.private_endpoint_connexion_name
+  type      = "Microsoft.Sql/servers/privateEndpointConnections@2024-05-01-preview"
+  name      = local.private_endpoint_connexion_name
   parent_id = var.mssql_servers[try(var.settings.lz_key, var.client_config.landingzone_key)][var.settings.mssql_server_key].id
 
   body = jsonencode({
