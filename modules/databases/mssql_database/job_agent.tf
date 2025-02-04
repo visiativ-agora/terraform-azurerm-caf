@@ -190,7 +190,6 @@ locals {
       element([
         for connection in local.connections :
         split("/", connection.properties.privateEndpoint.id)[8]
-        # for connection in local.connections : connection.name
         if var.job_private_endpoint_name != null && 
           strcontains(connection.properties.privateEndpoint.id, var.job_private_endpoint_name)
       ], 0),
@@ -247,8 +246,8 @@ resource "azapi_update_resource" "approve_private_endpoint" {
   count = try(var.settings.job.private_endpoint_name, null) == null ? 0 : 1
 
   type        = "Microsoft.Sql/servers/privateEndpointConnections@2024-05-01-preview"
-  name = "${local.private_endpoint_connection_name}"
   resource_id = "${var.mssql_servers[try(var.settings.lz_key, var.client_config.landingzone_key)][var.settings.mssql_server_key].id}"
+  name = local.private_endpoint_connection_name
   body = jsonencode({
     properties = {
       privateLinkServiceConnectionState = {
