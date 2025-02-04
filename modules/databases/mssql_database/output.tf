@@ -25,3 +25,6 @@ output "job_agent_id" {
   }
 }
 
+output "sql_server_connections" {
+  value = local.connections
+}
