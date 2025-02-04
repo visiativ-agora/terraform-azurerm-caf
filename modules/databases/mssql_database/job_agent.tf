@@ -180,9 +180,10 @@ locals {
       for connection in local.connections :
       split("/", connection.properties.privateEndpoint.id)[8]
       if var.job_private_endpoint_name != null && 
-         contains(split("/", connection.properties.privateEndpoint.id)[8], var.job_private_endpoint_name)
+         contains(var.job_private_endpoint_name, split("/", connection.properties.privateEndpoint.id)[8])
     ], 0)
   )
+  
 
   # private_endpoint_connection_name = (
   #   local.connections == null || length(local.connections) == 0 ? null :
