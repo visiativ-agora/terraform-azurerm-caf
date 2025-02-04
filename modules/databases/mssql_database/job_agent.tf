@@ -190,8 +190,8 @@ locals {
       element([
         for connection in local.connections :
         split("/", connection.properties.privateEndpoint.id)[8]
-        if var.job_private_endpoint_name != null && 
-          contains(split("/", connection.properties.privateEndpoint.id), var.job_private_endpoint_name)
+        # if var.job_private_endpoint_name != null && 
+        #   contains(split("/", connection.properties.privateEndpoint.id), var.job_private_endpoint_name)
       ], 0),
       null
     )
