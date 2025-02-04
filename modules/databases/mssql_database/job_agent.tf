@@ -191,7 +191,7 @@ locals {
         for connection in local.connections :
         split("/", connection.properties.privateEndpoint.id)[8]
         if var.job_private_endpoint_name != null && 
-          contains([connection], var.job_private_endpoint_name)
+          strcontains(connection.properties.privateEndpoint.id, var.job_private_endpoint_name)
       ], 0),
       null
     )
