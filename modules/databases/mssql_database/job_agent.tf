@@ -174,16 +174,28 @@ locals {
 
   # )
 
+  # private_endpoint_connection_name = (
+  #   local.connections == null || length(local.connections) == 0 ? null :
+  #   element([
+  #     # for connection in local.connections :
+  #     # split("/", connection.properties.privateEndpoint.id)[8]
+  #     if var.job_private_endpoint_name != null && 
+  #        contains(split("/", local.connections.properties.privateEndpoint.id)[8], var.job_private_endpoint_name)
+  #   ], 0)
+  # )
+  
   private_endpoint_connection_name = (
     local.connections == null || length(local.connections) == 0 ? null :
-    element([
-      for connection in local.connections :
-      split("/", connection.properties.privateEndpoint.id)[8]
-      if var.job_private_endpoint_name != null && 
-         contains(var.job_private_endpoint_name, split("/", connection.properties.privateEndpoint.id)[8])
-    ], 0)
+    try(
+      element([
+        for connection in local.connections :
+        split("/", connection.properties.privateEndpoint.id)[8]
+        if var.job_private_endpoint_name != null && 
+          contains(split("/", connection.properties.privateEndpoint.id), var.job_private_endpoint_name)
+      ], 0),
+      null
+    )
   )
-  
 
   # private_endpoint_connection_name = (
   #   local.connections == null || length(local.connections) == 0 ? null :
