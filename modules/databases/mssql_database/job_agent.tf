@@ -246,7 +246,7 @@ resource "azapi_update_resource" "approve_private_endpoint" {
   count = try(var.settings.job.private_endpoint_name, null) == null ? 0 : 1
 
   type        = "Microsoft.Sql/servers/privateEndpointConnections@2024-05-01-preview"
-  parent_id = "${var.mssql_servers[try(var.settings.lz_key, var.client_config.landingzone_key)][var.settings.mssql_server_key].id}"
+  parent_id = var.mssql_servers[try(var.settings.lz_key, var.client_config.landingzone_key)][var.settings.mssql_server_key].id
   name = local.private_endpoint_connection_name
   body = jsonencode({
     properties = {
@@ -261,3 +261,5 @@ resource "azapi_update_resource" "approve_private_endpoint" {
     ignore_changes = all
   }
 }
+
+name,parent_id
