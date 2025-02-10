@@ -261,5 +261,3 @@ resource "azapi_update_resource" "approve_private_endpoint" {
     ignore_changes = all
   }
 }
-
-name,parent_id
