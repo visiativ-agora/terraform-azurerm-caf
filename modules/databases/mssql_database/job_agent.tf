@@ -194,7 +194,7 @@ locals {
         # if var.job_private_endpoint_name != null && 
         #   strcontains(connection.properties.privateEndpoint.id, var.job_private_endpoint_name)
       ], 0),
-      null
+      "temp"
     )
   )
 
