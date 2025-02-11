@@ -147,7 +147,7 @@ resource "azapi_resource" "mssql_job_agents_private_endpoint" {
 
 resource "time_sleep" "wait_for_private_endpoint" {
   create_duration = "3m"
-  depends_on      = [azapi_resource.mssql_job_agents]
+  depends_on      = [azapi_resource.mssql_job_agents_jobs]
 }
 
 # locals {
