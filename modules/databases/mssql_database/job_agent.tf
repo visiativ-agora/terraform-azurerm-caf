@@ -190,7 +190,7 @@ locals {
       element([
         for connection in local.connections :
         split("/", connection.properties.privateEndpoint.id)[8]
-        if var.job_private_endpoint_name != null && strcontains("split("/", connection.properties.privateEndpoint.id)[8]", "JOB")
+        if var.job_private_endpoint_name != null && connection.properties.privateLinkServiceConnectionState.status == "Pending"
         # if var.job_private_endpoint_name != null && 
         #   strcontains(connection.properties.privateEndpoint.id, var.job_private_endpoint_name)
       ], 0),
@@ -198,16 +198,6 @@ locals {
     )
   )
 
-  # private_endpoint_connection_name = (
-  #   local.connections == null || length(local.connections) == 0 ? null :
-  #   try(
-  #     element([
-  #       for connection in local.connections :
-  #       connection.name
-  #     ], 0),
-  #     null
-  #   )
-  # )
 }
 
 # Data source pour récupérer les informations sur le serveur SQL
