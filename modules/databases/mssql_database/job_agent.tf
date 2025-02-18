@@ -147,7 +147,7 @@ resource "azapi_resource" "mssql_job_agents_private_endpoint" {
 
 resource "time_sleep" "wait_for_private_endpoint" {
   count = try(var.settings.job.private_endpoint_name, null) == null ? 0 : 1
-  
+
   create_duration = "2m"
   depends_on      = [azapi_resource.mssql_job_agents]
 
@@ -195,7 +195,7 @@ locals {
     try(
       element([
         for connection in local.connections :
-        split("/", connection.properties.privateEndpoint.id)[8]
+        # split("/", connection.properties.privateEndpoint.id)[8]
         if var.job_private_endpoint_name != null && connection.properties.privateLinkServiceConnectionState.status == "Pending"
         # if var.job_private_endpoint_name != null && 
         #   strcontains(connection.properties.privateEndpoint.id, var.job_private_endpoint_name)
@@ -243,8 +243,8 @@ resource "azapi_update_resource" "approve_private_endpoint" {
   count = try(var.settings.job.private_endpoint_name, null) == null ? 0 : 1
 
   type        = "Microsoft.Sql/servers/privateEndpointConnections@2024-05-01-preview"
-  resource_id = "${var.mssql_servers[try(var.settings.lz_key, var.client_config.landingzone_key)][var.settings.mssql_server_key].id}/privateEndpointConnections/${local.private_endpoint_connection_name}"
-  # name = local.private_endpoint_connection_name
+  # resource_id = "${var.mssql_servers[try(var.settings.lz_key, var.client_config.landingzone_key)][var.settings.mssql_server_key].id}/privateEndpointConnections/${local.private_endpoint_connection_name}"
+  resource_id = local.private_endpoint_connection_name
   body = jsonencode({
     properties = {
       privateLinkServiceConnectionState = {
