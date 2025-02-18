@@ -42,11 +42,11 @@ resource "azapi_resource" "mssql_job_agents_jobs" {
     properties = {
       description = try(each.value.description, null)
       schedule = {
-        enabled   = try(each.value.schedule.enabled, null)
-        startTime = try(each.value.schedule.startTime, null)
-        endTime   = try(each.value.schedule.endTime, null)
+        enabled   = try(each.value.schedule.enabled, false)
+        startTime = try(each.value.schedule.startTime, "0001-01-01T00:00:00Z")
+        endTime   = try(each.value.schedule.endTime, "0001-01-01T00:00:00Z")
         interval  = try(each.value.schedule.interval, null)
-        type      = try(each.value.schedule.type, null)
+        type      = try(each.value.schedule.type, "Once")
       }
     }
   })
@@ -152,55 +152,11 @@ resource "time_sleep" "wait_for_private_endpoint" {
   depends_on      = [azapi_resource.mssql_job_agents]
 
   triggers = {
-    timestamp  = timestamp()
+    timestamp = timestamp()
   }
 }
-
-# locals {
-
-#   connections = jsondecode(data.azapi_resource.sql_server.output).properties.privateEndpointConnections
-
-#   private_endpoint_connexion_name = local.connections == [] ? null : element([
-#     for connection in local.connections : connection.name
-#     if var.job_private_endpoint_name != null && endswith(connection.name, var.job_private_endpoint_name)
-#     ], 0
-#   )
-# }
-
 locals {
   connections = jsondecode(data.azapi_resource.sql_server.output).properties.privateEndpointConnections
-
-  # private_endpoint_connection_name = (
-  #   local.connections == null || length(local.connections) == 0 ? null :
-
-  #   element([
-  #     for connection in local.connections : connection.properties.privateEndpoint.id
-  #     # if var.job_private_endpoint_name != null && endswith(connection.properties.privateEndpoint.id, var.job_private_endpoint_name)
-  #   ], 0)
-
-  # )
-
-  # private_endpoint_connection_name = (
-  #   local.connections == null || length(local.connections) == 0 ? null :
-  #   element([
-  #     # for connection in local.connections :
-  #     # split("/", connection.properties.privateEndpoint.id)[8]
-  #     if var.job_private_endpoint_name != null && 
-  #        contains(split("/", local.connections.properties.privateEndpoint.id)[8], var.job_private_endpoint_name)
-  #   ], 0)
-  # )
-  
-  # private_endpoint_connection_name = (
-  #   local.connections == null || length(local.connections) == 0 ? null :
-  #   try(
-  #     element([
-  #       for connection in local.connections :
-  #       split("/", connection.properties.privateEndpoint.id)[8]
-  #       if var.job_private_endpoint_name != null && connection.properties.privateLinkServiceConnectionState.status == "Pending"
-  #     ], 0),
-  #     "temp"
-  #   )
-  # )
 
   private_endpoint_connection_name = (
     local.connections == null || length(local.connections) == 0 ? null :
@@ -221,37 +177,14 @@ data "azapi_resource" "sql_server" {
   type                   = "Microsoft.Sql/servers@2024-05-01-preview"
   resource_id            = var.mssql_servers[try(var.settings.lz_key, var.client_config.landingzone_key)][var.settings.mssql_server_key].id
   response_export_values = ["properties.privateEndpointConnections"]
-  # depends_on             = [azapi_resource.mssql_job_agents_private_endpoint]
 
   depends_on = [time_sleep.wait_for_private_endpoint]
 }
 
-# Ressource pour approuver automatiquement les connexions de points de terminaison privés
-
-# resource "azapi_update_resource" "approve_private_endpoint" {
-#   count = try(var.settings.job.private_endpoint_name, null) == null ? 0 : 1
-
-#   type      = "Microsoft.Sql/servers/privateEndpointConnections@2024-05-01-preview"
-#   name      = local.private_endpoint_connection_name
-#   parent_id = var.mssql_servers[try(var.settings.lz_key, var.client_config.landingzone_key)][var.settings.mssql_server_key].id
-
-#   body = jsonencode({
-#     properties = {
-#       privateLinkServiceConnectionState = {
-#         status      = "Approved"
-#         description = "Approved by Terraform"
-#       }
-#     }
-#   })
-
-#   lifecycle {
-#     ignore_changes = all
-#   }
-# }
 resource "azapi_update_resource" "approve_private_endpoint" {
   count = try(var.settings.job.private_endpoint_name, null) == null ? 0 : 1
 
-  type        = "Microsoft.Sql/servers/privateEndpointConnections@2024-05-01-preview"
+  type = "Microsoft.Sql/servers/privateEndpointConnections@2024-05-01-preview"
   # resource_id = "${var.mssql_servers[try(var.settings.lz_key, var.client_config.landingzone_key)][var.settings.mssql_server_key].id}/privateEndpointConnections/${local.private_endpoint_connection_name}"
   resource_id = local.private_endpoint_connection_name
   body = jsonencode({
