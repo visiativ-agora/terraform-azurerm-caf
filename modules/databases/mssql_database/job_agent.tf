@@ -202,19 +202,17 @@ locals {
   #   )
   # )
 
-private_endpoint_connection_name = (
-  local.connections == null || length(local.connections) == 0 ? null :
-  try(
-    element([
-      for connection_id in [for connection in local.connections : connection.properties.privateEndpoint.id] :
-      connection_id
-      if var.job_private_endpoint_name != null && connection.properties.privateLinkServiceConnectionState.status == "Pending"
-    ], 0),
-    "temp"
+  private_endpoint_connection_name = (
+    local.connections == null || length(local.connections) == 0 ? null :
+    try(
+      element([
+        for connection in local.connections :
+        connection.id
+        if var.job_private_endpoint_name != null && connection.properties.privateLinkServiceConnectionState.status == "Pending"
+      ], 0),
+      "temp"
+    )
   )
-)
-
-
 }
 
 # Data source pour récupérer les informations sur le serveur SQL
