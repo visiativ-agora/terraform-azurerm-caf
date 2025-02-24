@@ -81,7 +81,7 @@ resource "azapi_resource" "backup_vault" {
       ]
       identity = {
         type         = try(var.settings.identity.type, "SystemAssigned")
-        identity_ids = []
+        identity_ids = {}
       }
     }
   })
