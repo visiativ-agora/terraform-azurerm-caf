@@ -28,7 +28,7 @@ resource "azurecaf_name" "bckp" {
 # }
 
 resource "azapi_resource" "backup_vault" {
-  type      = "Microsoft.DataProtection/backupVaults@2024-10-01"
+  type      = "Microsoft.DataProtection/backupVaults@2025-01-01"
   name      = azurecaf_name.bckp.result
   location  = var.location
   parent_id = var.resource_group_id
@@ -49,9 +49,9 @@ resource "azapi_resource" "backup_vault" {
             identityType = var.settings.kek_identity_type
           } : null
           keyVaultProperties = {
-            # keyUri = can(var.settings.backup_data_encryption.encryption_key) ? var.remote_objects.keyvault_keys[try(var.settings.backup_data_encryption.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.keyvault_key_key].id : null
-            keyUri = var.remote_objects.keyvault_keys[try(var.settings.backup_data_encryption.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.keyvault_key_key].id            
-          }          
+            keyUri = can(var.settings.backup_data_encryption.encryption_key) ? var.remote_objects.keyvault_keys[try(var.settings.backup_data_encryption.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.keyvault_key_key].id : null
+            # keyUri = var.remote_objects.keyvault_keys[try(var.settings.backup_data_encryption.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.keyvault_key_key].id            
+          }
           state = try(var.settings.backup_data_encryption.encryption_state, false) ? "Enabled" : "Disabled"
         }
         softDeleteSettings = {
@@ -81,7 +81,5 @@ resource "azapi_resource" "backup_vault" {
       type = "SystemAssigned"
     }
   }
-  schema_validation_enabled = false  
+  schema_validation_enabled = false
 }
-
-
