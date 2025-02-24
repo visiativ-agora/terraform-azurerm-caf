@@ -1,5 +1,6 @@
 module "backup_vaults" {
   source   = "./modules/backup_vault"
+  depends_on = [module.keyvault_access_policies, module.keyvault_access_policies_azuread_apps]
   for_each = local.data_protection.backup_vaults
 
   global_settings     = local.global_settings
