@@ -56,7 +56,7 @@ resource "azapi_resource" "backup_vault" {
           kekIdentity = {
             identityType = try(var.settings.kek_identity_type, "SystemAssigned")
             identityId = try(var.settings.backup_data_encryption.kek_identity_id,
-              try(var.managed_identities[var.settings.backup_data_encryption.kek_identity.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.kek_identity.kek_identity_key].id,
+              try(var.managed_identities[try(var.settings.backup_data_encryption.kek_identity.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.kek_identity.kek_identity_key].id,
             null))
           }
 
