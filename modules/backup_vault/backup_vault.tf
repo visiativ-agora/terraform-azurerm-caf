@@ -49,8 +49,8 @@ resource "azapi_resource" "backup_vault" {
             identityType = var.settings.kek_identity_type
           } : null
           keyVaultProperties = {
-            keyUri = can(var.settings.backup_data_encryption.encryption_key) ? var.remote_objects.keyvault_keys[try(var.settings.backup_data_encryption.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.keyvault_key_key].id : null
-            # keyUri = var.remote_objects.keyvault_keys[try(var.settings.backup_data_encryption.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.keyvault_key_key].id            
+            # keyUri = can(var.settings.backup_data_encryption.encryption_key) ? var.remote_objects.keyvault_keys[try(var.settings.backup_data_encryption.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.keyvault_key_key].id : null
+            keyUri = var.remote_objects.keyvault_keys[try(var.settings.backup_data_encryption.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.keyvault_key_key].id            
           }
           state = try(var.settings.backup_data_encryption.encryption_state, false) ? "Enabled" : "Disabled"
         }
