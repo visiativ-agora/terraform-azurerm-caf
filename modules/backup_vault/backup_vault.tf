@@ -79,13 +79,13 @@ resource "azapi_resource" "backup_vault" {
           type          = var.settings.redundancy
         }
       ]
+      identity = {
+        type         = try(var.settings.identity.type, "SystemAssigned")
+        identity_ids = []
+      }
     }
   })
 
-  tags = local.tags
-
-  identity {
-    type = try(var.settings.enable_identity.type, "SystemAssigned")
-  }
+  tags                      = local.tags
   schema_validation_enabled = false
 }
