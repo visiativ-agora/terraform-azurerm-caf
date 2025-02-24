@@ -35,12 +35,21 @@ resource "azapi_resource" "backup_vault" {
 
   body = jsonencode({
     properties = {
-      storageSettings = [
-        {
-          datastoreType = var.settings.datastore_type
-          type          = var.settings.redundancy
+      featureSettings = {
+        crossRegionRestoreSettings = {
+          state = try(var.settings.cross_region_restore_state, "Disabled")
         }
-      ]
+        crossSubscriptionRestoreSettings = {
+          state = try(var.settings.cross_subscription_restore_state, "Disabled")
+        }
+      }
+      monitoringSettings = {
+        azureMonitorAlertSettings = {
+          alertsForAllJobFailures = try(var.settings.alerts_for_all_job_failures, "Disabled")
+        }
+      }
+      replicatedRegions              = try(var.settings.replicated_regions, [])
+      resourceGuardOperationRequests = try(var.settings.resource_guard_operation_requests, [])
       securitySettings = {
         encryptionSettings = {
           infrastructureEncryption = try(var.settings.infrastructure_encryption_enabled, false) ? "Enabled" : "Disabled"
@@ -49,37 +58,31 @@ resource "azapi_resource" "backup_vault" {
             identityType = var.settings.kek_identity_type
           } : null
           keyVaultProperties = {
-            # keyUri = can(var.settings.backup_data_encryption.encryption_key) ? var.remote_objects.keyvault_keys[try(var.settings.backup_data_encryption.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.keyvault_key_key].id : null
-            keyUri = var.remote_objects.keyvault_keys[try(var.settings.backup_data_encryption.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.keyvault_key_key].id            
+            keyUri = var.remote_objects.keyvault_keys[try(var.settings.backup_data_encryption.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.keyvault_key_key].id
           }
           state = try(var.settings.backup_data_encryption.encryption_state, false) ? "Enabled" : "Disabled"
+        }
+        immutabilitySettings = {
+          state = try(var.settings.immutability_state, "Disabled")
         }
         softDeleteSettings = {
           state                   = try(var.settings.soft_delete_retention_days, null) != null ? "Enabled" : "Disabled"
           retentionDurationInDays = try(var.settings.soft_delete_retention_days, 14)
         }
       }
-      monitoringSettings = try(var.settings.alerts_for_all_job_failures, null) != null ? {
-        azureMonitorAlertSettings = {
-          alertsForAllJobFailures = var.settings.alerts_for_all_job_failures
+      storageSettings = [
+        {
+          datastoreType = var.settings.datastore_type
+          type          = var.settings.redundancy
         }
-      } : null
-      featureSettings = try(var.settings.cross_region_restore_state, null) != null ? {
-        crossRegionRestoreSettings = {
-          state = var.settings.cross_region_restore_state
-        }
-      } : null
+      ]
     }
   })
 
   tags = local.tags
 
-  dynamic "identity" {
-    for_each = lookup(var.settings, "enable_identity", false) == false ? [] : [1]
-
-    content {
-      type = "SystemAssigned"
-    }
+  identity {
+    type = try(var.settings.enable_identity.type, "SystemAssigned")
   }
   schema_validation_enabled = false
 }
