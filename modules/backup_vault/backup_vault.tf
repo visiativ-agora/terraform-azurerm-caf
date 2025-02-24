@@ -80,6 +80,7 @@ resource "azapi_resource" "backup_vault" {
       type = "SystemAssigned"
     }
   }
+  schema_validation_enabled = false  
 }
 
 
