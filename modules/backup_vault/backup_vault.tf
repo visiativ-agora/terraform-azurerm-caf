@@ -87,5 +87,5 @@ resource "azapi_resource" "backup_vault" {
   })
 
   tags                      = local.tags
-  schema_validation_enabled = false
+  schema_validation_enabled = true
 }
