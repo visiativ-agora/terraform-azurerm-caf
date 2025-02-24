@@ -43,8 +43,8 @@ resource "azapi_resource" "backup_vault" {
       ]
       securitySettings = {
         encryptionSettings = {
-          infrastructureEncryption = var.settings.infrastructure_encryption_enabled ? "Enabled" : "Disabled"
-          kekIdentity = var.settings.kek_identity_id != null && var.settings.kek_identity_type != null ? {
+          infrastructureEncryption = try(var.settings.infrastructure_encryption_enabled, false) ? "Enabled" : "Disabled"
+          kekIdentity = try(var.settings.kek_identity_id, null) != null && try(var.settings.kek_identity_type, null) != null ? {
             identityId   = var.settings.kek_identity_id
             identityType = var.settings.kek_identity_type
           } : null
@@ -54,8 +54,8 @@ resource "azapi_resource" "backup_vault" {
           state = try(var.settings.backup_data_encryption.encryption_state, "Disabled")
         }
         softDeleteSettings = {
-          state                   = var.settings.soft_delete_enabled ? "Enabled" : "Disabled"
-          retentionDurationInDays = try(var.settings.soft_delete_retention_days, null)
+          state                   = try(var.settings.soft_delete_retention_days, null) != null ? "Enabled" : "Disabled"
+          retentionDurationInDays = try(var.settings.soft_delete_retention_days, 14)
         }
       }
       monitoringSettings = try(var.settings.alerts_for_all_job_failures, null) != null ? {
@@ -63,7 +63,7 @@ resource "azapi_resource" "backup_vault" {
           alertsForAllJobFailures = var.settings.alerts_for_all_job_failures
         }
       } : null
-      featureSettings = var.settings.cross_region_restore_state != null ? {
+      featureSettings = try(var.settings.cross_region_restore_state, null) != null ? {
         crossRegionRestoreSettings = {
           state = var.settings.cross_region_restore_state
         }
@@ -81,4 +81,5 @@ resource "azapi_resource" "backup_vault" {
     }
   }
 }
+
 
