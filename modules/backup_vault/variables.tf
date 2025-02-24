@@ -23,3 +23,6 @@ variable "settings" {}
 variable "storage_accounts" {}
 variable "resource_group_id" {}
 variable "remote_objects" {}
+variable "managed_identities" {
+  default = {}
+}
