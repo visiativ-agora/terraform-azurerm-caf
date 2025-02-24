@@ -33,6 +33,14 @@ resource "azapi_resource" "backup_vault" {
   location  = var.location
   parent_id = var.resource_group_id
 
+  identity {
+    type = try(var.settings.identity.type, "SystemAssigned")
+
+  identity_ids = try(var.settings.identity.type, "SystemAssigned") == "SystemAssigned" ? [] : [
+    var.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.identity.identity_key].id
+  ]
+  }
+
   body = jsonencode({
     properties = {
       featureSettings = {
@@ -79,10 +87,6 @@ resource "azapi_resource" "backup_vault" {
           type          = var.settings.redundancy
         }
       ]
-      identity = {
-        type         = try(var.settings.identity.type, "SystemAssigned")
-        identity_ids = {}
-      }
     }
   })
 
