@@ -1,12 +1,12 @@
-output "id" {
-  description = "The ID of the Backup Vault"
-  value       = azurerm_data_protection_backup_vault.backup_vault.id
-}
+# output "id" {
+#   description = "The ID of the Backup Vault"
+#   value       = azurerm_data_protection_backup_vault.backup_vault.id
+# }
 
-output "name" {
-  description = "The name of the Backup Vault"
-  value       = azurerm_data_protection_backup_vault.backup_vault.name
-}
+# output "name" {
+#   description = "The name of the Backup Vault"
+#   value       = azurerm_data_protection_backup_vault.backup_vault.name
+# }
 output "location" {
   description = "The location of the Backup Vault"
   value       = var.location
@@ -27,14 +27,14 @@ output "redundancy" {
   value       = try(var.settings.redundancy, null)
 }
 
-output "identity" {
-  description = " An identity block, which contains the Identity information for this Backup Vault. Exports principal_id (The Principal ID for the Service Principal associated with the Identity of this Backup Vault), tenand_id (The Tenant ID for the Service Principal associated with the Identity of this Backup Vault)"
-  value       = try(azurerm_data_protection_backup_vault.backup_vault.identity, null)
-}
-output "rbac_id" {
-  description = " The Principal ID for the Service Principal associated with the Identity of this Backup Vault. (Extracted from the identity block)"
-  value       = try(azurerm_data_protection_backup_vault.backup_vault.identity.0.principal_id, null)
-}
+# output "identity" {
+#   description = " An identity block, which contains the Identity information for this Backup Vault. Exports principal_id (The Principal ID for the Service Principal associated with the Identity of this Backup Vault), tenand_id (The Tenant ID for the Service Principal associated with the Identity of this Backup Vault)"
+#   value       = try(azurerm_data_protection_backup_vault.backup_vault.identity, null)
+# }
+# output "rbac_id" {
+#   description = " The Principal ID for the Service Principal associated with the Identity of this Backup Vault. (Extracted from the identity block)"
+#   value       = try(azurerm_data_protection_backup_vault.backup_vault.identity.0.principal_id, null)
+# }
 # output "backup_vault_policies"{
 #   value = azurerm_data_protection_backup_policy_blob_storage.backup_vault_policy
 # }
