@@ -42,21 +42,21 @@ resource "azapi_resource" "backup_vault" {
 
   body = {
     properties = {
-      # featureSettings = {
-      #   crossRegionRestoreSettings = {
-      #     state = try(var.settings.cross_region_restore_state, "Disabled")
-      #   }
-      #   crossSubscriptionRestoreSettings = {
-      #     state = try(var.settings.cross_subscription_restore_state, "Disabled")
-      #   }
-      # }
-      # monitoringSettings = {
-      #   azureMonitorAlertSettings = {
-      #     alertsForAllJobFailures = try(var.settings.alerts_for_all_job_failures, "Disabled")
-      #   }
-      # }
-      # replicatedRegions              = try(var.settings.replicated_regions, [])
-      # resourceGuardOperationRequests = try(var.settings.resource_guard_operation_requests, [])
+      featureSettings = {
+        crossRegionRestoreSettings = {
+          state = try(var.settings.cross_region_restore_state, "Disabled")
+        }
+        crossSubscriptionRestoreSettings = {
+          state = try(var.settings.cross_subscription_restore_state, "Disabled")
+        }
+      }
+      monitoringSettings = {
+        azureMonitorAlertSettings = {
+          alertsForAllJobFailures = try(var.settings.alerts_for_all_job_failures, "Disabled")
+        }
+      }
+      replicatedRegions              = try(var.settings.replicated_regions, [])
+      resourceGuardOperationRequests = try(var.settings.resource_guard_operation_requests, [])
       securitySettings = {
         # encryptionSettings = {
         #   infrastructureEncryption = try(var.settings.infrastructure_encryption_enabled, false) ? "Enabled" : "Disabled"
