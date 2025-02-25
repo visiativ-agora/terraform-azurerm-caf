@@ -43,9 +43,9 @@ resource "azapi_resource" "backup_vault" {
   body = {
     properties = {
       featureSettings = {
-        crossRegionRestoreSettings = {
-          state = try(var.settings.cross_region_restore_state, "Disabled")
-        }
+        # crossRegionRestoreSettings = {
+        #   state = try(var.settings.cross_region_restore_state, "Disabled")
+        # }
         crossSubscriptionRestoreSettings = {
           state = try(var.settings.cross_subscription_restore_state, "Disabled")
         }
