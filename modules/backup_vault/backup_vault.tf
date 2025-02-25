@@ -33,52 +33,54 @@ resource "azapi_resource" "backup_vault" {
   location  = var.location
   parent_id = var.resource_group_id
 
+  # identity {
+  #   type = try(var.settings.identity.type, "SystemAssigned")
+  #   identity_ids = try(var.settings.identity.type, "SystemAssigned") == "SystemAssigned" ? null : [
+  #     var.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.identity.identity_key].id
+  #   ]
+  # }
   identity {
-    type = try(var.settings.identity.type, "SystemAssigned")
-    identity_ids = try(var.settings.identity.type, "SystemAssigned") == "SystemAssigned" ? null : [
-      var.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.identity.identity_key].id
-    ]
+    type = "None"
   }
-
   body = {
     properties = {
-      featureSettings = {
-        crossRegionRestoreSettings = {
-          state = try(var.settings.cross_region_restore_state, "Disabled")
-        }
-        crossSubscriptionRestoreSettings = {
-          state = try(var.settings.cross_subscription_restore_state, "Disabled")
-        }
-      }
-      monitoringSettings = {
-        azureMonitorAlertSettings = {
-          alertsForAllJobFailures = try(var.settings.alerts_for_all_job_failures, "Disabled")
-        }
-      }
-      replicatedRegions              = try(var.settings.replicated_regions, [])
-      resourceGuardOperationRequests = try(var.settings.resource_guard_operation_requests, [])
-      securitySettings = {
-        encryptionSettings = {
-          infrastructureEncryption = try(var.settings.infrastructure_encryption_enabled, false) ? "Enabled" : "Disabled"
-          kekIdentity = {
-            identityType = try(var.settings.kek_identity_type, "SystemAssigned")
-            identityId = try(var.settings.backup_data_encryption.kek_identity_id,
-              try(var.managed_identities[try(var.settings.backup_data_encryption.kek_identity.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.kek_identity.kek_identity_key].id,
-            null))
-          }
-          keyVaultProperties = {
-            keyUri = try(var.remote_objects.keyvault_keys[try(var.settings.backup_data_encryption.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.keyvault_key_key].id, null)
-          }
-          state = try(var.settings.backup_data_encryption.encryption_state, false) ? "Enabled" : "Disabled"
-        }
-        immutabilitySettings = {
-          state = try(var.settings.immutability_state, "Disabled")
-        }
-        softDeleteSettings = {
-          state                   = try(var.settings.soft_delete_retention_days, null) != null ? "Enabled" : "Disabled"
-          retentionDurationInDays = try(var.settings.soft_delete_retention_days, 14)
-        }
-      }
+      # featureSettings = {
+      #   crossRegionRestoreSettings = {
+      #     state = try(var.settings.cross_region_restore_state, "Disabled")
+      #   }
+      #   crossSubscriptionRestoreSettings = {
+      #     state = try(var.settings.cross_subscription_restore_state, "Disabled")
+      #   }
+      # }
+      # monitoringSettings = {
+      #   azureMonitorAlertSettings = {
+      #     alertsForAllJobFailures = try(var.settings.alerts_for_all_job_failures, "Disabled")
+      #   }
+      # }
+      # replicatedRegions              = try(var.settings.replicated_regions, [])
+      # resourceGuardOperationRequests = try(var.settings.resource_guard_operation_requests, [])
+      # securitySettings = {
+      #   encryptionSettings = {
+      #     infrastructureEncryption = try(var.settings.infrastructure_encryption_enabled, false) ? "Enabled" : "Disabled"
+      #     kekIdentity = {
+      #       identityType = try(var.settings.kek_identity_type, "SystemAssigned")
+      #       identityId = try(var.settings.backup_data_encryption.kek_identity_id,
+      #         try(var.managed_identities[try(var.settings.backup_data_encryption.kek_identity.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.kek_identity.kek_identity_key].id,
+      #       null))
+      #     }
+      #     keyVaultProperties = {
+      #       keyUri = try(var.remote_objects.keyvault_keys[try(var.settings.backup_data_encryption.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.keyvault_key_key].id, null)
+      #     }
+      #     state = try(var.settings.backup_data_encryption.encryption_state, false) ? "Enabled" : "Disabled"
+      #   }
+      #   immutabilitySettings = {
+      #     state = try(var.settings.immutability_state, "Disabled")
+      #   }
+      #   softDeleteSettings = {
+      #     state                   = try(var.settings.soft_delete_retention_days, null) != null ? "Enabled" : "Disabled"
+      #     retentionDurationInDays = try(var.settings.soft_delete_retention_days, 14)
+      #   }
+      # }
       storageSettings = [
         {
           datastoreType = var.settings.datastore_type
