@@ -33,15 +33,7 @@ resource "azapi_resource" "backup_vault" {
   location  = var.location
   parent_id = var.resource_group_id
 
-  identity {
-    type = try(var.settings.identity.type, "SystemAssigned")
-
-  identity_ids = try(var.settings.identity.type, "SystemAssigned") == "SystemAssigned" ? [] : [
-    var.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.identity.identity_key].id
-  ]
-  }
-
-  body = jsonencode({
+  body = {
     properties = {
       featureSettings = {
         crossRegionRestoreSettings = {
@@ -67,7 +59,6 @@ resource "azapi_resource" "backup_vault" {
               try(var.managed_identities[try(var.settings.backup_data_encryption.kek_identity.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.kek_identity.kek_identity_key].id,
             null))
           }
-
           keyVaultProperties = {
             keyUri = var.remote_objects.keyvault_keys[try(var.settings.backup_data_encryption.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.keyvault_key_key].id
           }
@@ -76,10 +67,6 @@ resource "azapi_resource" "backup_vault" {
         immutabilitySettings = {
           state = try(var.settings.immutability_state, "Disabled")
         }
-        # softDeleteSettings = {
-        #   state                   = try(var.settings.soft_delete_retention_days, null) != null ? "Enabled" : "Disabled"
-        #   retentionDurationInDays = try(var.settings.soft_delete_retention_days, 14)
-        # }
       }
       storageSettings = [
         {
@@ -88,8 +75,15 @@ resource "azapi_resource" "backup_vault" {
         }
       ]
     }
-  })
+  }
 
-  tags                      = local.tags
-  schema_validation_enabled = true
+  tags = local.tags
+
+  identity {
+    type = try(var.settings.identity.type, "SystemAssigned")
+    identity_ids = try(var.settings.identity.type, "SystemAssigned") == "SystemAssigned" ? [] : [
+      var.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.identity.identity_key].id
+    ]
+  }
 }
+
