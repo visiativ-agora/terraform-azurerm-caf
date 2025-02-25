@@ -28,7 +28,7 @@ resource "azurecaf_name" "bckp" {
 # }
 
 resource "azapi_resource" "backup_vault" {
-  type      = "Microsoft.DataProtection/backupVaults@2025-01-01"
+  type      = "Microsoft.DataProtection/backupVaults@2024-04-01"
   name      = azurecaf_name.bckp.result
   location  = var.location
   parent_id = var.resource_group_id
