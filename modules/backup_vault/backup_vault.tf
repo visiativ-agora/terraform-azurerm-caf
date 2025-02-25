@@ -58,19 +58,19 @@ resource "azapi_resource" "backup_vault" {
       replicatedRegions              = try(var.settings.replicated_regions, [])
       resourceGuardOperationRequests = try(var.settings.resource_guard_operation_requests, [])
       securitySettings = {
-        # encryptionSettings = {
-        #   infrastructureEncryption = try(var.settings.infrastructure_encryption_enabled, false) ? "Enabled" : "Disabled"
-        #   kekIdentity = {
-        #     identityType = try(var.settings.kek_identity_type, "SystemAssigned")
-        #     identityId = try(var.settings.backup_data_encryption.kek_identity_id,
-        #       try(var.managed_identities[try(var.settings.backup_data_encryption.kek_identity.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.kek_identity.kek_identity_key].id,
-        #     null))
-        #   }
-        #   keyVaultProperties = {
-        #     keyUri = try(var.remote_objects.keyvault_keys[try(var.settings.backup_data_encryption.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.keyvault_key_key].id, null)
-        #   }
-        #   state = try(var.settings.backup_data_encryption.encryption_state, false) ? "Enabled" : "Disabled"
-        # }
+        encryptionSettings = {
+          infrastructureEncryption = try(var.settings.infrastructure_encryption_enabled, false) ? "Enabled" : "Disabled"
+          kekIdentity = {
+            identityType = try(var.settings.kek_identity_type, "SystemAssigned")
+            identityId = try(var.settings.backup_data_encryption.kek_identity_id,
+              try(var.managed_identities[try(var.settings.backup_data_encryption.kek_identity.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.kek_identity.kek_identity_key].id,
+            null))
+          }
+          keyVaultProperties = {
+            keyUri = try(var.remote_objects.keyvault_keys[try(var.settings.backup_data_encryption.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.keyvault_key_key].id, null)
+          }
+          state = try(var.settings.backup_data_encryption.encryption_state, false) ? "Enabled" : "Disabled"
+        }
         immutabilitySettings = {
           state = try(var.settings.immutability_state, "Disabled")
         }
