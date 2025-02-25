@@ -55,8 +55,8 @@ resource "azapi_resource" "backup_vault" {
           alertsForAllJobFailures = try(var.settings.alerts_for_all_job_failures, "Disabled")
         }
       }
-      replicatedRegions              = try(var.settings.replicated_regions, [])
-      resourceGuardOperationRequests = try(var.settings.resource_guard_operation_requests, [])
+      # replicatedRegions              = try(var.settings.replicated_regions, [])
+      # resourceGuardOperationRequests = try(var.settings.resource_guard_operation_requests, [])
       securitySettings = {
         # encryptionSettings = {
         #   infrastructureEncryption = try(var.settings.infrastructure_encryption_enabled, false) ? "Enabled" : "Disabled"
