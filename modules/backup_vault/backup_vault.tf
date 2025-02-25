@@ -33,15 +33,13 @@ resource "azapi_resource" "backup_vault" {
   location  = var.location
   parent_id = var.resource_group_id
 
-  # identity {
-  #   type = try(var.settings.identity.type, "SystemAssigned")
-  #   identity_ids = try(var.settings.identity.type, "SystemAssigned") == "SystemAssigned" ? null : [
-  #     var.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.identity.identity_key].id
-  #   ]
-  # }
   identity {
-    type = "None"
+    type = try(var.settings.identity.type, "None")
+    identity_ids = try(var.settings.identity.type, "None") != "None" && try(var.settings.identity.type, "None") != "SystemAssigned" ? [
+      var.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.identity.identity_key].id
+    ] : null
   }
+
   body = {
     properties = {
       # featureSettings = {
