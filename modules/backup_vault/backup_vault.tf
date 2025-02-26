@@ -27,6 +27,72 @@ resource "azurecaf_name" "bckp" {
 #   }
 # }
 
+# resource "azapi_resource" "backup_vault" {
+#   type      = "Microsoft.DataProtection/backupVaults@2024-04-01"
+#   name      = azurecaf_name.bckp.result
+#   location  = var.location
+#   parent_id = var.resource_group_id
+
+#   identity {
+#     type = try(var.settings.identity.type, "None")
+#     identity_ids = try(var.settings.identity.type, "None") != "None" && try(var.settings.identity.type, "None") != "SystemAssigned" ? [
+#       var.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.identity.identity_key].id
+#     ] : null
+#   }
+
+#   body = {
+#     properties = {
+#       featureSettings = {
+#         # crossRegionRestoreSettings = {
+#         #   state = try(var.settings.cross_region_restore_state, "Disabled")
+#         # }
+#         crossSubscriptionRestoreSettings = {
+#           state = try(var.settings.cross_subscription_restore_state, "Disabled")
+#         }
+#       }
+#       monitoringSettings = {
+#         azureMonitorAlertSettings = {
+#           alertsForAllJobFailures = try(var.settings.alerts_for_all_job_failures, "Disabled")
+#         }
+#       }
+#       replicatedRegions              = try(var.settings.replicated_regions, [])
+#       resourceGuardOperationRequests = try(var.settings.resource_guard_operation_requests, [])
+#       securitySettings = {
+#         encryptionSettings = {
+#           infrastructureEncryption = try(var.settings.infrastructure_encryption_enabled, false) ? "Enabled" : "Disabled"
+#           kekIdentity = {
+#             identityType = try(var.settings.identity.type, "SystemAssigned")
+#             # identityId = try(var.settings.backup_data_encryption.kek_identity_id,
+#             #   try(var.managed_identities[try(var.settings.backup_data_encryption.kek_identity.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.kek_identity.kek_identity_key].id,
+#             # null))
+#             identityId = try(var.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.identity.identity_key].id, null)
+#           }
+#           keyVaultProperties = {
+#             keyUri = try(var.remote_objects.keyvault_keys[try(var.settings.backup_data_encryption.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.keyvault_key_key].id, null)
+#           }
+#           state = try(var.settings.backup_data_encryption.encryption_state, false) ? "Enabled" : null
+#         }
+#         immutabilitySettings = {
+#           state = try(var.settings.immutability_state, "Disabled")
+#         }
+#         softDeleteSettings = {
+#           state                   = try(var.settings.softdelete.state, "Off")
+#           retentionDurationInDays = try(var.settings.softdelete.days, 14)
+#         }
+#       }
+#       storageSettings = [
+#         {
+#           datastoreType = var.settings.datastore_type
+#           type          = var.settings.redundancy
+#         }
+#       ]
+#     }
+#   }
+
+#   tags = local.tags
+# }
+
+
 resource "azapi_resource" "backup_vault" {
   type      = "Microsoft.DataProtection/backupVaults@2024-04-01"
   name      = azurecaf_name.bckp.result
@@ -35,17 +101,14 @@ resource "azapi_resource" "backup_vault" {
 
   identity {
     type = try(var.settings.identity.type, "None")
-    identity_ids = try(var.settings.identity.type, "None") != "None" && try(var.settings.identity.type, "None") != "SystemAssigned" ? [
+    identity_ids = try(var.settings.identity.type, "UserAssigned") ? [
       var.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.identity.identity_key].id
     ] : null
   }
 
-  body = {
+  body = jsonencode({
     properties = {
       featureSettings = {
-        # crossRegionRestoreSettings = {
-        #   state = try(var.settings.cross_region_restore_state, "Disabled")
-        # }
         crossSubscriptionRestoreSettings = {
           state = try(var.settings.cross_subscription_restore_state, "Disabled")
         }
@@ -58,58 +121,23 @@ resource "azapi_resource" "backup_vault" {
       replicatedRegions              = try(var.settings.replicated_regions, [])
       resourceGuardOperationRequests = try(var.settings.resource_guard_operation_requests, [])
       securitySettings = {
-
-          dynamic "encryptionSettings" {
-            for_each = try(var.settings.encryptionSettings, null) != null ? [var.settings.encryptionSettings] : []
-
-            content {
-              infrastructureEncryption = try(var.encryptionSettings.infrastructure_encryption_enabled, false) ? "Enabled" : "Disabled"
-              
-              dynamic "kekIdentity" {
-                for_each = try(var.encryptionSettings.identity, null) != null ? [var.encryptionSettings.identity] : []
-              content {
-                identityType = try(var.identity.type, "SystemAssigned")
-                identityId = try(var.managed_identities[try(var.kekIdentity.lz_key, var.client_config.landingzone_key)][var.kekIdentity.identity_key].id, null)
-              }
-              }
-
-              dynamic "keyVaultProperties" {
-                for_each = try(var.settings.backup_data_encryption, null) != null ? [var.settings.backup_data_encryption] : []
-                content {
-                  keyUri = try(var.remote_objects.keyvault_keys[try(var.keyVaultProperties.lz_key, var.client_config.landingzone_key)][var.keyVaultProperties.keyvault_key_key].id, null)
-                }
-              }
-
-              dynamic "state" {
-                for_each = try(var.settings.backup_data_encryption, null) != null ? [var.settings.backup_data_encryption] : []
-                
-                content {
-                  state = try(var.state.encryption_state, false) ? "Enabled" : null
-                }
-              }  
-            }            
-          }
-
-        # encryptionSettings = {
-        #   infrastructureEncryption = try(var.settings.infrastructure_encryption_enabled, false) ? "Enabled" : "Disabled"
-        #   kekIdentity = {
-        #     identityType = try(var.settings.identity.type, "SystemAssigned")
-        #     # identityId = try(var.settings.backup_data_encryption.kek_identity_id,
-        #     #   try(var.managed_identities[try(var.settings.backup_data_encryption.kek_identity.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.kek_identity.kek_identity_key].id,
-        #     # null))
-        #     identityId = try(var.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.identity.identity_key].id, null)
-        #   }
-        #   keyVaultProperties = {
-        #     keyUri = try(var.remote_objects.keyvault_keys[try(var.settings.backup_data_encryption.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.keyvault_key_key].id, null)
-        #   }
-        #   state = try(var.settings.backup_data_encryption.encryption_state, false) ? "Enabled" : null
-        # }
+        encryptionSettings = var.settings.encryptionSettings != null ? {
+          infrastructureEncryption = var.settings.infrastructure_encryption_enabled ? "Enabled" : "Disabled"
+          kekIdentity = try(var.settings.encryptionSettings.backup_data_encryption.kek_identity, null) != null ? {
+            identityType = var.settings.encryptionSettings.backup_data_encryption.kek_identity.kek_identity_type
+            identityId   = var.managed_identities[try(var.settings.encryptionSettings.backup_data_encryption.kek_identity.lz_key, var.client_config.landingzone_key)][var.settings.encryptionSettings.backup_data_encryption.kek_identity.kek_identity_key].id
+          } : null
+          keyVaultProperties = try(var.settings.encryptionSettings.backup_data_encryption.keyvault_key_key, null) != null ? {
+            keyUri = var.remote_objects.keyvault_keys[try(var.settings.encryptionSettings.backup_data_encryption.lz_key, var.client_config.landingzone_key)][var.settings.encryptionSettings.backup_data_encryption.keyvault_key_key].id
+          } : null
+          state = var.settings.encryptionSettings.backup_data_encryption.encryption_state ? "Enabled" : "Disabled"
+        } : null
         immutabilitySettings = {
-          state = try(var.settings.immutability_state, "Disabled")
+          state = var.settings.immutability_state
         }
         softDeleteSettings = {
-          state                   = try(var.settings.softdelete.state, "Off")
-          retentionDurationInDays = try(var.settings.softdelete.days, 14)
+          state                   = var.settings.softdelete.state
+          retentionDurationInDays = try(var.settings.softdelete.days, null)
         }
       }
       storageSettings = [
@@ -119,9 +147,8 @@ resource "azapi_resource" "backup_vault" {
         }
       ]
     }
-  }
+  })
 
   tags = local.tags
 }
-
 
