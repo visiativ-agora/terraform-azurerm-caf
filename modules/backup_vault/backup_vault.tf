@@ -58,6 +58,35 @@ resource "azapi_resource" "backup_vault" {
       replicatedRegions              = try(var.settings.replicated_regions, [])
       resourceGuardOperationRequests = try(var.settings.resource_guard_operation_requests, [])
       securitySettings = {
+
+          dynamic "encryptionSettings" {
+            for_each = try(var.settings.encryptionSettings, null) != null ? [var.settings.encryptionSettings] : []
+
+            content {
+              infrastructureEncryption = try(var.encryptionSettings.infrastructure_encryption_enabled, false) ? "Enabled" : "Disabled"
+              
+              dynamic "kekIdentity" {
+                for_each = try(var.encryptionSettings.identity, null) != null ? [var.encryptionSettings.identity] : []
+
+                identityType = try(var.identity.type, "SystemAssigned")
+                identityId = try(var.managed_identities[try(var.kekIdentity.lz_key, var.client_config.landingzone_key)][var.kekIdentity.identity_key].id, null)
+              }
+
+              dynamic "keyVaultProperties" {
+                for_each = try(var.settings.backup_data_encryption, null) != null ? [var.settings.backup_data_encryption] : []
+
+                keyUri = try(var.remote_objects.keyvault_keys[try(var.keyVaultProperties.lz_key, var.client_config.landingzone_key)][var.keyVaultProperties.keyvault_key_key].id, null)
+            
+              }
+
+              dynamic "state" {
+                for_each = try(var.settings.backup_data_encryption, null) != null ? [var.settings.backup_data_encryption] : []
+
+                state = try(var.state.encryption_state, false) ? "Enabled" : null
+            
+              }              
+          }
+
         # encryptionSettings = {
         #   infrastructureEncryption = try(var.settings.infrastructure_encryption_enabled, false) ? "Enabled" : "Disabled"
         #   kekIdentity = {
