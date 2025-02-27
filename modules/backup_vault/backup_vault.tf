@@ -106,16 +106,23 @@ resource "azapi_resource" "backup_vault" {
   #   ] : null
   # }
 
-  dynamic "identity" {
-    for_each = try(var.settings.identity, null) != null ? [var.settings.identity] : []
-
-    content {
-      type         = identity.value.type
-      identity_ids = identity.value.type == "UserAssigned" ? [
-      var.managed_identities[try(identity.value.lz_key, var.client_config.landingzone_key)][identity.value.identity_key].id
+  identity {
+    type = try(var.settings.identity.type, "None")
+    identity_ids = var.settings.type == "UserAssigned" ? [
+      var.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.identity.identity_key].id
     ] : null
-    }
   }
+
+  # dynamic "identity" {
+  #   for_each = try(var.settings.identity, null) != null ? [var.settings.identity] : []
+
+  #   content {
+  #     type         = identity.value.type
+  #     identity_ids = identity.value.type == "UserAssigned" ? [
+  #     var.managed_identities[try(identity.value.lz_key, var.client_config.landingzone_key)][identity.value.identity_key].id
+  #   ] : null
+  #   }
+  # }
 
 
   body = jsonencode({
