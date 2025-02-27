@@ -142,7 +142,7 @@ resource "azapi_resource" "backup_vault" {
       securitySettings = {
 
         encryptionSettings = try(var.settings.encryptionSettings, null) != null ? {
-          infrastructureEncryption = var.settings.infrastructure_encryption_enabled ? "Enabled" : "Disabled"
+          infrastructureEncryption = var.settings.encryptionSettings.infrastructure_encryption_enabled ? "Enabled" : "Disabled"
           kekIdentity = {
             identityType = try(var.settings.identity.type, "SystemAssigned")
             identityId = try(var.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.identity.identity_key].id, null)
