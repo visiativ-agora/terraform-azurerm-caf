@@ -108,7 +108,7 @@ resource "azapi_resource" "backup_vault" {
 
   identity {
     type = try(var.settings.identity.type, "None")
-    identity_ids = var.settings.type == "UserAssigned" ? [
+    identity_ids = var.settings.identity.type == "UserAssigned" ? [
       var.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.identity.identity_key].id
     ] : null
   }
