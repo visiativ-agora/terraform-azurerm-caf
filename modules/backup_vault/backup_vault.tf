@@ -140,7 +140,8 @@ resource "azapi_resource" "backup_vault" {
       replicatedRegions              = try(var.settings.replicated_regions, [])
       resourceGuardOperationRequests = try(var.settings.resource_guard_operation_requests, [])
       securitySettings = {
-        encryptionSettings = var.settings.encryptionSettings != null ? {
+
+        encryptionSettings = try(var.settings.encryptionSettings, null) != null ? {
           infrastructureEncryption = var.settings.infrastructure_encryption_enabled ? "Enabled" : "Disabled"
           kekIdentity = {
             identityType = try(var.settings.identity.type, "SystemAssigned")
@@ -151,9 +152,11 @@ resource "azapi_resource" "backup_vault" {
           } : null
           state = var.settings.encryptionSettings.backup_data_encryption.encryption_state ? "Enabled" : "Disabled"
         } : null
+
         immutabilitySettings = {
           state = try(var.settings.immutability_state, "Disabled")
         }
+        
         softDeleteSettings = {
           state                   = try(var.settings.softdelete.state, "Off")
           retentionDurationInDays = try(var.settings.softdelete.days, null)
