@@ -142,10 +142,10 @@ resource "azapi_resource" "backup_vault" {
       securitySettings = {
         encryptionSettings = var.settings.encryptionSettings != null ? {
           infrastructureEncryption = var.settings.infrastructure_encryption_enabled ? "Enabled" : "Disabled"
-          kekIdentity = try(var.settings.encryptionSettings.backup_data_encryption.kek_identity, null) != null ? {
-            identityType = var.settings.encryptionSettings.backup_data_encryption.kek_identity.kek_identity_type
-            identityId   = var.managed_identities[try(var.settings.encryptionSettings.backup_data_encryption.kek_identity.lz_key, var.client_config.landingzone_key)][var.settings.encryptionSettings.backup_data_encryption.kek_identity.kek_identity_key].id
-          } : null
+          kekIdentity = {
+            identityType = try(var.settings.identity.type, "SystemAssigned")
+            identityId = try(var.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.identity.identity_key].id, null)
+          }
           keyVaultProperties = try(var.settings.encryptionSettings.backup_data_encryption.keyvault_key_key, null) != null ? {
             keyUri = var.remote_objects.keyvault_keys[try(var.settings.encryptionSettings.backup_data_encryption.lz_key, var.client_config.landingzone_key)][var.settings.encryptionSettings.backup_data_encryption.keyvault_key_key].id
           } : null
