@@ -152,10 +152,10 @@ resource "azapi_resource" "backup_vault" {
           state = var.settings.encryptionSettings.backup_data_encryption.encryption_state ? "Enabled" : "Disabled"
         } : null
         immutabilitySettings = {
-          state = var.settings.immutability_state
+          state = try(var.settings.immutability_state, "Disabled")
         }
         softDeleteSettings = {
-          state                   = var.settings.softdelete.state
+          state                   = try(var.settings.softdelete.state, "Off")
           retentionDurationInDays = try(var.settings.softdelete.days, null)
         }
       }
