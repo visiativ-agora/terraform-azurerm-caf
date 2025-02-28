@@ -26,85 +26,11 @@ resource "azurecaf_name" "bckp" {
 #     }
 #   }
 # }
-
-# resource "azapi_resource" "backup_vault" {
-#   type      = "Microsoft.DataProtection/backupVaults@2024-04-01"
-#   name      = azurecaf_name.bckp.result
-#   location  = var.location
-#   parent_id = var.resource_group_id
-
-#   identity {
-#     type = try(var.settings.identity.type, "None")
-#     identity_ids = try(var.settings.identity.type, "None") != "None" && try(var.settings.identity.type, "None") != "SystemAssigned" ? [
-#       var.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.identity.identity_key].id
-#     ] : null
-#   }
-
-#   body = {
-#     properties = {
-#       featureSettings = {
-#         # crossRegionRestoreSettings = {
-#         #   state = try(var.settings.cross_region_restore_state, "Disabled")
-#         # }
-#         crossSubscriptionRestoreSettings = {
-#           state = try(var.settings.cross_subscription_restore_state, "Disabled")
-#         }
-#       }
-#       monitoringSettings = {
-#         azureMonitorAlertSettings = {
-#           alertsForAllJobFailures = try(var.settings.alerts_for_all_job_failures, "Disabled")
-#         }
-#       }
-#       replicatedRegions              = try(var.settings.replicated_regions, [])
-#       resourceGuardOperationRequests = try(var.settings.resource_guard_operation_requests, [])
-#       securitySettings = {
-#         encryptionSettings = {
-#           infrastructureEncryption = try(var.settings.infrastructure_encryption_enabled, false) ? "Enabled" : "Disabled"
-#           kekIdentity = {
-#             identityType = try(var.settings.identity.type, "SystemAssigned")
-#             # identityId = try(var.settings.backup_data_encryption.kek_identity_id,
-#             #   try(var.managed_identities[try(var.settings.backup_data_encryption.kek_identity.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.kek_identity.kek_identity_key].id,
-#             # null))
-#             identityId = try(var.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.identity.identity_key].id, null)
-#           }
-#           keyVaultProperties = {
-#             keyUri = try(var.remote_objects.keyvault_keys[try(var.settings.backup_data_encryption.lz_key, var.client_config.landingzone_key)][var.settings.backup_data_encryption.keyvault_key_key].id, null)
-#           }
-#           state = try(var.settings.backup_data_encryption.encryption_state, false) ? "Enabled" : null
-#         }
-#         immutabilitySettings = {
-#           state = try(var.settings.immutability_state, "Disabled")
-#         }
-#         softDeleteSettings = {
-#           state                   = try(var.settings.softdelete.state, "Off")
-#           retentionDurationInDays = try(var.settings.softdelete.days, 14)
-#         }
-#       }
-#       storageSettings = [
-#         {
-#           datastoreType = var.settings.datastore_type
-#           type          = var.settings.redundancy
-#         }
-#       ]
-#     }
-#   }
-
-#   tags = local.tags
-# }
-
-
 resource "azapi_resource" "backup_vault" {
   type      = "Microsoft.DataProtection/backupVaults@2024-04-01"
   name      = azurecaf_name.bckp.result
   location  = var.location
   parent_id = var.resource_group_id
-
-  # identity {
-  #   type = try(var.settings.identity.type, "None")
-  #   identity_ids = try(var.settings.identity.type, "UserAssigned") ? [
-  #     var.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.identity.identity_key].id
-  #   ] : null
-  # }
 
   identity {
     type = try(var.settings.identity.type, "None")
@@ -113,19 +39,7 @@ resource "azapi_resource" "backup_vault" {
     ] : null
   }
 
-  # dynamic "identity" {
-  #   for_each = try(var.settings.identity, null) != null ? [var.settings.identity] : []
-
-  #   content {
-  #     type         = identity.value.type
-  #     identity_ids = identity.value.type == "UserAssigned" ? [
-  #     var.managed_identities[try(identity.value.lz_key, var.client_config.landingzone_key)][identity.value.identity_key].id
-  #   ] : null
-  #   }
-  # }
-
-
-  body = {
+  body = jsonencode({
     properties = {
       featureSettings = {
         crossSubscriptionRestoreSettings = {
@@ -145,7 +59,7 @@ resource "azapi_resource" "backup_vault" {
           infrastructureEncryption = var.settings.encryptionSettings.infrastructure_encryption_enabled ? "Enabled" : "Disabled"
           kekIdentity = {
             identityType = try(var.settings.identity.type, "SystemAssigned")
-            identityId = try(var.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.identity.identity_key].id, null)
+            identityId   = try(var.settings.identity.type, "SystemAssigned") == "UserAssigned" ? try(var.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.identity.identity_key].id, null) : null
           }
           keyVaultProperties = try(var.settings.encryptionSettings.backup_data_encryption.keyvault_key_key, null) != null ? {
             keyUri = var.remote_objects.keyvault_keys[try(var.settings.encryptionSettings.backup_data_encryption.lz_key, var.client_config.landingzone_key)][var.settings.encryptionSettings.backup_data_encryption.keyvault_key_key].id
@@ -169,7 +83,7 @@ resource "azapi_resource" "backup_vault" {
         }
       ]
     }
-  }
+  })
 
   tags = local.tags
 }
