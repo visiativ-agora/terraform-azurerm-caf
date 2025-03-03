@@ -187,22 +187,22 @@ resource "azapi_update_resource" "approve_private_endpoint" {
   type = "Microsoft.Sql/servers/privateEndpointConnections@2024-05-01-preview"
   # resource_id = "${var.mssql_servers[try(var.settings.lz_key, var.client_config.landingzone_key)][var.settings.mssql_server_key].id}/privateEndpointConnections/${local.private_endpoint_connection_name}"
   resource_id = local.private_endpoint_connection_name
-  # body = {
-  #   properties = {
-  #     privateLinkServiceConnectionState = {
-  #       status      = "Approved"
-  #       description = "Approved by Terraform"
-  #     }
-  #   }
-  # }  
-  body = jsonencode({
+  body = {
     properties = {
       privateLinkServiceConnectionState = {
         status      = "Approved"
         description = "Approved by Terraform"
       }
     }
-  })
+  }  
+  # body = jsonencode({
+  #   properties = {
+  #     privateLinkServiceConnectionState = {
+  #       status      = "Approved"
+  #       description = "Approved by Terraform"
+  #     }
+  #   }
+  # })
 
   lifecycle {
     ignore_changes = all
