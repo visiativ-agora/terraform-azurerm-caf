@@ -31,6 +31,7 @@ resource "azapi_resource" "backup_vault" {
   name      = azurecaf_name.bckp.result
   location  = var.location
   parent_id = var.resource_group_id
+  schema_validation_enabled = false
 
   identity {
     type = try(var.settings.identity.type, "None")
