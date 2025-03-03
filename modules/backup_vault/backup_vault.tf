@@ -39,7 +39,7 @@ resource "azapi_resource" "backup_vault" {
     ] : null
   }
 
-  body = {
+  body = jsonencode({
     properties = {
       featureSettings = {
         crossSubscriptionRestoreSettings = {
@@ -83,7 +83,7 @@ resource "azapi_resource" "backup_vault" {
         }
       ]
     }
-  }
+  })
 
   tags = local.tags
 }
