@@ -7,7 +7,7 @@ module "container_apps" {
   resource_group_name          = can(each.value.resource_group.name) || can(each.value.resource_group_name) ? try(each.value.resource_group.name, each.value.resource_group_name) : local.combined_objects_resource_groups[try(each.value.resource_group.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group_key, each.value.resource_group.key)].name
   base_tags                    = local.global_settings.inherit_tags
   container_app_environment_id = can(each.value.container_app_environment_id) ? each.value.container_app_environment_id : local.combined_objects_container_app_environments[try(each.value.lz_key, local.client_config.landingzone_key)][each.value.container_app_environment_key].id
-  workload_profile_name        = each.value.workload_profile_name
+  workload_profile_name        = try(each.value.workload_profile_name, null)
   client_config                = local.client_config
   combined_diagnostics         = local.combined_diagnostics
   diagnostic_profiles          = try(each.value.diagnostic_profiles, {})
