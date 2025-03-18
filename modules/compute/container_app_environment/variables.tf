@@ -18,3 +18,10 @@ variable "resource_group" {
 }
 variable "settings" {}
 variable "subnet_id" {}
+# variable "private_endpoints" {
+#   default = {}
+# }
+# variable "private_dns" {
+#   default = {}
+# }
+# variable "vnets" {}
