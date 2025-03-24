@@ -8,10 +8,14 @@ resource "azurerm_web_application_firewall_policy" "wafpolicy" {
   dynamic "custom_rules" {
     for_each = try(var.settings.custom_rules, {})
     content {
-      name      = custom_rules.value.name
-      priority  = custom_rules.value.priority
-      rule_type = custom_rules.value.rule_type
-      action    = custom_rules.value.action
+      name                 = custom_rules.value.name
+      priority             = custom_rules.value.priority
+      rule_type            = custom_rules.value.rule_type
+      action               = custom_rules.value.action
+      enabled              = try(custom_rules.value.enabled, null)
+      rate_limit_duration  = try(custom_rules.value.rate_limit_duration, null)
+      rate_limit_threshold = try(custom_rules.value.rate_limit_threshold, null)
+      group_rate_limit_by  = try(custom_rules.value.group_rate_limit_by, null)
 
       dynamic "match_conditions" {
         for_each = custom_rules.value.match_conditions
