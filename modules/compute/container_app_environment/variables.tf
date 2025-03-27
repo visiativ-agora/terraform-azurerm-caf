@@ -18,10 +18,19 @@ variable "resource_group" {
 }
 variable "settings" {}
 variable "subnet_id" {}
-# variable "private_endpoints" {
-#   default = {}
-# }
-# variable "private_dns" {
-#   default = {}
-# }
-# variable "vnets" {}
+
+variable "private_dns" {
+  default = {}
+}
+variable "base_tags" {
+  description = "Base tags for the resource to be inherited from the resource group."
+  type        = bool
+}
+variable "virtual_subnets" {
+  description = "Map of virtual_subnets objects"
+  default     = {}
+  nullable    = false
+}
+variable "vnets" {
+  default = {}
+}
