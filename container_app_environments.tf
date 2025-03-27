@@ -1,5 +1,6 @@
 module "container_app_environments" {
-  source   = "./modules/compute/container_app_environment"
+  source = "./modules/compute/container_app_environment"
+  # depends_on = [module.networking]
   for_each = local.compute.container_app_environments
 
   location             = can(local.global_settings.regions[each.value.region]) ? local.global_settings.regions[each.value.region] : local.combined_objects_resource_groups[try(each.value.resource_group.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group.key, each.value.resource_group_key)].location
@@ -13,6 +14,9 @@ module "container_app_environments" {
   diagnostics          = local.combined_diagnostics
   global_settings      = local.global_settings
   settings             = each.value
+  vnets                = local.combined_objects_networking
+  virtual_subnets      = local.combined_objects_virtual_subnets
+  private_dns          = local.combined_objects_private_dns
 }
 
 output "container_app_environments" {

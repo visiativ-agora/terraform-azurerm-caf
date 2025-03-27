@@ -18,3 +18,15 @@ variable "resource_group" {
 }
 variable "settings" {}
 variable "subnet_id" {}
+
+variable "private_dns" {
+  default = {}
+}
+variable "virtual_subnets" {
+  description = "Map of virtual_subnets objects"
+  default     = {}
+  nullable    = false
+}
+variable "vnets" {
+  default = {}
+}
