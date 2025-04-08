@@ -455,3 +455,6 @@ variable "recovery_plans" {
 variable "management_locks" {
   default = {}
 }
+variable "mi_federated_credentials" {
+  default = {}
+}
