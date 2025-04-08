@@ -45,3 +45,4 @@ variable "azuread_federated_credentials" {
 variable "mi_federated_credentials" {
   default = {}
 }
+variable "azuread_applications" {}

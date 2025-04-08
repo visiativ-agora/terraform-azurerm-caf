@@ -7,13 +7,13 @@ module "aks_clusters" {
   depends_on = [null_resource.register_feature_preview, module.networking, module.routes, module.azurerm_firewall_policies, module.application_gateways, module.application_gateway_platforms, module.application_gateway_applications]
   for_each   = local.compute.aks_clusters
 
-  client_config       = local.client_config
-  diagnostic_profiles = try(each.value.diagnostic_profiles, {})
-  diagnostics         = local.combined_diagnostics
-  global_settings     = local.global_settings
-  managed_identities  = local.combined_objects_managed_identities
-  settings            = each.value
-  vnets               = local.combined_objects_networking
+  client_config        = local.client_config
+  diagnostic_profiles  = try(each.value.diagnostic_profiles, {})
+  diagnostics          = local.combined_diagnostics
+  global_settings      = local.global_settings
+  managed_identities   = local.combined_objects_managed_identities
+  settings             = each.value
+  vnets                = local.combined_objects_networking
   azuread_applications = local.combined_objects_azuread_applications
 
   admin_group_object_ids = try(each.value.admin_groups.azuread_group_keys, null) == null ? null : try(
