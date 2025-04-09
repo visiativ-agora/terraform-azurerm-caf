@@ -1,6 +1,6 @@
 module "mi_federated_credentials" {
   source   = "../../security/mi_federated_credentials"
-  for_each = var.settings.mi_federated_credentials
+  for_each = lookup(var.settings.mi_federated_credentials, {})
 
   client_config      = var.client_config
   settings           = each.value
