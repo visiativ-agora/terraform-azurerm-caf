@@ -76,6 +76,14 @@ resource "azurerm_storage_account" "stg" {
       default_service_version  = try(var.storage_account.blob_properties.default_service_version, "2020-06-12")
       last_access_time_enabled = try(var.storage_account.blob_properties.last_access_time_enabled, false)
 
+      dynamic "restore_policy" {
+        for_each = lookup(var.storage_account.blob_properties, "restore_policy", false) == false ? [] : [1]
+
+        content {
+          days = var.storage_account.blob_properties.restore_policy.days
+        }
+      }
+
       dynamic "cors_rule" {
         for_each = lookup(var.storage_account.blob_properties, "cors_rule", false) == false ? [] : [1]
 
@@ -86,7 +94,7 @@ resource "azurerm_storage_account" "stg" {
           exposed_headers    = var.storage_account.blob_properties.cors_rule.exposed_headers
           max_age_in_seconds = var.storage_account.blob_properties.cors_rule.max_age_in_seconds
         }
-      }
+      }      
 
       dynamic "delete_retention_policy" {
         for_each = lookup(var.storage_account.blob_properties, "delete_retention_policy", false) == false ? [] : [1]
