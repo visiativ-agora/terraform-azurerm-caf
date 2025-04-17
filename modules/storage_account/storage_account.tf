@@ -94,7 +94,7 @@ resource "azurerm_storage_account" "stg" {
           exposed_headers    = var.storage_account.blob_properties.cors_rule.exposed_headers
           max_age_in_seconds = var.storage_account.blob_properties.cors_rule.max_age_in_seconds
         }
-      }      
+      }
 
       dynamic "delete_retention_policy" {
         for_each = lookup(var.storage_account.blob_properties, "delete_retention_policy", false) == false ? [] : [1]
