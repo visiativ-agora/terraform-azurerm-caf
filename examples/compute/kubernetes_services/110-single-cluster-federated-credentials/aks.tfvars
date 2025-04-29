@@ -77,8 +77,8 @@ aks_clusters = {
       }
     }
 
-    oidc_issuer_enabled                 = true
-    workload_identity_enabled           = true
+    oidc_issuer_enabled       = true
+    workload_identity_enabled = true
 
     mi_federated_credentials = {
       cred1 = {
