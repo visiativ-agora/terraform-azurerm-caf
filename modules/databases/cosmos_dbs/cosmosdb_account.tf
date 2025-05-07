@@ -48,7 +48,6 @@ resource "azurerm_cosmosdb_account" "cosmos_account" {
     }
   }
 
-
   dynamic "identity" {
     for_each = can(var.settings.identity) ? [var.settings.identity] : []
 
@@ -66,6 +65,19 @@ resource "azurerm_cosmosdb_account" "cosmos_account" {
       name = capabilities.value
     }
   }
+
+  dynamic "backup" {
+    for_each = try(var.settings.backup, null) != null ? [var.settings.backup] : []
+
+    content {
+      type                = backup.value.type
+      tier                = try(backup.value.tier, null)
+      interval_in_minutes = try(backup.value.interval_in_minutes, null)
+      retention_in_hours  = try(backup.value.retention_in_hours, null)
+      storage_redundancy  = try(backup.value.storage_redundancy, null)
+    }
+  }
+
   dynamic "restore" {
     for_each = try(var.settings.restore, null) != null ? [var.settings.restore] : []
     content {
@@ -81,5 +93,3 @@ resource "azurerm_cosmosdb_account" "cosmos_account" {
     }
   }
 }
-
-
