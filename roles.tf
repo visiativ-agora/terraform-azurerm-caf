@@ -249,9 +249,9 @@ locals {
       mapping.object_id_resource_type,
       mapping.object_id_key_resource,
       replace(mapping.role_definition_name, " ", "_"),
-      mapping.lz_key1,
-      mapping.lz_key2,
-      mapping.lz_key3
+      lookup(mapping, "lz_key1", ""),
+      lookup(mapping, "lz_key2", ""),
+      lookup(mapping, "lz_key3", "")
     ) => mapping
   }
 }
