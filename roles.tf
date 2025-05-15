@@ -244,7 +244,22 @@ locals {
           ]
         ]
       ]
-    ) : format("%s_%s_%s_%s_%s", mapping.object_id_resource_type, mapping.scope_key_resource, replace(mapping.role_definition_name, " ", "_"), mapping.object_id_key_resource, coalesce(mapping.object_id_lz_key, var.current_landingzone_key)) => mapping
+    ) :
+    ( mapping.object_id_lz_key != null && mapping.object_id_lz_key != var.current_landingzone_key
+      ? format("%s_%s_%s_%s_%s",
+          mapping.object_id_resource_type,
+          mapping.scope_key_resource,
+          replace(mapping.role_definition_name, " ", "_"),
+          mapping.object_id_key_resource,
+          mapping.object_id_lz_key
+        )
+      : format("%s_%s_%s_%s",
+          mapping.object_id_resource_type,
+          mapping.scope_key_resource,
+          replace(mapping.role_definition_name, " ", "_"),
+          mapping.object_id_key_resource
+        )
+    ) => mapping
   }
 }
 # The code transform this input format to
