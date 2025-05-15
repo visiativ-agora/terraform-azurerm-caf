@@ -207,7 +207,9 @@ locals {
     for k, v in try(var.custom_role_definitions, {}) : k => flatten([
       for assignment_type, attrs in try(v.assignable_scopes, {}) : [
         for attr in attrs : [
-          try(attr.id, local.services_roles[assignment_type][try(attr.lz_key, var.current_landingzone_key)][attr.key].id)
+          try(attr.id, local.services_roles[assignment_type][
+            coalesce(try(attr.lz_key, null), var.current_landingzone_key)
+          ][attr.key].id)
         ]
       ]
     ])
@@ -242,7 +244,7 @@ locals {
           ]
         ]
       ]
-    ) : format("%s_%s_%s_%s", mapping.object_id_resource_type, mapping.scope_key_resource, replace(mapping.role_definition_name, " ", "_"), mapping.object_id_key_resource) => mapping
+    ) : format("%s_%s_%s_%s_%s", mapping.object_id_resource_type, mapping.scope_key_resource, replace(mapping.role_definition_name, " ", "_"), mapping.object_id_key_resource, coalesce(mapping.object_id_lz_key, var.current_landingzone_key)) => mapping
   }
 }
 # The code transform this input format to
