@@ -245,20 +245,13 @@ locals {
         ]
       ]
     ) :
-    ( mapping.object_id_lz_key != null && mapping.object_id_lz_key != var.current_landingzone_key
-      ? format("%s_%s_%s_%s_%s",
-          mapping.object_id_resource_type,
-          mapping.scope_key_resource,
-          replace(mapping.role_definition_name, " ", "_"),
-          mapping.object_id_key_resource,
-          mapping.object_id_lz_key
-        )
-      : format("%s_%s_%s_%s",
-          mapping.object_id_resource_type,
-          mapping.scope_key_resource,
-          replace(mapping.role_definition_name, " ", "_"),
-          mapping.object_id_key_resource
-        )
+    format("%s_%s_%s_%s_%s_%s",
+      mapping.object_id_resource_type,
+      mapping.object_id_key_resource,
+      replace(mapping.role_definition_name, " ", "_"),
+      mapping.lz_key1,
+      mapping.lz_key2,
+      mapping.lz_key3
     ) => mapping
   }
 }
