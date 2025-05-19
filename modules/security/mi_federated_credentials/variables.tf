@@ -13,3 +13,5 @@ variable "managed_identities" {
 variable "oidc_issuer_url" {
   default = null
 }
+variable "resource_group_name" {
+}
