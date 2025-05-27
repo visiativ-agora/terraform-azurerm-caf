@@ -50,14 +50,8 @@ resource "azurerm_cosmosdb_sql_role_assignment" "cosmos_account" {
   role_definition_id = (
     each.value.mode == "custom_role_mapping" ?
     module.cosmosdb_custom_roles[each.value.role_definition_name].id :
-    format("/subscriptions/%s/resourceGroups/%s/providers/Microsoft.DocumentDB/databaseAccounts/%s/sqlRoleDefinitions/%s",
-      local.client_config.subscription_id,
-      (
-        try(each.value.resource_group.name, null) != null || try(each.value.resource_group_name, null) != null ?
-        try(each.value.resource_group.name, each.value.resource_group_name) :
-        local.combined_objects_resource_groups[try(each.value.resource_group.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group_key, each.value.resource_group.key)].name
-      ),
-      local.combined_objects_resource_groups[try(each.value.resource_group.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group_key, each.value.resource_group.key)].name,
+    format("%s/sqlRoleDefinitions/%s",
+      local.combined_objects_cosmos_dbs[try(each.value.account_lz_key, local.client_config.landingzone_key)][each.value.account_key].id,
       local.cosmosdb_built_in_roles[lower(each.value.role_definition_name)]
     )
   )
