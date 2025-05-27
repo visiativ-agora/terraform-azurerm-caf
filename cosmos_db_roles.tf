@@ -51,7 +51,7 @@ resource "azurerm_cosmosdb_sql_role_assignment" "cosmos_account" {
     each.value.mode == "custom_role_mapping" ?
     module.cosmosdb_custom_roles[each.value.role_definition_name].id :
     format("%s/sqlRoleDefinitions/%s",
-      local.combined_objects_cosmos_dbs[try(each.value.account_lz_key, local.client_config.landingzone_key)][each.value.account_key].id,
+      local.combined_objects_cosmos_dbs[try(each.value.account.lz_key, local.client_config.landingzone_key)][try(each.value.account_key, each.value.account.key)].id,
       local.cosmosdb_built_in_roles[lower(each.value.role_definition_name)]
     )
   )
