@@ -109,7 +109,7 @@ storage_accounts = {
 
     customer_managed_key = {
       keyvault_key     = "kv1"
-      keyvault_key_key = "cmk1"      
+      keyvault_key_key = "cmk1"
       # key_vault_uri              = "https://cmk.vault.azure.net/"
       # key_name                   = "st-cmk"
       user_assigned_identity_key = "msi"

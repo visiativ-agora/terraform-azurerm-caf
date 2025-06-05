@@ -43,19 +43,19 @@ resource "azurerm_storage_account_customer_managed_key" "cmk" {
   }
 
   storage_account_id = module.storage_accounts[each.key].id
-  
+
   key_vault_id = (
     try(each.value.customer_managed_key.key_vault_uri, null) == null
     ? coalesce(
-        try(each.value.customer_managed_key.key_vault_id, null),
-        (
-          try(each.value.customer_managed_key["keyvault_key"], null) != null
-          ? local.combined_objects_keyvaults[
-              try(each.value.customer_managed_key.lz_key, local.client_config.landingzone_key)
-            ][try(each.value.customer_managed_key["keyvault_key"], null)].id
-          : null
-        )
+      try(each.value.customer_managed_key.key_vault_id, null),
+      (
+        try(each.value.customer_managed_key["keyvault_key"], null) != null
+        ? local.combined_objects_keyvaults[
+          try(each.value.customer_managed_key.lz_key, local.client_config.landingzone_key)
+        ][try(each.value.customer_managed_key["keyvault_key"], null)].id
+        : null
       )
+    )
     : null
   )
 
