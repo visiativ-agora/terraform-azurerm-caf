@@ -26,8 +26,10 @@ resource "azurerm_mssql_server" "mssql" {
 
     content {
       type = identity.value.type
+      identity_ids = try(local.managed_identities, null)
     }
   }
+  primary_user_assigned_identity_id = try(var.managed_identities[var.client_config.landingzone_key][var.settings.identity.primary_user_assigned_identity_key].id, null)
 
 }
 
