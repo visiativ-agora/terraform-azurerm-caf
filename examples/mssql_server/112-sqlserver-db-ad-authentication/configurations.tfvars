@@ -82,7 +82,7 @@ mssql_databases = {
       group1 = { # group_name
         db_roles = ["db_owner", "db_accessadmin"]
         azuread_groups = {
-          keys    = ["sqlserver_admin"]
+          keys = ["sqlserver_admin"]
         }
       }
     }
