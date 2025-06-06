@@ -12,6 +12,7 @@ module "mssql_databases" {
   managed_identities        = local.combined_objects_managed_identities
   settings                  = each.value
   client_config             = local.client_config
+  azuread_groups            = local.combined_objects_azuread_groups
   server_id                 = can(each.value.server_id) ? each.value.server_id : local.combined_objects_mssql_servers[try(each.value.lz_key, local.client_config.landingzone_key)][each.value.mssql_server_key].id
   server_name               = can(each.value.server_name) ? each.value.server_name : local.combined_objects_mssql_servers[try(each.value.lz_key, local.client_config.landingzone_key)][each.value.mssql_server_key].name
   elastic_pool_id           = can(each.value.elastic_pool_id) || can(each.value.elastic_pool_key) == false ? try(each.value.elastic_pool_id, null) : local.combined_objects_mssql_elastic_pools[try(each.value.lz_key, local.client_config.landingzone_key)][each.value.elastic_pool_key].id

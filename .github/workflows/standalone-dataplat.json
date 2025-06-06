@@ -56,6 +56,7 @@
     "mssql_server/109-sqlserver-network-firewall-rule",
     "mssql_server/112-sqlserver-db-user-creation",
     "mssql_server/113-sqlserver-db-job-agent",
+    "mssql_server/114-sqlserver-db-adgroup-authentication",
     "mysql_flexible_server/100-simple-mysql-flexible",
     "mysql_flexible_server/101-delegated-subnet-with-fw-rule",
     "mysql_flexible_server/102-advanced-mysql-flexible",
