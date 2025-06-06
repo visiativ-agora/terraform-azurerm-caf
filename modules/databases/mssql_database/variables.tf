@@ -42,3 +42,7 @@ variable "client_config" {
 variable "mssql_servers" {}
 
 variable "keyvault_id" {}
+
+variable "azuread_groups" {
+  default = null
+}
