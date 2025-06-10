@@ -31,12 +31,12 @@ module "search_shared_private_link_service" {
   search_service_id = module.search_service[each.value.search_service.key].id
   target_resource_id = {
     "storage" = local.combined_objects_storage_accounts[
-      try(each.value.target_resource.lz_key, local.client_config.landingzone_key)
-    ][each.value.target_resource.key].id
+      try(each.value.shared_private_access.target_resource.lz_key, local.client_config.landingzone_key)
+    ][each.value.shared_private_access.target_resource.key].id
     "cosmosdb" = local.combined_objects_cosmosdb_sql_databases[
-      try(each.value.target_resource.lz_key, local.client_config.landingzone_key)
-    ][each.value.target_resource.key].id
-  }[each.value.target_resource.type]
+      try(each.value.shared_private_access.target_resource.lz_key, local.client_config.landingzone_key)
+    ][each.value.shared_private_access.target_resource.key].id
+  }[each.value.shared_private_access.target_resource.type]
 }
 
 output "search_shared_private_link_service" {
