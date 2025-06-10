@@ -41,7 +41,7 @@ module "search_shared_private_link_service" {
   client_config     = local.client_config
   global_settings   = local.global_settings
   settings          = each.value.settings
-  search_service_id = module.search_service[each.value.search_service.key].id
+  search_service_id = module.search_service[each.value.search_key].id
   target_resource_id = {
     "storage" = local.combined_objects_storage_accounts[
       try(each.value.settings.target_resourcelz_key, local.client_config.landingzone_key)
