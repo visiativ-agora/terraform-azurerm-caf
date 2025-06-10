@@ -20,23 +20,44 @@ output "search_service" {
   value = module.search_service
 }
 
+
+locals {
+  shared_private_access = flatten([
+    for search_key, search_val in local.search_services.search_services : [
+      for spa_key, spa_val in search_val.shared_private_access : {
+        search_key = search_key
+        spa_key    = spa_key
+        settings   = spa_val
+      }
+    ]
+  ])
+}
+
 module "search_shared_private_link_service" {
   depends_on = [module.search_service]
   source     = "./modules/search_service/private_link"
-  for_each   = local.search_services.search_services
+  for_each   = { for idx, val in local.shared_private_access : "${val.search_key}-${val.spa_key}" => val }
 
   client_config     = local.client_config
   global_settings   = local.global_settings
   settings          = each.value.shared_private_access
   search_service_id = module.search_service[each.value.search_service.key].id
+  # target_resource_id = {
+  #   "storage" = local.combined_objects_storage_accounts[
+  #     try(each.value.shared_private_access.target_resource.lz_key, local.client_config.landingzone_key)
+  #   ][each.value.shared_private_access.target_resource.key].id
+  #   "cosmosdb" = local.combined_objects_cosmosdb_sql_databases[
+  #     try(each.value.shared_private_access.target_resource.lz_key, local.client_config.landingzone_key)
+  #   ][each.value.shared_private_access.target_resource.key].id
+  # }[each.value.shared_private_access.target_resource.type]
   target_resource_id = {
     "storage" = local.combined_objects_storage_accounts[
-      try(each.value.shared_private_access.target_resource.lz_key, local.client_config.landingzone_key)
-    ][each.value.shared_private_access.target_resource.key].id
+      try(each.value.settings.target_resource.lz_key, local.client_config.landingzone_key)
+    ][each.value.settings.target_resource.key].id
     "cosmosdb" = local.combined_objects_cosmosdb_sql_databases[
-      try(each.value.shared_private_access.target_resource.lz_key, local.client_config.landingzone_key)
-    ][each.value.shared_private_access.target_resource.key].id
-  }[each.value.shared_private_access.target_resource.type]
+      try(each.value.settings.target_resource.lz_key, local.client_config.landingzone_key)
+    ][each.value.settings.target_resource.key].id
+  }[each.value.settings.target_resource.type]  
 }
 
 output "search_shared_private_link_service" {
