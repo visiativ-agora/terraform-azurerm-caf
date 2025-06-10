@@ -19,3 +19,26 @@ module "search_service" {
 output "search_service" {
   value = module.search_service
 }
+
+module "search_shared_private_link_service" {
+  depends_on = [module.search_service]
+  source     = "./modules/search_service/private_link"
+  for_each   = local.search_services.search_services
+
+  client_config     = local.client_config
+  global_settings   = local.global_settings
+  settings          = each.value.shared_private_access
+  search_service_id = module.search_service[each.value.search_service.key].id
+  target_resource_id = {
+    "storage" = local.combined_objects_storage_accounts[
+      try(each.value.target_resource.lz_key, local.client_config.landingzone_key)
+    ][each.value.target_resource.key].id
+    "cosmosdb" = local.combined_objects_cosmosdb_sql_databases[
+      try(each.value.target_resource.lz_key, local.client_config.landingzone_key)
+    ][each.value.target_resource.key].id
+  }[each.value.target_resource.type]
+}
+
+output "search_shared_private_link_service" {
+  value = module.search_shared_private_link_service
+}
