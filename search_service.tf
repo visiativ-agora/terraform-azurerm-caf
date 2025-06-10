@@ -40,11 +40,11 @@ module "search_shared_private_link_service" {
 
   client_config     = local.client_config
   global_settings   = local.global_settings
-  settings          = each.value.shared_private_access
+  settings          = each.value.settings
   search_service_id = module.search_service[each.value.search_service.key].id
   target_resource_id = {
     "storage" = local.combined_objects_storage_accounts[
-      try(each.value.settings.target_resource.lz_key, local.client_config.landingzone_key)
+      try(each.value.settings.target_resourcelz_key, local.client_config.landingzone_key)
     ][each.value.settings.target_resource.key].id
     "cosmosdbaccount" = local.combined_objects_cosmos_dbs[
       try(each.value.settings.target_resource.lz_key, local.client_config.landingzone_key)
