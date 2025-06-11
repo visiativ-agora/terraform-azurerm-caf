@@ -31,6 +31,13 @@ locals {
       }
     ]
   ])
+
+
+  target_resource_type_map = {
+    "storage"         = "Microsoft.Storage/storageAccounts"
+    "cosmosdbaccount" = "Microsoft.DocumentDB/databaseAccounts"
+    # Ajoute d'autres types ici si besoin
+  }
 }
 
 module "search_shared_private_link_service" {
@@ -49,15 +56,14 @@ module "search_shared_private_link_service" {
   "cosmosdbaccount" = try(local.combined_objects_cosmos_dbs[
     try(each.value.settings.target_resource.lz_key, local.client_config.landingzone_key)
   ][each.value.settings.target_resource.key].id, null)
-}, each.value.settings.target_resource.type, null)
-  # target_resource_id = {
-  #   "storage" = local.combined_objects_storage_accounts[
-  #     try(each.value.settings.target_resourcelz_key, local.client_config.landingzone_key)
-  #   ][each.value.settings.target_resource.key].id
-  #   "cosmosdbaccount" = local.combined_objects_cosmos_dbs[
-  #     try(each.value.settings.target_resource.lz_key, local.client_config.landingzone_key)
-  #   ][each.value.settings.target_resource.key].id
-  # }[each.value.settings.target_resource.type]  
+  }, each.value.settings.target_resource.type, null)
+
+
+  target_resource_type = lookup(
+      local.target_resource_type_map,
+      each.value.settings.target_resource.type,
+      null
+    )
 }
 
 
