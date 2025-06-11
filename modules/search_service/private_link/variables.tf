@@ -11,4 +11,4 @@ variable "search_service_id" {}
 
 variable "target_resource_id" {}
 
-variable "target_resource_type" {}
+# variable "target_resource_type" {}
