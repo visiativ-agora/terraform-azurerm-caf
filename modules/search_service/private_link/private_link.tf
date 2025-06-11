@@ -41,7 +41,8 @@ resource "azapi_update_resource" "approve_connection" {
 
   type        = "${var.target_resource_type}/privateEndpointConnections@${var.target_resource_api_version}"
     
-  resource_id = try(local.pending_connection.id, null)
+  # resource_id = try(local.pending_connection.id, null)
+  resource_id = "/subscriptions/05fb9a2a-6ca0-467a-aacd-c1f92acf123a/resourceGroups/RSG30111902BOT001/providers/Microsoft.DocumentDB/databaseAccounts/dat30111902cdb001/privateEndpointConnections/NET30111902SPA007-SEA"
 
   body = jsonencode({
     properties = {
@@ -61,3 +62,6 @@ resource "azapi_update_resource" "approve_connection" {
   ]  
 }
 
+
+# /subscriptions/05fb9a2a-6ca0-467a-aacd-c1f92acf123a/resourceGroups/RSG30111902BOT001/providers/Microsoft.DocumentDB/databaseAccounts/dat30111902cdb001/privateEndpointConnections/NET30111902SPA007-SEA
+# /subscriptions/4b6e02e4-1c2e-45fe-aa8d-fad6a8531fe4/resourceGroups/azspppe/providers/Microsoft.Network/privateEndpoints/NET30111902SPA007-SEA
