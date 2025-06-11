@@ -9,7 +9,7 @@ resource "azurerm_search_shared_private_link_service" "search_service_shared_pri
 
 resource "time_sleep" "wait_for_private_endpoint" {
   create_duration = "2m"
-  depends_on      = [azapi_reazurerm_search_shared_private_link_servicesource.search_service_shared_private_link_service]
+  depends_on      = [azurerm_search_shared_private_link_service.search_service_shared_private_link_service]
 
   triggers = {
     timestamp = timestamp()
@@ -30,7 +30,7 @@ data "azapi_resource" "target_resource" {
   resource_id            = var.target_resource_id
   response_export_values = ["properties.privateEndpointConnections"]
   
-  depends_on = [time_sleep.wait_for_propagation]
+  depends_on = [time_sleep.wait_for_private_endpoint]
 }
 
 # Extraction de la connexion en attente
