@@ -41,7 +41,7 @@ resource "azapi_update_resource" "approve_connection" {
 
   type        = "${var.target_resource_type}/privateEndpointConnections@${var.target_resource_api_version}"
     
-  resource_id = local.pending_connection.id
+  resource_id = try(local.pending_connection.id, null)
 
   body = jsonencode({
     properties = {
@@ -55,5 +55,9 @@ resource "azapi_update_resource" "approve_connection" {
   lifecycle {
     ignore_changes = [body] # Empêche la reconfirmation permanente
   }
+
+  depends_on = [
+    data.azapi_resource.target_resource
+  ]  
 }
 
