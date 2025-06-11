@@ -47,7 +47,7 @@ resource "azapi_update_resource" "approve_connection" {
     properties = {
       privateLinkServiceConnectionState = {
         status      = "Approved"
-        description = "Auto-approved by Terraform"
+        description = "Approved by Terraform"
       }
     }
   })
