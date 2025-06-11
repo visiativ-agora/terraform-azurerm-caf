@@ -37,7 +37,7 @@ locals {
 
 # Auto-approbation via azapi
 resource "azapi_update_resource" "approve_connection" {
-  count = local.pending_connection != null ? 1 : 0
+  count = var.settings.auto_approve ? 1 : 0
 
   type        = "${var.target_resource_type}/privateEndpointConnections@${var.target_resource_api_version}"
     
