@@ -33,11 +33,17 @@ locals {
   ])
 
 
-  # target_resource_type_map = {
-  #   "storage"         = "Microsoft.Storage/storageAccounts"
-  #   "cosmosdbaccount" = "Microsoft.DocumentDB/databaseAccounts"
-  #   # Ajoute d'autres types ici si besoin
-  # }
+  target_resource_type_map = {
+    "storage"         = "Microsoft.Storage/storageAccounts"
+    "cosmosdbaccount" = "Microsoft.DocumentDB/databaseAccounts"
+    # Ajoute d'autres types ici si besoin
+  }
+
+  target_resource_api_version_map = {
+    "storage"         = "2024-01-01"
+    "cosmosdbaccount" = "2025-05-01-preview"
+    # Ajoute d'autres versions ici
+  }  
 }
 
 module "search_shared_private_link_service" {
@@ -59,11 +65,16 @@ module "search_shared_private_link_service" {
   }, each.value.settings.target_resource.type, null)
 
 
-  # target_resource_type = lookup(
-  #     local.target_resource_type_map,
-  #     each.value.settings.target_resource.type,
-  #     null
-  #   )
+  target_resource_type = lookup(
+      local.target_resource_type_map,
+      each.value.settings.target_resource.type,
+      null
+    )
+  target_resource_api_version = lookup(
+      local.target_resource_api_version_map,
+      each.value.settings.target_resource.type,
+      null
+    )    
 }
 
 
