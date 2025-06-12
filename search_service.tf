@@ -22,16 +22,6 @@ output "search_service" {
 
 
 locals {
-  # shared_private_access = flatten([
-  #   for search_key, search_val in local.search_services.search_services : [
-  #     for spa_key, spa_val in search_val.shared_private_access : {
-  #       search_key = search_key
-  #       spa_key    = spa_key
-  #       settings   = spa_val
-  #     }
-  #   ]
-  # ])
-
   shared_private_access = flatten([
     for search_key, search_val in local.search_services.search_services : try([
       for spa_key, spa_val in search_val.shared_private_access : {
@@ -44,14 +34,12 @@ locals {
 
   target_resource_type_map = {
     "storage"         = "Microsoft.Storage/storageAccounts"
-    "cosmosdbaccount" = "Microsoft.DocumentDB/databaseAccounts"
-    # Ajoute d'autres types ici si besoin
+    "cosmosdbaccount" = "Microsoft.DocumentDB/databaseAccounts"    
   }
 
   target_resource_api_version_map = {
     "storage"         = "2024-01-01"
     "cosmosdbaccount" = "2025-05-01-preview"
-    # Ajoute d'autres versions ici
   }  
 }
 
