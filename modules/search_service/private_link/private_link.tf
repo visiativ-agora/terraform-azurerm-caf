@@ -26,12 +26,28 @@ data "azapi_resource" "target_resource" {
 }
 
 # Extraction de la connexion en attente
-locals {
-  connections = try(jsondecode(data.azapi_resource.target_resource.output).properties.privateEndpointConnections, [])
+# locals {
+#   connections = try(jsondecode(data.azapi_resource.target_resource.output).properties.privateEndpointConnections, [])
   
-  pending_connection = try(
-    [for conn in local.connections : conn if conn.properties.privateLinkServiceConnectionState.status == "Pending"][0],
-    null
+#   pending_connection = try(
+#     [for conn in local.connections : conn if conn.properties.privateLinkServiceConnectionState.status == "Pending"][0],
+#     null
+#   )
+# }
+
+locals {
+  connections = jsondecode(data.azapi_resource.target_resource.output).properties.privateEndpointConnections
+
+  pending_connection = (
+    local.connections == null || length(local.connections) == 0 ? null :
+    try(
+      element([
+        for connection in local.connections :
+        connection.id
+        if var.settings.name != null && connection.properties.privateLinkServiceConnectionState.status == "Pending"
+      ], 0),
+      "temp"
+    )
   )
 }
 
@@ -45,8 +61,8 @@ resource "azapi_update_resource" "approve_connection" {
 
   type        = "${var.target_resource_type}/privateEndpointConnections@${var.target_resource_api_version}"
     
-  # resource_id = try(local.pending_connection.id, null)
-  resource_id = "/subscriptions/05fb9a2a-6ca0-467a-aacd-c1f92acf123a/resourceGroups/RSG30111902BOT001/providers/Microsoft.DocumentDB/databaseAccounts/dat30111902cdb001/privateEndpointConnections/NET30111902SPA007-SEA"
+  resource_id = try(local.pending_connection.id, null)
+  # resource_id = "/subscriptions/05fb9a2a-6ca0-467a-aacd-c1f92acf123a/resourceGroups/RSG30111902BOT001/providers/Microsoft.DocumentDB/databaseAccounts/dat30111902cdb001/privateEndpointConnections/NET30111902SPA007-SEA"
 
   body = jsonencode({
     properties = {
