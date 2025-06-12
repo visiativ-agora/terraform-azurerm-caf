@@ -55,6 +55,7 @@ resource "azapi_update_resource" "approve_connection" {
 
   lifecycle {
     ignore_changes = [body] # Empêche la reconfirmation permanente
+    replace_triggered_by = [var.settings.name] 
   }
 
   depends_on = [
