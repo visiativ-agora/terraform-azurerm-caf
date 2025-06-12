@@ -74,13 +74,13 @@ resource "azapi_update_resource" "approve_connection" {
   })
 
   lifecycle {
-    ignore_changes = [body] # Empêche la reconfirmation permanente
+    ignore_changes = all
     # replace_triggered_by = [terraform_data.pe_name]
   }
 
-  depends_on = [
-    data.azapi_resource.target_resource
-  ]  
+  # depends_on = [
+  #   data.azapi_resource.target_resource
+  # ]  
 }
 
 
