@@ -25,20 +25,28 @@ data "azapi_resource" "target_resource" {
 }
 
 locals {
-  connections = jsondecode(data.azapi_resource.target_resource.output).properties.privateEndpointConnections
 
-  pending_connection = (
-    local.connections == null || length(local.connections) == 0 ? null :
-    try(
-      element([
-        for connection in local.connections :
-        connection.id
-        if var.settings.name != null && connection.properties.privateLinkServiceConnectionState.status == "Pending"
-      ], 0),
-      "temp"
-    )
+  connections = try(jsondecode(data.azapi_resource.target_resource.output).properties.privateEndpointConnections, [])
+  
+  pending_connection = try(
+    [for conn in local.connections : conn if conn.properties.privateLinkServiceConnectionState.status == "Pending"][0],
+    null
   )
-}
+}  
+  # connections = jsondecode(data.azapi_resource.target_resource.output).properties.privateEndpointConnections
+
+  # pending_connection = (
+  #   local.connections == null || length(local.connections) == 0 ? null :
+  #   try(
+  #     element([
+  #       for connection in local.connections :
+  #       connection.id
+  #       if var.settings.name != null && connection.properties.privateLinkServiceConnectionState.status == "Pending"
+  #     ], 0),
+  #     "temp"
+  #   )
+  # )
+# }
 
 resource "azapi_update_resource" "approve_connection" {
   count = var.settings.auto_approve ? 1 : 0
