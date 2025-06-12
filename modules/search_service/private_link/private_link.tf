@@ -35,9 +35,9 @@ locals {
   )
 }
 
-resource "terraform_data" "pe_name" {
-  input = var.settings.name
-}
+# resource "terraform_data" "pe_name" {
+#   input = var.settings.name
+# }
 
 # Auto-approbation via azapi
 resource "azapi_update_resource" "approve_connection" {
@@ -45,8 +45,8 @@ resource "azapi_update_resource" "approve_connection" {
 
   type        = "${var.target_resource_type}/privateEndpointConnections@${var.target_resource_api_version}"
     
-  resource_id = try(local.pending_connection.id, null)
-  # resource_id = "/subscriptions/05fb9a2a-6ca0-467a-aacd-c1f92acf123a/resourceGroups/RSG30111902BOT001/providers/Microsoft.DocumentDB/databaseAccounts/dat30111902cdb001/privateEndpointConnections/NET30111902SPA007-SEA"
+  # resource_id = try(local.pending_connection.id, null)
+  resource_id = "/subscriptions/05fb9a2a-6ca0-467a-aacd-c1f92acf123a/resourceGroups/RSG30111902BOT001/providers/Microsoft.DocumentDB/databaseAccounts/dat30111902cdb001/privateEndpointConnections/NET30111902SPA007-SEA"
 
   body = jsonencode({
     properties = {
@@ -59,7 +59,7 @@ resource "azapi_update_resource" "approve_connection" {
 
   lifecycle {
     ignore_changes = [body] # Empêche la reconfirmation permanente
-    replace_triggered_by = [terraform_data.pe_name]
+    # replace_triggered_by = [terraform_data.pe_name]
   }
 
   depends_on = [
