@@ -34,13 +34,13 @@ locals {
 
   target_resource_type_map = {
     "storage"         = "Microsoft.Storage/storageAccounts"
-    "cosmosdbaccount" = "Microsoft.DocumentDB/databaseAccounts"    
+    "cosmosdbaccount" = "Microsoft.DocumentDB/databaseAccounts"
   }
 
   target_resource_api_version_map = {
     "storage"         = "2024-01-01"
     "cosmosdbaccount" = "2025-05-01-preview"
-  }  
+  }
 }
 
 module "search_shared_private_link_service" {
@@ -53,25 +53,25 @@ module "search_shared_private_link_service" {
   settings          = each.value.settings
   search_service_id = module.search_service[each.value.search_key].id
   target_resource_id = lookup({
-  "storage" = try(local.combined_objects_storage_accounts[
-    try(each.value.settings.target_resource.lz_key, local.client_config.landingzone_key)
-  ][each.value.settings.target_resource.key].id, null)
-  "cosmosdbaccount" = try(local.combined_objects_cosmos_dbs[
-    try(each.value.settings.target_resource.lz_key, local.client_config.landingzone_key)
-  ][each.value.settings.target_resource.key].id, null)
+    "storage" = try(local.combined_objects_storage_accounts[
+      try(each.value.settings.target_resource.lz_key, local.client_config.landingzone_key)
+    ][each.value.settings.target_resource.key].id, null)
+    "cosmosdbaccount" = try(local.combined_objects_cosmos_dbs[
+      try(each.value.settings.target_resource.lz_key, local.client_config.landingzone_key)
+    ][each.value.settings.target_resource.key].id, null)
   }, each.value.settings.target_resource.type, null)
 
 
   target_resource_type = lookup(
-      local.target_resource_type_map,
-      each.value.settings.target_resource.type,
-      null
-    )
+    local.target_resource_type_map,
+    each.value.settings.target_resource.type,
+    null
+  )
   target_resource_api_version = lookup(
-      local.target_resource_api_version_map,
-      each.value.settings.target_resource.type,
-      null
-    )    
+    local.target_resource_api_version_map,
+    each.value.settings.target_resource.type,
+    null
+  )
 }
 
 
