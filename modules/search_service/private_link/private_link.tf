@@ -35,6 +35,10 @@ locals {
   )
 }
 
+resource "terraform_data" "pe_name" {
+  input = var.settings.name
+}
+
 # Auto-approbation via azapi
 resource "azapi_update_resource" "approve_connection" {
   count = var.settings.auto_approve ? 1 : 0
@@ -55,7 +59,7 @@ resource "azapi_update_resource" "approve_connection" {
 
   lifecycle {
     ignore_changes = [body] # Empêche la reconfirmation permanente
-    replace_triggered_by = [var.settings.name] 
+    replace_triggered_by = [terraform_data.pe_name]
   }
 
   depends_on = [
