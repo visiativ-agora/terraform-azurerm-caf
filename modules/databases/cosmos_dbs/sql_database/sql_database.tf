@@ -34,8 +34,8 @@ resource "azurerm_cosmosdb_sql_container" "container" {
   partition_key_kind    = try(each.value.partition_key_kind, null)
   partition_key_version = try(each.value.partition_key_version, null)
   partition_key_paths   = try(each.value.partition_key_paths, null)
-  throughput = try(each.value.autoscale_settings, null) != null ? null : try(each.value.throughput, null)
-  default_ttl = try(each.value.default_ttl, -1)
+  throughput            = try(each.value.autoscale_settings, null) != null ? null : try(each.value.throughput, null)
+  default_ttl           = try(each.value.default_ttl, -1)
 
   dynamic "unique_key" {
     for_each = try(each.value.unique_key, null) != null ? [each.value.unique_key] : []
