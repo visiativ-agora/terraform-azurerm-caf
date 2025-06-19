@@ -1,6 +1,6 @@
 
 module "aks_fleet_managers" {
-  source   = "./modules/compute/aks_fleet_managers"
+  source   = "./modules/aks_fleet_managers"
   for_each = local.compute.aks_fleet_managers
 
   client_config       = local.client_config
