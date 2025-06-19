@@ -1,4 +1,4 @@
-resource "azurerm_kubernetes_fleet_managers" "kfm" {
+resource "azurerm_kubernetes_fleet_manager" "kfm" {
   name                = var.name
   location            = var.location
   resource_group_name = var.resource_group_name
