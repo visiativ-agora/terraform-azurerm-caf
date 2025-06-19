@@ -27,14 +27,15 @@ resource "azurerm_cosmosdb_sql_database" "database" {
 resource "azurerm_cosmosdb_sql_container" "container" {
   for_each = var.settings.containers
 
-  name                = each.value.name
-  resource_group_name = var.resource_group_name
-  account_name        = var.cosmosdb_account_name
-  database_name       = azurerm_cosmosdb_sql_database.database.name
-  partition_key_path  = each.value.partition_key_path
-  # Note : throughput and autoscale_settings conflict and autoscale_settings will take precedence if set
-  throughput  = try(each.value.autoscale_settings, null) != null ? null : each.value.throughput
-  default_ttl = try(each.value.default_ttl, -1)
+  name                  = each.value.name
+  resource_group_name   = var.resource_group_name
+  account_name          = var.cosmosdb_account_name
+  database_name         = azurerm_cosmosdb_sql_database.database.name
+  partition_key_kind    = try(each.value.partition_key_kind, null)
+  partition_key_version = try(each.value.partition_key_version, null)
+  partition_key_paths   = try(each.value.partition_key_paths, null)
+  throughput            = try(each.value.autoscale_settings, null) != null ? null : try(each.value.throughput, null)
+  default_ttl           = try(each.value.default_ttl, -1)
 
   dynamic "unique_key" {
     for_each = try(each.value.unique_key, null) != null ? [each.value.unique_key] : []

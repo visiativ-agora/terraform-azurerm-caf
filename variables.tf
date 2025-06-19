@@ -452,3 +452,12 @@ variable "load_test" {
 variable "aks_fleet_managers" {
   default     = {}
 }
+variable "recovery_plans" {
+  default = {}
+}
+variable "management_locks" {
+  default = {}
+}
+variable "mi_federated_credentials" {
+  default = {}
+}

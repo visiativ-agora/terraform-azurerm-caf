@@ -17,6 +17,10 @@ variable "resource_group_name" {
 variable "resource_group" {
   description = "Resource group object to deploy the virtual machine"
 }
+variable "resource_groups" {
+  description = "Resource group object to deploy the mi federated credentials"
+}
+
 variable "base_tags" {
   description = "Base tags for the resource to be inherited from the resource group."
   type        = bool
@@ -39,3 +43,10 @@ variable "private_endpoints" {
 variable "private_dns" {
   default = {}
 }
+variable "azuread_federated_credentials" {
+  default = {}
+}
+variable "mi_federated_credentials" {
+  default = {}
+}
+variable "azuread_applications" {}

@@ -25,6 +25,7 @@ locals {
     azuread_service_principal_passwords = try(var.azuread.azuread_service_principal_passwords, {})
     azuread_service_principals          = try(var.azuread.azuread_service_principals, {})
     azuread_users                       = try(var.azuread.azuread_users, {})
+    azuread_federated_credentials       = try(var.azuread.azuread_federated_credentials, {})
   }
 
   client_config = var.client_config == {} ? {
@@ -103,6 +104,7 @@ locals {
     wvd_host_pools                         = try(var.compute.wvd_host_pools, {})
     wvd_workspaces                         = try(var.compute.wvd_workspaces, {})
     virtual_machines                       = try(var.compute.virtual_machines, {})
+    virtual_machines_replication           = try(var.compute.virtual_machines_replication, {})
     virtual_machine_scale_sets             = try(var.compute.virtual_machine_scale_sets, {})
     runbooks                               = try(var.compute.runbooks, {})
   }
@@ -220,6 +222,9 @@ locals {
     managed_identities           = local.combined_objects_managed_identities
     resource_groups              = local.combined_objects_resource_groups
     storage_accounts             = local.combined_objects_storage_accounts
+    cognitive_services_accounts  = local.combined_objects_cognitive_services_accounts
+    search_services              = local.combined_objects_search_services
+    cosmos_dbs                   = local.combined_objects_cosmos_dbs
   }
 
   global_settings = merge({
@@ -287,6 +292,7 @@ locals {
     azurerm_firewalls                                       = try(var.networking.azurerm_firewalls, {})
     azurerm_routes                                          = try(var.networking.azurerm_routes, {})
     cdn_endpoint                                            = try(var.networking.cdn_endpoint, {})
+    cdn_frontdoor_profiles                                  = try(var.networking.cdn_frontdoor_profiles, {})
     cdn_profile                                             = try(var.networking.cdn_profile, {})
     ddos_services                                           = try(var.networking.ddos_services, {})
     dns_zone_records                                        = try(var.networking.dns_zone_records, {})
@@ -355,34 +361,36 @@ locals {
   object_id = coalesce(var.logged_user_objectId, var.logged_aad_app_objectId, try(data.azuread_client_config.current.object_id, null), try(data.azuread_service_principal.logged_in_app[0].object_id, null))
 
   security = {
-    disk_encryption_sets                = try(var.security.disk_encryption_sets, {})
-    dynamic_keyvault_secrets            = try(var.security.dynamic_keyvault_secrets, {})
-    keyvault_certificate_issuers        = try(var.security.keyvault_certificate_issuers, {})
-    keyvault_certificate_requests       = try(var.security.keyvault_certificate_requests, {})
-    keyvault_certificates               = try(var.security.keyvault_certificates, {})
-    keyvault_keys                       = try(var.security.keyvault_keys, {})
-    lighthouse_definitions              = try(var.security.lighthouse_definitions, {})
-    sentinel_automation_rules           = try(var.security.sentinel_automation_rules, {})
-    sentinel_watchlists                 = try(var.security.sentinel_watchlists, {})
-    sentinel_watchlist_items            = try(var.security.sentinel_watchlist_items, {})
-    sentinel_ar_fusions                 = try(var.security.sentinel_ar_fusions, {})
-    sentinel_ar_ml_behavior_analytics   = try(var.security.sentinel_ar_ml_behavior_analytics, {})
-    sentinel_ar_ms_security_incidents   = try(var.security.sentinel_ar_ms_security_incidents, {})
-    sentinel_ar_scheduled               = try(var.security.sentinel_ar_scheduled, {})
-    sentinel_dc_aad                     = try(var.security.sentinel_dc_aad, {})
-    sentinel_dc_app_security            = try(var.security.sentinel_dc_app_security, {})
-    sentinel_dc_aws                     = try(var.security.sentinel_dc_aws, {})
-    sentinel_dc_azure_threat_protection = try(var.security.sentinel_dc_azure_threat_protection, {})
-    sentinel_dc_ms_threat_protection    = try(var.security.sentinel_dc_ms_threat_protection, {})
-    sentinel_dc_office_365              = try(var.security.sentinel_dc_office_365, {})
-    sentinel_dc_security_center         = try(var.security.sentinel_dc_security_center, {})
-    sentinel_dc_threat_intelligence     = try(var.security.sentinel_dc_threat_intelligence, {})
+    disk_encryption_sets                  = try(var.security.disk_encryption_sets, {})
+    dynamic_keyvault_secrets              = try(var.security.dynamic_keyvault_secrets, {})
+    keyvault_certificate_issuers          = try(var.security.keyvault_certificate_issuers, {})
+    keyvault_certificate_requests         = try(var.security.keyvault_certificate_requests, {})
+    keyvault_certificates                 = try(var.security.keyvault_certificates, {})
+    keyvault_keys                         = try(var.security.keyvault_keys, {})
+    lighthouse_definitions                = try(var.security.lighthouse_definitions, {})
+    security_center_subscription_pricings = try(var.security.security_center_subscription_pricings, {})
+    sentinel_automation_rules             = try(var.security.sentinel_automation_rules, {})
+    sentinel_watchlists                   = try(var.security.sentinel_watchlists, {})
+    sentinel_watchlist_items              = try(var.security.sentinel_watchlist_items, {})
+    sentinel_ar_fusions                   = try(var.security.sentinel_ar_fusions, {})
+    sentinel_ar_ml_behavior_analytics     = try(var.security.sentinel_ar_ml_behavior_analytics, {})
+    sentinel_ar_ms_security_incidents     = try(var.security.sentinel_ar_ms_security_incidents, {})
+    sentinel_ar_scheduled                 = try(var.security.sentinel_ar_scheduled, {})
+    sentinel_dc_aad                       = try(var.security.sentinel_dc_aad, {})
+    sentinel_dc_app_security              = try(var.security.sentinel_dc_app_security, {})
+    sentinel_dc_aws                       = try(var.security.sentinel_dc_aws, {})
+    sentinel_dc_azure_threat_protection   = try(var.security.sentinel_dc_azure_threat_protection, {})
+    sentinel_dc_ms_threat_protection      = try(var.security.sentinel_dc_ms_threat_protection, {})
+    sentinel_dc_office_365                = try(var.security.sentinel_dc_office_365, {})
+    sentinel_dc_security_center           = try(var.security.sentinel_dc_security_center, {})
+    sentinel_dc_threat_intelligence       = try(var.security.sentinel_dc_threat_intelligence, {})
   }
 
   shared_services = {
     automations                               = try(var.shared_services.automations, {})
     automation_schedules                      = try(var.shared_services.automation_schedules, {})
     automation_runbooks                       = try(var.shared_services.automation_runbooks, {})
+    automation_powershell72_module            = try(var.shared_services.automation_powershell72_module, {})
     automation_log_analytics_links            = try(var.shared_services.automation_log_analytics_links, {})
     automation_software_update_configurations = try(var.shared_services.automation_software_update_configurations, {})
     consumption_budgets                       = try(var.shared_services.consumption_budgets, {})
@@ -412,10 +420,14 @@ locals {
     app_service_environments_v3                    = try(var.webapp.app_service_environments_v3, {})
     app_service_plans                              = try(var.webapp.app_service_plans, {})
     app_services                                   = try(var.webapp.app_services, {})
+    linux_web_apps                                 = try(var.webapp.linux_web_apps, {})
+    windows_web_apps                               = try(var.webapp.windows_web_apps, {})
     azurerm_application_insights                   = try(var.webapp.azurerm_application_insights, {})
     azurerm_application_insights_web_test          = try(var.webapp.azurerm_application_insights_web_test, {})
     azurerm_application_insights_standard_web_test = try(var.webapp.azurerm_application_insights_standard_web_test, {})
     function_apps                                  = try(var.webapp.function_apps, {})
+    windows_function_apps                          = try(var.webapp.windows_function_apps, {})
+    linux_function_apps                            = try(var.webapp.linux_function_apps, {})
     static_sites                                   = try(var.webapp.static_sites, {})
   }
 
@@ -471,6 +483,7 @@ locals {
   maintenance = {
     maintenance_configuration              = try(var.maintenance.maintenance_configuration, {})
     maintenance_assignment_virtual_machine = try(var.maintenance.maintenance_assignment_virtual_machine, {})
+    maintenance_assignment_dynamic_scope   = try(var.maintenance.maintenance_assignment_dynamic_scope, {})
   }
 
 

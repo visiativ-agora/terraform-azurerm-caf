@@ -12,6 +12,7 @@ resource "azurerm_container_app" "ca" {
   name                         = azurecaf_name.ca.result
   resource_group_name          = local.resource_group_name
   container_app_environment_id = var.container_app_environment_id
+  workload_profile_name        = try(var.workload_profile_name, null)
   revision_mode                = var.settings.revision_mode
   tags                         = merge(local.tags, try(var.settings.tags, null))
 
@@ -230,9 +231,9 @@ resource "azurerm_container_app" "ca" {
         for_each = try(ingress.value.traffic_weight, {})
 
         content {
-          label           = traffic_weight.value.label
-          latest_revision = traffic_weight.value.latest_revision
-          revision_suffix = traffic_weight.value.revision_suffix
+          label           = try(traffic_weight.value.label, null)
+          latest_revision = try(traffic_weight.value.latest_revision, null)
+          revision_suffix = try(traffic_weight.value.revision_suffix, null)
           percentage      = traffic_weight.value.percentage
         }
       }
@@ -253,8 +254,10 @@ resource "azurerm_container_app" "ca" {
     for_each = try(var.settings.secret, {})
 
     content {
-      name  = secret.value.name
-      value = secret.value.value
+      name                = secret.value.name
+      value               = try(secret.value.value, null)
+      identity            = can(secret.value.identity.key) ? var.combined_resources.managed_identities[try(secret.value.identity.lz_key, var.client_config.landingzone_key)][secret.value.identity.key].id : try(secret.value.identity.id, null)
+      key_vault_secret_id = try(secret.value.key_vault_secret_id, null)
     }
   }
 
