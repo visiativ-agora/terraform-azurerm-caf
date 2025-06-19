@@ -75,6 +75,7 @@ locals {
 
   compute = {
     aks_clusters                           = try(var.compute.aks_clusters, {})
+    aks_fleet_managers                     = try(var.compute.aks_fleet_managers, {})
     aro_clusters                           = try(var.compute.aro_clusters, {})
     availability_sets                      = try(var.compute.availability_sets, {})
     azure_container_registries             = try(var.compute.azure_container_registries, {})
