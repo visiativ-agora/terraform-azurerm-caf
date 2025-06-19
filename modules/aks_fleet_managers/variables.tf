@@ -2,10 +2,10 @@ variable "location" {
   description = "(Required) The Azure Region where the Kubernetes Fleet Manager should exist. Changing this forces a new Kubernetes Fleet Manager to be created."
   type        = string
 }
-variable "name" {
-  description = "(Required) Specifies the name of this Kubernetes Fleet Manager. Changing this forces a new Kubernetes Fleet Manager to be created."
-  type        = string
-}
+# variable "name" {
+#   description = "(Required) Specifies the name of this Kubernetes Fleet Manager. Changing this forces a new Kubernetes Fleet Manager to be created."
+#   type        = string
+# }
 variable "resource_group_name" {
   description = "(Required) Specifies the name of the Resource Group within which this Kubernetes Fleet Manager should exist. Changing this forces a new Kubernetes Fleet Manager to be created."
   type        = string
