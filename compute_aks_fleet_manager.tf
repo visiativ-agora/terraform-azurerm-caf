@@ -1,5 +1,5 @@
 
-module "fleet_manager" {
+module "aks_fleet_manager" {
   source   = "./modules/compute/aks_fleet_manager"
   for_each = local.compute.aks_fleet_managers
 
@@ -13,6 +13,6 @@ module "fleet_manager" {
   tags                = try(each.value.tags, {})
 }
 
-output "fleet_manager" {
-  value = module.fleet_manager
+output "aks_fleet_manager" {
+  value = module.aks_fleet_manager
 }
