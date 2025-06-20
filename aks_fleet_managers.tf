@@ -1,7 +1,7 @@
 
 module "aks_fleet_managers" {
   source   = "./modules/aks_fleet_managers"
-  for_each = local.aks_fleet_managers
+  for_each = local.aks_fleet_managers.aks_fleet_managers
 
   client_config       = local.client_config
   global_settings     = local.global_settings
