@@ -1,7 +1,7 @@
 
-module "aks_fleet_managers" {
-  source   = "./modules/aks_fleet_managers"
-  for_each = local.aks_fleet_managers.aks_fleet_managers
+module "kubernetes_fleet_managers" {
+  source   = "./modules/aks_fleet_managers/kubernetes_fleet_managers"
+  for_each = local.kubernetes_fleet_managers.kubernetes_fleet_managers
 
   client_config       = local.client_config
   global_settings     = local.global_settings
@@ -15,6 +15,6 @@ module "aks_fleet_managers" {
   tags                = try(each.value.tags, {})
 }
 
-output "aks_fleet_managers" {
-  value = module.aks_fleet_managers
+output "kubernetes_fleet_managers" {
+  value = module.kubernetes_fleet_managers
 }
