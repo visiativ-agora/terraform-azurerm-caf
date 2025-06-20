@@ -485,6 +485,10 @@ locals {
     maintenance_assignment_dynamic_scope   = try(var.maintenance.maintenance_assignment_dynamic_scope, {})
   }
 
+  kubernetes_fleet_managers = {
+    kubernetes_fleet_managers = try(var.kubernetes_fleet_managers.kubernetes_fleet_managers, {})
+  }
+  # kubernetes_fleet_managers = try(var.kubernetes_fleet_managers, {})
 
   load_test = try(var.load_test, {})
 }
