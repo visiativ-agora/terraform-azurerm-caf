@@ -207,11 +207,11 @@ locals {
                 account_lz_key          = try(db_role_mappings.lz_key, null)
                 role_definition_name    = role_definition_name
                 object_id_resource_type = object_id_key
-                object_id_key_resource  = object_id_key_resource
+                object_id_key_resource  = try(object_id_key_resource.key, object_id_key_resource)
                 object_id_lz_key        = try(object_resources.lz_key, null)
                 resource_group          = try(object_resources.resource_group, null)
                 resource_group_name     = try(object_resources.resource_group_name, null)
-                resource_group_key      = try(object_resources.resource_group_key, null)
+                resource_group_key      = try(object_id_key_resource.resource_group_key, object_resources.resource_group_key, null)
               }
             ]
           ] if !contains(["lz_key", "account_key"], role_definition_name)
