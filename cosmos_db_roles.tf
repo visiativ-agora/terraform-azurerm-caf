@@ -211,7 +211,7 @@ locals {
                 object_id_lz_key        = try(object_resources.lz_key, null)
                 resource_group          = try(object_resources.resource_group, null)
                 resource_group_name     = try(object_resources.resource_group_name, null)
-                resource_group_key      = try(object_resources.resource_group_key, null)
+                resource_group_key      = try(object_id_key_resource.resource_group_key, object_resources.resource_group_key, null)
               }
             ]
           ] if !contains(["lz_key", "account_key"], role_definition_name)
