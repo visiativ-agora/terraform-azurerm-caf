@@ -487,8 +487,8 @@ locals {
 
   kubernetes_fleet_managers = {
     kubernetes_fleet_managers = try(var.kubernetes_fleet_managers.kubernetes_fleet_managers, {})
+    kubernetes_fleet_members = try(var.kubernetes_fleet_managers.kubernetes_fleet_members, {})
   }
-  # kubernetes_fleet_managers = try(var.kubernetes_fleet_managers, {})
 
   load_test = try(var.load_test, {})
 }
