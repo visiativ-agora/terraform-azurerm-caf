@@ -1,6 +1,6 @@
 
 module "kubernetes_fleet_managers" {
-  source   = "./modules/aks_fleet_managers/kubernetes_fleet_managers"
+  source   = "./modules/kubernetes_fleet_managers/kubernetes_fleet_managers"
   for_each = local.kubernetes_fleet_managers.kubernetes_fleet_managers
 
   client_config       = local.client_config
@@ -18,7 +18,7 @@ output "kubernetes_fleet_managers" {
 }
 
 module "kubernetes_fleet_members" {
-  source   = "./modules/aks_fleet_managers/kubernetes_fleet_members"
+  source   = "./modules/kubernetes_fleet_managers/kubernetes_fleet_members"
   depends_on = [module.kubernetes_fleet_managers]
   for_each = local.kubernetes_fleet_managers.kubernetes_fleet_members
 
