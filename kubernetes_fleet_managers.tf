@@ -25,17 +25,8 @@ module "kubernetes_fleet_members" {
   client_config         = local.client_config
   global_settings       = local.global_settings
   settings              = each.value.members
-  kubernetes_cluster_id = local.combined_objects_kubernetes_fleet_managers
+  kubernetes_cluster_id = local.combined_objects_aks_clusters
   kubernetes_fleet_id   = module.kubernetes_fleet_managers[each.key].id
-
-  members = flatten([
-    for group in try(each.value.members, {}) : [
-      for item in group.value.keys : {
-        lz_key = item.lz_key
-        keys   = item.keys
-      }
-    ]
-  ])
 }
 
 output "kubernetes_fleet_members" {
