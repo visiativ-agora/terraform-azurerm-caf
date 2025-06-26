@@ -14,5 +14,6 @@ locals {
   # tags = merge(var.base_tags, local.module_tag, try(var.tags, null))
   # location            = var.location
   # resource_group_name = var.resource_group_name
+  members = var.members
 }
 
