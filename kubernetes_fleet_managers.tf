@@ -25,7 +25,7 @@ module "kubernetes_fleet_members" {
   client_config         = local.client_config
   global_settings       = local.global_settings
   settings              = each.value.members
-  kubernetes_cluster_id = local.combined_objects_aks_clusters
+  kubernetes_cluster_id = local.combined_objects_kubernetes_fleet_managers
   kubernetes_fleet_id   = module.kubernetes_fleet_managers[each.key].id
 }
 
