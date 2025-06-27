@@ -18,6 +18,7 @@ resource "azurerm_managed_disk" "disk" {
   resource_group_name    = local.resource_group_name
   storage_account_type   = each.value.storage_account_type
   create_option          = each.value.create_option
+  source_resource_id     = each.value.source_resource_id
   disk_size_gb           = each.value.disk_size_gb
   zone                   = try(each.value.zone, each.value.zones[0], null)
   disk_iops_read_write   = try(each.value.disk_iops_read_write, null)
