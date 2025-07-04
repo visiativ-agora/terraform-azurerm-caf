@@ -384,7 +384,8 @@ resource "azurerm_linux_web_app" "linux_web_apps" {
   }
 
   dynamic "storage_account" {
-    for_each = lookup(var.settings, "storage_account", {})
+    # for_each = lookup(var.settings, "storage_account", {})
+    for_each = lookup(var.settings, "storage_account", {}) != {} ? [1] : []
     content {
       name         = storage_account.value.name
       type         = storage_account.value.type
