@@ -389,9 +389,9 @@ resource "azurerm_linux_web_app" "linux_web_apps" {
     content {
       name         = var.settings.name
       type         = var.settings.value.type
-      account_name = can(var.settings.value.account_key) ? var.var.settings[try(var.settings.value.lz_key, var.client_config.landingzone_key)][var.settings.value.account_key].name : try(var.settings.value.account_name, null)
+      account_name = can(var.settings.value.account_key) ? var.settings[try(var.settings.value.lz_key, var.client_config.landingzone_key)][var.settings.value.account_key].name : try(var.settings.value.account_name, null)
       share_name   = var.settings.value.share_name
-      access_key   = can(var.settings.value.account_key) ? var.var.settings[try(var.settings.value.lz_key, var.client_config.landingzone_key)][var.settings.value.account_key].primary_access_key : try(var.settings.value.access_key, null)
+      access_key   = can(var.settings.value.account_key) ? var.settings[try(var.settings.value.lz_key, var.client_config.landingzone_key)][var.settings.value.account_key].primary_access_key : try(var.settings.value.access_key, null)
       mount_path   = lookup(var.settings.value, "mount_path", null)
     }
   }
