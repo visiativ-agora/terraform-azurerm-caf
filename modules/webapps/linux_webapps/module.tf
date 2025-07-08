@@ -383,8 +383,7 @@ resource "azurerm_linux_web_app" "linux_web_apps" {
     }
   }
 
-  dynamic "storage_account" {
-    # for_each = lookup(var.settings, "storage_account", {})
+  dynamic "storage_account" {  
     for_each = try(var.settings.storage_account, {})
     content {
       name         = var.settings.storage_account.name
