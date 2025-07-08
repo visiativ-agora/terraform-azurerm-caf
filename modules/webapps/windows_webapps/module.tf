@@ -374,15 +374,15 @@ resource "azurerm_windows_web_app" "windows_web_apps" {
     }
   }
 
-  dynamic "storage_account" {
-    for_each = lookup(var.settings, "storage_account", {})
+  dynamic "storage_account" {  
+    for_each = try(var.settings.storage_account, {})
     content {
-      name         = storage_account.value.name
-      type         = storage_account.value.type
-      account_name = can(storage_account.value.account_key) ? var.storage_accounts[try(storage_account.value.lz_key, var.client_config.landingzone_key)][storage_account.value.account_key].name : try(storage_account.value.account_name, null)
-      share_name   = storage_account.value.share_name
-      access_key   = can(storage_account.value.account_key) ? var.storage_accounts[try(storage_account.value.lz_key, var.client_config.landingzone_key)][storage_account.value.account_key].primary_access_key : try(storage_account.value.access_key, null)
-      mount_path   = lookup(storage_account.value, "mount_path", null)
+      name         = var.settings.storage_account.name
+      type         = var.settings.storage_account.type
+      account_name = can(var.settings.storage_account.account_key) ? var.settings.storage_account.account_key : var.storage_accounts[try(var.settings.storage_account.lz_key, var.client_config.landingzone_key)][var.settings.storage_account.access_key].account
+      share_name   = var.settings.storage_account.share_name      
+      access_key  = can(var.settings.storage_account.account_key) ? var.settings.storage_account.account_key : var.storage_accounts[try(var.settings.storage_account.lz_key, var.client_config.landingzone_key)][var.settings.storage_account.access_key].primary_access_key
+      mount_path   = try(var.settings.storage_account.mount_path, null)
     }
   }
 
