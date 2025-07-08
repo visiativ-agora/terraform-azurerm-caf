@@ -383,14 +383,14 @@ resource "azurerm_linux_web_app" "linux_web_apps" {
     }
   }
 
-  dynamic "storage_account" {  
+  dynamic "storage_account" {
     for_each = try(var.settings.storage_account, {})
     content {
       name         = var.settings.storage_account.name
       type         = var.settings.storage_account.type
       account_name = can(var.settings.storage_account.account_key) ? var.settings.storage_account.account_key : var.storage_accounts[try(var.settings.storage_account.lz_key, var.client_config.landingzone_key)][var.settings.storage_account.access_key].account
-      share_name   = var.settings.storage_account.share_name      
-      access_key  = can(var.settings.storage_account.account_key) ? var.settings.storage_account.account_key : var.storage_accounts[try(var.settings.storage_account.lz_key, var.client_config.landingzone_key)][var.settings.storage_account.access_key].primary_access_key
+      share_name   = var.settings.storage_account.share_name
+      access_key   = can(var.settings.storage_account.account_key) ? var.settings.storage_account.account_key : var.storage_accounts[try(var.settings.storage_account.lz_key, var.client_config.landingzone_key)][var.settings.storage_account.access_key].primary_access_key
       mount_path   = try(var.settings.storage_account.mount_path, null)
     }
   }
