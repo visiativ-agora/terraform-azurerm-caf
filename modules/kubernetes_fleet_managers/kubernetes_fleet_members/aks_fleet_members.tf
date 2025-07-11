@@ -1,5 +1,9 @@
 resource "azurerm_kubernetes_fleet_member" "kfme" {
-  name = var.settings.name
-  kubernetes_cluster_id = "/subscriptions/4936a57f-886a-4874-9ff3-bbbf940bde45/resourcegroups/aks-re1/providers/microsoft.containerservice/managedclusters/akscluster-re1-001"
-  kubernetes_fleet_id = var.kubernetes_fleet_id
+  for_each = {
+    for fm in local.fleet_members : "${fm.name}-${fm.lz_key}-${fm.key}" => fm
+  }
+
+  name                   = each.value.name
+  kubernetes_cluster_id  = var.kubernetes_cluster_id[each.value.lz_key][each.value.key].id
+  kubernetes_fleet_id    = var.kubernetes_fleet_id
 }
