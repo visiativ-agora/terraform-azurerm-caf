@@ -65,11 +65,11 @@ resource "azurerm_web_application_firewall_policy" "wafpolicy" {
               version = try(exclusion.value.excluded_rule_set.version, "3.2")
 
               dynamic "rule_group" {
-                for_each = try(exclusion.value.excluded_rule_set.rule_groups, {}) != {} ? [1] : []
+                for_each = try(excluded_rule_set.value.rule_groups, {}) != {} ? [1] : []
                 # for_each = try(exclusion.value.excluded_rule_set.rule_groups, {})
                 content {
-                  rule_group_name = exclusion.value.excluded_rule_set.rule_groups.rule_group_name
-                  excluded_rules  = try(exclusion.value.excluded_rule_set.rule_groups.excluded_rules, [])
+                  rule_group_name = excluded_rule_set.value.rule_group_name
+                  excluded_rules  = try(excluded_rule_set.value.excluded_rules, [])
                 }
               }
             }
