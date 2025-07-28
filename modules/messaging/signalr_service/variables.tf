@@ -11,3 +11,21 @@ variable "remote_objects" {
   description = "(Required) Specifies the supported Azure location where to create the resource. Changing this forces a new resource to be created."
   default     = {}
 }
+variable "private_endpoints" {}
+variable "resource_groups" {}
+variable "private_dns" {
+  default = {}
+}
+variable "vnets" {}
+
+variable "resource_group_name" {
+  description = "Resource group object to deploy the virtual machine"
+  default     = null
+}
+variable "resource_group" {
+  description = "Resource group object to deploy the virtual machine"
+}
+variable "base_tags" {
+  description = "Base tags for the resource to be inherited from the resource group."
+  type        = bool
+}
