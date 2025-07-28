@@ -10,8 +10,8 @@ module "private_endpoint" {
 
   resource_id         = azurerm_signalr_service.signalr_service.id
   name                = each.value.name
-  location            = var.resource_groups[each.value.resource_group_key].location
-  resource_group_name = var.resource_groups[each.value.resource_group_key].name
+  location            = var.resource_groups[try(each.value.resource_group_key, each.value.resource_group.key)].location
+  resource_group_name = var.resource_groups[try(each.value.resource_group_key, each.value.resource_group.key)].name
   subnet_id           = can(each.value.subnet_id) ? each.value.subnet_id : var.vnets[try(each.value.lz_key, var.client_config.landingzone_key)][each.value.vnet_key].subnets[each.value.subnet_key].id
   settings            = each.value
   global_settings     = var.global_settings
