@@ -35,10 +35,11 @@ resource "azurerm_signalr_service" "signalr_service" {
   }
 
   dynamic "identity" {
-    for_each = try(var.identity, null) == null ? [] : [1]
+    for_each = can(var.settings.identity) ? [var.settings.identity] : []
+
     content {
-      type         = var.identity.type
-      identity_ids = lower(var.identity.type) == "userassigned" ? local.managed_identities : null
+      type         = identity.value.type
+      identity_ids = try(local.managed_identities, null)
     }
   }
   # dynamic "features" {

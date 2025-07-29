@@ -33,7 +33,6 @@ variable "resource_group_name" {
   description = "Name of the existing resource group to deploy the virtual machine"
   type        = string
 }
-variable "identity" {
-  default = null
+variable "managed_identities" {
+  default = {}
 }
-variable "combined_objects" {}
