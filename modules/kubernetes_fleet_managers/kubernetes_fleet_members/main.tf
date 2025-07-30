@@ -18,20 +18,18 @@ locals {
 
 
 locals {
-  # On part de la map lokale qui contient fleet_managers et fleet_members
-  # mais ici on génère la liste plate des membres avec la référence au fleet parent
   fleet_members = {
     for member in flatten([
-      for fleet_key, fleet in local.kubernetes_fleet_managers.fleet_managers : [
-        # On récupère les membres sous la clé 'members' dans chaque fleet manager
+      for fleet_key, fleet in var.kubernetes_fleet_managers : [
         for member_key, member in try(fleet.members, {}) : merge(
           member,
           {
-            fleet_key = fleet_key   # référence au fleet manager parent
-            member_key = member_key # éventuellement utile pour clé unique
+            fleet_key = fleet_key
+            member_key = member_key
           }
         )
       ]
     ]) : "${member.fleet_key}-${member.member_key}" => member
   }
 }
+
