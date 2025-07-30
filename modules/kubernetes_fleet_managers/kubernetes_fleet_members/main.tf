@@ -21,13 +21,10 @@ locals {
   fleet_members = {
     for member in flatten([
       for fleet_key, fleet in var.kubernetes_fleet_managers : [
-        for member_key, member in try(fleet.members, {}) : merge(
-          member,
-          {
-            fleet_key = fleet_key
-            member_key = member_key
-          }
-        )
+        for member_key, member in try(fleet.members, {}) : {
+          fleet_key = fleet_key
+          member_key = member_key
+        }
       ]
     ]) : "${member.fleet_key}-${member.member_key}" => member
   }
