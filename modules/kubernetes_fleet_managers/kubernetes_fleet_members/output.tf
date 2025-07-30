@@ -1,3 +1,3 @@
-output "id" {
-  value = { for k, v in azurerm_kubernetes_fleet_member.kfme : k => v.id }
+output "ids" {
+  value = [for fm in azurerm_kubernetes_fleet_member.kfme : fm.value.id]
 }
