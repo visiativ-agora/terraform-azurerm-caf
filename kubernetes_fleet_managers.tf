@@ -27,6 +27,7 @@ module "kubernetes_fleet_members" {
   settings              = each.value.members
   kubernetes_cluster_id = local.combined_objects_aks_clusters
   kubernetes_fleet_id   = module.kubernetes_fleet_managers[each.key].id
+  kubernetes_fleet_managers = local.kubernetes_fleet_managers.fleet_managers 
 }
 
 output "kubernetes_fleet_members" {
