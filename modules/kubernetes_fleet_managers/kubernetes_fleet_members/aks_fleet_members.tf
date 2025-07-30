@@ -1,7 +1,5 @@
 resource "azurerm_kubernetes_fleet_member" "kfme" {
-  for_each = {
-    for m in local.fleet_members : "${m.fleet_key}-${m.group_key}-${m.name}" => m
-  }
+  for_each = local.fleet_members
 
   name                  = each.value.name
   kubernetes_cluster_id = var.kubernetes_cluster_id[each.value.lz_key][each.value.key].id
