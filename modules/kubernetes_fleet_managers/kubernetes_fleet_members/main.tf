@@ -17,14 +17,20 @@ locals {
 }
 
 locals {
-  # On "aplatit" la map des membres pour pouvoir faire un for_each dessus
   fleet_members = flatten([
-    for member_name, member in var.settings : [
-      for key_obj in member.keys : {
-        name      = member_name
-        lz_key    = key_obj.lz_key
-        key       = key_obj.keys[0] # On suppose qu'il n'y a qu'un seul key par keys
-      }
+    for fleet_key, fleet in aks_fleet_managers : [
+      for group_key, group in try(fleet.members_groups, {}) : [
+        for member_key, member in try(group.members, {}) : {
+          fleet_key  = fleet_key
+          fleet_name = fleet.name
+          group_key  = group_key
+          member_key = member_key
+          lz_key     = member.lz_key
+          key        = member.key
+          name       = try(member.name, member_key)
+        }
+      ]
     ]
   ])
 }
+
