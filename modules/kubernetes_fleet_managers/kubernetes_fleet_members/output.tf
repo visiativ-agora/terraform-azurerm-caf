@@ -1,3 +1,3 @@
 output "id" {
-  value = azurerm_kubernetes_fleet_member.kfme[each.key].id
+  value = { for k, v in azurerm_kubernetes_fleet_member.kfme : k => v.id }
 }
