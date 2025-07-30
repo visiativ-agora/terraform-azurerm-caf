@@ -16,11 +16,13 @@ locals {
   resource_group_name = var.resource_group_name
 }
 
+
 locals {
   fleet_members = length(try(var.settings.members_groups, {})) > 0 ? merge(
     {
       for group_key, group in try(var.settings.members_groups, {}) :
-      for member_key, member in try(group.members, {}) :
+      group_key => {
+        for member_key, member in try(group.members, {}) :
         member_key => merge(
           member,
           {
@@ -28,6 +30,7 @@ locals {
             member_key  = member_key
           }
         )
+      }
     }
   ) : {}
 }
