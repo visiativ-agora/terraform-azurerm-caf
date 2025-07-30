@@ -20,7 +20,7 @@ locals {
 locals {
   fleet_members = {
     for member in flatten([
-      for fleet_key, fleet in var.kubernetes_fleet_managers : [
+      for fleet_key, fleet in try(var.kubernetes_fleet_managers, {}) : [
         for member_key, member in try(fleet.members, {}) : {
           fleet_key = fleet_key
           member_key = member_key
