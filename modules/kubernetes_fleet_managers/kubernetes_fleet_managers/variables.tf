@@ -25,3 +25,6 @@ variable "client_config" {
   description = "Client configuration object (see module README.md)."
 }
 variable "settings" {}
+variable "kubernetes_cluster_id" {
+  description = "(Required) The ARM resource ID of the cluster that joins the Fleet. Changing this forces a new Kubernetes Fleet Member to be created."
+} 
