@@ -24,7 +24,7 @@ locals {
         for member_key, member in try(fleet.members, {}) : merge(
           member,
           {
-            fleet_key = fleet_key
+            lz_key = fleet_key
             member_key = member_key
           }
         )
