@@ -12,4 +12,6 @@ variable "client_config" {
 }
 variable "settings" {}
 
-variable "kubernetes_fleet_managers" {}
+variable "kubernetes_fleet_managers" {
+  type        = any
+}
