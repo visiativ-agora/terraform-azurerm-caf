@@ -3,5 +3,5 @@ resource "azurerm_kubernetes_fleet_member" "kfme" {
 
   name                  = each.value.name
   kubernetes_cluster_id = var.kubernetes_cluster_id[each.value.lz_key][each.value.key].id
-  kubernetes_fleet_id   = module.kubernetes_fleet_managers[each.value.fleet_key].id
+  kubernetes_fleet_id   = kubernetes_fleet_id
 }
