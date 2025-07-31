@@ -12,7 +12,7 @@ resource "null_resource" "example" {
 
   provisioner "local-exec" {
 
-    command = "echo ${var.kubernetes_cluster_id}"
+    command = "echo '${jsonencode(var.kubernetes_cluster_id)}'"
 
   }
 
