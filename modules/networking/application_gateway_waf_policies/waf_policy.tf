@@ -64,7 +64,7 @@ resource "azurerm_web_application_firewall_policy" "wafpolicy" {
               type    = try(exclusion.value.excluded_rule_set.type, "OWASP")
               version = try(exclusion.value.excluded_rule_set.version, "3.2")
               dynamic "rule_group" {
-                for_each = try(excluded_rule_set.value.rule_groups, [])
+                for_each = try([for k, v in excluded_rule_set.value.rule_groups : v], [])
                 content {
                   rule_group_name = rule_group.value.rule_group_name
                   excluded_rules  = rule_group.value.excluded_rules
