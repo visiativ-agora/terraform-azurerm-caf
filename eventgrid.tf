@@ -96,10 +96,10 @@ module "eventgrid_system_event_subscription" {
   source   = "./modules/messaging/eventgrid/eventgrid_system_event_subscription"
   for_each = local.messaging.eventgrid_system_event_subscription
 
-  global_settings = local.global_settings
-  client_config   = local.client_config
-  settings        = each.value
-  managed_identities  = local.combined_objects_managed_identities
+  global_settings    = local.global_settings
+  client_config      = local.client_config
+  settings           = each.value
+  managed_identities = local.combined_objects_managed_identities
 
   remote_objects = merge(
     local.remote_objects,
