@@ -15,7 +15,7 @@ resource "azurerm_eventgrid_system_topic_event_subscription" "eges" {
   eventhub_endpoint_id          = can(var.settings.eventhub.id) ? var.settings.eventhub.id : can(var.remote_objects.eventhubs[try(var.settings.eventhub.lz_key, var.client_config.landingzone_key)][var.settings.eventhub.key].id) ? var.remote_objects.eventhubs[try(var.settings.eventhub.lz_key, var.client_config.landingzone_key)][var.settings.eventhub.key].id : null
   hybrid_connection_endpoint_id = can(var.settings.hybrid_connection.id) ? var.settings.hybrid_connection.id : can(var.remote_objects.hybrid_connections[try(var.settings.hybrid_connection.lz_key, var.client_config.landingzone_key)][var.settings.hybrid_connection.key].id) ? var.remote_objects.hybrid_connections[try(var.settings.hybrid_connection.lz_key, var.client_config.landingzone_key)][var.settings.hybrid_connection.key].id : null
   service_bus_queue_endpoint_id = can(var.settings.servicebus_queues.id) ? var.settings.servicebus_queues.id : can(var.remote_objects.servicebus_queues[try(var.settings.servicebus_queues.lz_key, var.client_config.landingzone_key)][var.settings.servicebus_queues.key].id) ? var.remote_objects.servicebus_queues[try(var.settings.servicebus_queues.lz_key, var.client_config.landingzone_key)][var.settings.servicebus_queues.key].id : null
-  service_bus_topic_endpoint_id = can(var.settings.servicebus_topic.id) ? var.settings.servicebus_topic.id : can(var.remote_objects.servicebus_topic[try(var.settings.servicebus_topic.lz_key, var.client_config.landingzone_key)][var.settings.servicebus_topic.key].id) ? var.remote_objects.servicebus_topic[try(var.settings.servicebus_topic.lz_key, var.client_config.landingzone_key)][var.settings.servicebus_topic.key].id : null
+  service_bus_topic_endpoint_id = can(var.settings.servicebus_topics.id) ? var.settings.servicebus_topics.id : can(var.remote_objects.servicebus_topics[try(var.settings.servicebus_topics.lz_key, var.client_config.landingzone_key)][var.settings.servicebus_topics.key].id) ? var.remote_objects.servicebus_topics[try(var.settings.servicebus_topics.lz_key, var.client_config.landingzone_key)][var.settings.servicebus_topics.key].id : null
   expiration_time_utc           = try(var.settings.expiration_time_utc, null)
   event_delivery_schema         = try(var.settings.event_delivery_schema, null)
 
@@ -194,12 +194,14 @@ resource "azurerm_eventgrid_system_topic_event_subscription" "eges" {
     }
   }
   dynamic "delivery_identity" {
-    for_each = try(var.settings.delivery_identity, null) != null ? [var.settings.delivery_identity] : []
+    for_each = can(var.settings.delivery_identity) ? [var.settings.delivery_identity] : []
     content {
-      type                   = try(delivery_identity.value.type, null)
-      user_assigned_identity = try(delivery_identity.value.user_assigned_identity, null)
+      type                   = var.settings.delivery_identity.type
+      user_assigned_identity = can(delivery_identity.value.user_assigned_identity_id) ? delivery_identity.value.user_assigned_identity_id : var.managed_identities[try(var.settings.delivery_identity.lz_key, var.client_config.landingzone_key)][var.settings.delivery_identity.managed_identity_key].id
     }
   }
+
+
   dynamic "delivery_property" {
     for_each = try(var.settings.delivery_property, null) != null ? [var.settings.delivery_property] : []
     content {
