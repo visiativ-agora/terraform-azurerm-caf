@@ -20,6 +20,9 @@ variable "location" {
   description = "Specifies the supported Azure location where to create the resource. Changing this forces a new resource to be created."
   default     = null
 }
-variable "managed_identities" {
+variable "identity" {
   default = null
+}
+variable "combined_objects" {
+  default = {}
 }

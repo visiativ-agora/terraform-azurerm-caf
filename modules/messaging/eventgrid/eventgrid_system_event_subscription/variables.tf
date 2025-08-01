@@ -16,3 +16,6 @@ variable "base_tags" {
   type        = map(any)
   default     = {}
 }
+variable "managed_identities" {
+  default = {}
+}
