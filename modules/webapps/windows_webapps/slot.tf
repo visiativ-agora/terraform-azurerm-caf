@@ -43,19 +43,21 @@ resource "azurerm_windows_web_app_slot" "slots" {
       dynamic "application_stack" {
         for_each = lookup(var.settings.site_config, "application_stack", {}) != {} ? [1] : []
         content {
-          docker_image_name        = lookup(var.settings.site_config.application_stack, "docker_image_name", null)
-          docker_registry_url      = lookup(var.settings.site_config.application_stack, "docker_registry_url", null)
-          docker_registry_username = lookup(var.settings.site_config.application_stack, "docker_registry_username", null)
-          docker_registry_password = lookup(var.settings.site_config.application_stack, "docker_registry_password", null)
-          dotnet_version           = lookup(var.settings.site_config.application_stack, "dotnet_version", null)
-          go_version               = lookup(var.settings.site_config.application_stack, "go_version", null)
-          java_version             = lookup(var.settings.site_config.application_stack, "java_version", null)
-          java_server              = lookup(var.settings.site_config.application_stack, "java_server", null)
-          java_server_version      = lookup(var.settings.site_config.application_stack, "java_server_version", null)
-          node_version             = lookup(var.settings.site_config.application_stack, "node_version", null)
-          php_version              = lookup(var.settings.site_config.application_stack, "php_version", null)
-          python_version           = lookup(var.settings.site_config.application_stack, "python_version", null)
-          ruby_version             = lookup(var.settings.site_config.application_stack, "ruby_version", null)
+          current_stack                = lookup(var.settings.site_config.current_stack, "python_version", null)
+          docker_image_name            = lookup(var.settings.site_config.application_stack, "docker_image_name", null)
+          docker_registry_url          = lookup(var.settings.site_config.application_stack, "docker_registry_url", null)
+          docker_registry_username     = lookup(var.settings.site_config.application_stack, "docker_registry_username", null)
+          docker_registry_password     = lookup(var.settings.site_config.application_stack, "docker_registry_password", null)
+          docker_container_name        = lookup(var.settings.site_config.application_stack, "docker_container_name", null)
+          docker_container_tag         = lookup(var.settings.site_config.application_stack, "docker_container_tag", null)
+          dotnet_version               = lookup(var.settings.site_config.application_stack, "dotnet_version", null)
+          dotnet_core_version          = lookup(var.settings.site_config.application_stack, "dotnet_core_version", null)
+          tomcat_version               = lookup(var.settings.site_config.application_stack, "tomcat_version", null)
+          java_embedded_server_enabled = lookup(var.settings.site_config.application_stack, "java_embedded_server_enabled", null)
+          java_version                 = lookup(var.settings.site_config.application_stack, "java_version", null)
+          node_version                 = lookup(var.settings.site_config.application_stack, "node_version", null)
+          php_version                  = lookup(var.settings.site_config.application_stack, "php_version", null)
+          python                       = lookup(var.settings.site_config.application_stack, "python", null)
         }
       }
 
