@@ -17,7 +17,7 @@ resource "azurerm_windows_web_app_slot" "slots" {
   key_vault_reference_identity_id                = can(var.settings.key_vault_reference_identity.key) ? var.combined_objects.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.key_vault_reference_identity.key].id : try(var.settings.key_vault_reference_identity.id, null)
   tags                                           = local.tags
   ftp_publish_basic_authentication_enabled       = lookup(var.settings, "ftp_publish_basic_authentication_enabled", null)
-  service_plan_id                                = var.app_service_plan_id
+  service_plan_id                                = var.app_service_plan_id != azurerm_windows_web_app.windows_web_apps.service_plan_id ? var.app_service_plan_id : null
   webdeploy_publish_basic_authentication_enabled = lookup(var.settings, "webdeploy_publish_basic_authentication_enabled", null)
   zip_deploy_file                                = lookup(var.settings, "zip_deploy_file", null)
 
