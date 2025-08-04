@@ -80,10 +80,10 @@ resource "azurerm_linux_web_app_slot" "slots" {
             for_each = lookup(var.settings.site_config.auto_heal_setting, "trigger", {}) != {} ? [lookup(var.settings.site_config.auto_heal_setting, "trigger", {})] : []
             content {
               dynamic "request" {
-                for_each = lookup(trigger.value, "slow_request", {}) != {} ? [lookup(trigger.value, "slow_request", {})] : []
+                for_each = lookup(trigger.value, "request", {}) != {} ? [lookup(trigger.value, "request", {})] : []
                 content {
-                  count    = lookup(slow_request.value, "count", null)
-                  interval = lookup(slow_request.value, "interval", null)
+                  count    = lookup(request.value, "count", null)
+                  interval = lookup(request.value, "interval", null)
                 }
               }
               dynamic "slow_request" {
@@ -193,7 +193,7 @@ resource "azurerm_linux_web_app_slot" "slots" {
   app_settings = var.app_settings
 
   dynamic "connection_string" {
-    for_each = var.connection_strings
+    for_each = var.connection_string
 
     content {
       name  = connection_string.value.name
