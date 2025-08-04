@@ -1,11 +1,11 @@
 # Per options https://www.terraform.io/docs/providers/azurerm/r/app_service.html
 
-resource "azurerm_app_service_slot" "slots" {
+resource "azurerm_linux_web_app_slot" "slots" {
   for_each = var.slots
 
-  name                               = each.value.name
-  location                           = local.location
-  resource_group_name                = local.resource_group_name
+  name = each.value.name
+  # location                           = local.location
+  # resource_group_name                = local.resource_group_name
   app_service_id                     = azurerm_linux_web_app.linux_web_apps.id
   client_affinity_enabled            = lookup(var.settings, "client_affinity_enabled", null)
   client_certificate_enabled         = lookup(var.settings, "client_certificate_enabled", null)
@@ -150,7 +150,7 @@ resource "azurerm_app_service_slot" "slots" {
 
     content {
       enabled                        = lookup(var.settings.auth_settings, "enabled", false)
-      additional_login_params        = lookup(var.settings.auth_settings, "additional_login_params", null)
+      additional_login_parameters    = lookup(var.settings.auth_settings, "additional_login_parameters", null)
       allowed_external_redirect_urls = lookup(var.settings.auth_settings, "allowed_external_redirect_urls", null)
       default_provider               = lookup(var.settings.auth_settings, "default_provider", null)
       issuer                         = lookup(var.settings.auth_settings, "issuer", null)
