@@ -57,13 +57,70 @@ resource "azurerm_linux_web_app_slot" "slots" {
 
       auto_heal_enabled = lookup(var.settings.site_config, "auto_heal_enabled", null)
 
+      # dynamic "auto_heal_setting" {
+      #   for_each = lookup(var.settings.site_config, "auto_heal_setting", {}) != {} ? [1] : []
+      #   content {
+      #     action  = lookup(var.settings.site_config.auto_heal_setting, "action", null)
+      #     trigger = lookup(var.settings.site_config.auto_heal_setting, "trigger", null)
+      #   }
+      # }
+
       dynamic "auto_heal_setting" {
         for_each = lookup(var.settings.site_config, "auto_heal_setting", {}) != {} ? [1] : []
+
         content {
-          action  = lookup(var.settings.site_config.auto_heal_setting, "action", null)
-          trigger = lookup(var.settings.site_config.auto_heal_setting, "trigger", null)
+          dynamic "action" {
+            for_each = lookup(var.settings.site_config.auto_heal_setting, "action", {}) != {} ? [lookup(var.settings.site_config.auto_heal_setting, "action", {})] : []
+            content {
+              action_type                    = lookup(action.value, "action_type ", null)
+              minimum_process_execution_time = lookup(action.value, "minimum_process_execution_time ", null)
+            }
+          }
+          dynamic "trigger" {
+            for_each = lookup(var.settings.site_config.auto_heal_setting, "trigger", {}) != {} ? [lookup(var.settings.site_config.auto_heal_setting, "trigger", {})] : []
+            content {
+              dynamic "request" {
+                for_each = lookup(trigger.value, "slow_request", {}) != {} ? [lookup(trigger.value, "slow_request", {})] : []
+                content {
+                  count    = lookup(slow_request.value, "count", null)
+                  interval = lookup(slow_request.value, "interval", null)
+                }
+              }
+              dynamic "slow_request" {
+                for_each = lookup(trigger.value, "slow_request", {}) != {} ? [lookup(trigger.value, "slow_request", {})] : []
+                content {
+                  count      = lookup(slow_request.value, "count", null)
+                  interval   = lookup(slow_request.value, "interval", null)
+                  time_taken = lookup(slow_request.value, "time_taken", null)
+                  path       = lookup(slow_request.value, "path", null)
+                }
+              }
+              dynamic "status_code" {
+                for_each = lookup(trigger.value, "status_code", {}) != {} ? [lookup(trigger.value, "status_code", {})] : []
+                content {
+                  count             = lookup(status_code.value, "count", null)
+                  interval          = lookup(status_code.value, "interval", null)
+                  status_code_range = lookup(status_code.value, "status_code_range", null)
+                  path              = lookup(status_code.value, "path", null)
+                  sub_status        = lookup(status_code.value, "sub_status", null)
+                  win32_status_code = lookup(status_code.value, "win32_status_code", null)
+
+                }
+              }
+              dynamic "slow_request_with_path" {
+                for_each = lookup(trigger.value, "slow_request_with_path", {}) != {} ? [lookup(trigger.value, "slow_request_with_path", {})] : []
+                content {
+                  count      = lookup(slow_request_with_path.value, "count", null)
+                  interval   = lookup(slow_request_with_path.value, "interval", null)
+                  time_taken = lookup(slow_request_with_path.value, "time_taken", null)
+                  path       = lookup(slow_request_with_path.value, "path", null)
+                }
+              }
+            }
+          }
         }
       }
+
 
       auto_swap_slot_name                           = lookup(var.settings.site_config, "auto_swap_slot_name", null)
       container_registry_managed_identity_client_id = lookup(var.settings.site_config, "container_registry_managed_identity_client_id", null)
