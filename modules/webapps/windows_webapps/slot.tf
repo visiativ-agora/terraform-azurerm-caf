@@ -43,7 +43,7 @@ resource "azurerm_windows_web_app_slot" "slots" {
       dynamic "application_stack" {
         for_each = lookup(var.settings.site_config, "application_stack", {}) != {} ? [1] : []
         content {
-          current_stack                = lookup(var.settings.site_config.current_stack, "python_version", null)
+          current_stack                = lookup(var.settings.site_config.application_stack, "current_stack", null)
           docker_image_name            = lookup(var.settings.site_config.application_stack, "docker_image_name", null)
           docker_registry_url          = lookup(var.settings.site_config.application_stack, "docker_registry_url", null)
           docker_registry_username     = lookup(var.settings.site_config.application_stack, "docker_registry_username", null)
