@@ -79,11 +79,11 @@ resource "azurerm_linux_web_app_slot" "slots" {
           dynamic "trigger" {
             for_each = lookup(var.settings.site_config.auto_heal_setting, "trigger", {}) != {} ? [lookup(var.settings.site_config.auto_heal_setting, "trigger", {})] : []
             content {
-              dynamic "request" {
-                for_each = lookup(trigger.value, "request", {}) != {} ? [lookup(trigger.value, "request", {})] : []
+              dynamic "requests" {
+                for_each = lookup(trigger.value, "requests", {}) != {} ? [lookup(trigger.value, "requests", {})] : []
                 content {
-                  count    = lookup(request.value, "count", null)
-                  interval = lookup(request.value, "interval", null)
+                  count    = lookup(requests.value, "count", null)
+                  interval = lookup(requests.value, "interval", null)
                 }
               }
               dynamic "slow_request" {
