@@ -1,21 +1,25 @@
 # Per options https://www.terraform.io/docs/providers/azurerm/r/app_service.html
 
-resource "azurerm_linux_web_app_slot" "slots" {
+resource "azurerm_windows_web_app_slot" "slots" {
   for_each = var.slots
 
   name = each.value.name
   # location                           = local.location
   # resource_group_name                = local.resource_group_name
-  app_service_id                     = azurerm_linux_web_app.linux_web_apps.id
-  client_affinity_enabled            = lookup(var.settings, "client_affinity_enabled", null)
-  client_certificate_enabled         = lookup(var.settings, "client_certificate_enabled", null)
-  client_certificate_mode            = lookup(var.settings, "client_certificate_mode", null)
-  client_certificate_exclusion_paths = lookup(var.settings, "client_certificate_exclusion_paths", null)
-  enabled                            = lookup(var.settings, "enabled", null)
-  https_only                         = lookup(var.settings, "https_only", null)
-  public_network_access_enabled      = lookup(var.settings, "public_network_access_enabled", null)
-  key_vault_reference_identity_id    = can(var.settings.key_vault_reference_identity.key) ? var.combined_objects.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.key_vault_reference_identity.key].id : try(var.settings.key_vault_reference_identity.id, null)
-  tags                               = local.tags
+  app_service_id                                 = azurerm_windows_web_app.windows_web_apps.id
+  client_affinity_enabled                        = lookup(var.settings, "client_affinity_enabled", null)
+  client_certificate_enabled                     = lookup(var.settings, "client_certificate_enabled", null)
+  client_certificate_mode                        = lookup(var.settings, "client_certificate_mode", null)
+  client_certificate_exclusion_paths             = lookup(var.settings, "client_certificate_exclusion_paths", null)
+  enabled                                        = lookup(var.settings, "enabled", null)
+  https_only                                     = lookup(var.settings, "https_only", null)
+  public_network_access_enabled                  = lookup(var.settings, "public_network_access_enabled", null)
+  key_vault_reference_identity_id                = can(var.settings.key_vault_reference_identity.key) ? var.combined_objects.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.key_vault_reference_identity.key].id : try(var.settings.key_vault_reference_identity.id, null)
+  tags                                           = local.tags
+  ftp_publish_basic_authentication_enabled       = lookup(var.settings, "ftp_publish_basic_authentication_enabled", null)
+  service_plan_id                                = var.app_service_plan_id
+  webdeploy_publish_basic_authentication_enabled = lookup(var.settings, "webdeploy_publish_basic_authentication_enabled", null)
+  zip_deploy_file                                = lookup(var.settings, "zip_deploy_file", null)
 
   dynamic "identity" {
     for_each = try(var.identity, null) != null ? [1] : []
@@ -72,7 +76,14 @@ resource "azurerm_linux_web_app_slot" "slots" {
           dynamic "action" {
             for_each = lookup(var.settings.site_config.auto_heal_setting, "action", {}) != {} ? [lookup(var.settings.site_config.auto_heal_setting, "action", {})] : []
             content {
-              action_type                    = lookup(action.value, "action_type", null)
+              action_type = lookup(action.value, "action_type", null)
+              dynamic "custom_action" {
+                for_each = lookup(action.value, "custom_action", {}) != {} ? [lookup(action.value, "custom_action", {})] : []
+                content {
+                  executable = lookup(custom_action.value, "executable", null)
+                  parameters = lookup(custom_action.value, "parameters", null)
+                }
+              }
               minimum_process_execution_time = lookup(action.value, "minimum_process_execution_time ", null)
             }
           }
