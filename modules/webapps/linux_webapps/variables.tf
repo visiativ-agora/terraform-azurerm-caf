@@ -95,3 +95,7 @@ variable "virtual_subnets" {
 
 variable "vnets" {
 }
+
+variable "slots" {
+  default = {}
+}
