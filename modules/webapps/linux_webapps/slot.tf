@@ -11,7 +11,7 @@ resource "azurerm_linux_web_app_slot" "slots" {
   client_certificate_enabled         = lookup(var.settings, "client_certificate_enabled", null)
   client_certificate_mode            = lookup(var.settings, "client_certificate_mode", null)
   client_certificate_exclusion_paths = lookup(var.settings, "client_certificate_exclusion_paths", null)
-  enabled                            = lookup(var.settings, "enabled", true)
+  enabled                            = lookup(var.settings, "enabled", null)
   https_only                         = lookup(var.settings, "https_only", null)
   public_network_access_enabled      = lookup(var.settings, "public_network_access_enabled", null)
   key_vault_reference_identity_id    = can(var.settings.key_vault_reference_identity.key) ? var.combined_objects.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.key_vault_reference_identity.key].id : try(var.settings.key_vault_reference_identity.id, null)
@@ -31,9 +31,9 @@ resource "azurerm_linux_web_app_slot" "slots" {
 
     content {
       # numberOfWorkers           = lookup(each.value.site_config, "numberOfWorkers", 1)  # defined in ARM template below
-      always_on             = lookup(var.settings.site_config, "always_on", false)
-      api_management_api_id = lookup(var.settings.site_config, "api_management_api_id", false)
-      api_definition_url    = lookup(var.settings.site_config, "api_definition_url", false)
+      always_on             = lookup(var.settings.site_config, "always_on", null)
+      api_management_api_id = lookup(var.settings.site_config, "api_management_api_id", null)
+      api_definition_url    = lookup(var.settings.site_config, "api_definition_url", null)
       app_command_line      = lookup(var.settings.site_config, "app_command_line", null)
 
       dynamic "application_stack" {
