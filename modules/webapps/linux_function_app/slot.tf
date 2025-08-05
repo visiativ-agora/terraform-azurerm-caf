@@ -36,88 +36,16 @@ resource "azurerm_linux_function_app_slot" "slots" {
       dynamic "application_stack" {
         for_each = lookup(var.settings.site_config, "application_stack", {}) != {} ? [1] : []
         content {
-          docker_image_name        = lookup(var.settings.site_config.application_stack, "docker_image_name", null)
-          docker_registry_url      = lookup(var.settings.site_config.application_stack, "docker_registry_url", null)
-          docker_registry_username = lookup(var.settings.site_config.application_stack, "docker_registry_username", null)
-          docker_registry_password = lookup(var.settings.site_config.application_stack, "docker_registry_password", null)
-          dotnet_version           = lookup(var.settings.site_config.application_stack, "dotnet_version", null)
-          go_version               = lookup(var.settings.site_config.application_stack, "go_version", null)
-          java_version             = lookup(var.settings.site_config.application_stack, "java_version", null)
-          java_server              = lookup(var.settings.site_config.application_stack, "java_server", null)
-          java_server_version      = lookup(var.settings.site_config.application_stack, "java_server_version", null)
-          node_version             = lookup(var.settings.site_config.application_stack, "node_version", null)
-          php_version              = lookup(var.settings.site_config.application_stack, "php_version", null)
-          python_version           = lookup(var.settings.site_config.application_stack, "python_version", null)
-          ruby_version             = lookup(var.settings.site_config.application_stack, "ruby_version", null)
+          docker                      = lookup(var.settings.site_config.application_stack, "docker", null)
+          dotnet_version              = lookup(var.settings.site_config.application_stack, "dotnet_version", null)
+          use_dotnet_isolated_runtime = lookup(var.settings.site_config.application_stack, "use_dotnet_isolated_runtime", null)
+          java_version                = lookup(var.settings.site_config.application_stack, "java_version", null)
+          node_version                = lookup(var.settings.site_config.application_stack, "node_version", null)
+          powershell_core_version     = lookup(var.settings.site_config.application_stack, "powershell_core_version", null)
+          python_version              = lookup(var.settings.site_config.application_stack, "python_version", null)
+          use_custom_runtime          = lookup(var.settings.site_config.application_stack, "use_custom_runtime", null)
         }
       }
-
-      auto_heal_enabled = lookup(var.settings.site_config, "auto_heal_enabled", null)
-
-      # dynamic "auto_heal_setting" {
-      #   for_each = lookup(var.settings.site_config, "auto_heal_setting", {}) != {} ? [1] : []
-      #   content {
-      #     action  = lookup(var.settings.site_config.auto_heal_setting, "action", null)
-      #     trigger = lookup(var.settings.site_config.auto_heal_setting, "trigger", null)
-      #   }
-      # }
-
-      dynamic "auto_heal_setting" {
-        for_each = lookup(var.settings.site_config, "auto_heal_setting", {}) != {} ? [1] : []
-
-        content {
-          dynamic "action" {
-            for_each = lookup(var.settings.site_config.auto_heal_setting, "action", {}) != {} ? [lookup(var.settings.site_config.auto_heal_setting, "action", {})] : []
-            content {
-              action_type                    = lookup(action.value, "action_type", null)
-              minimum_process_execution_time = lookup(action.value, "minimum_process_execution_time ", null)
-            }
-          }
-          dynamic "trigger" {
-            for_each = lookup(var.settings.site_config.auto_heal_setting, "trigger", {}) != {} ? [lookup(var.settings.site_config.auto_heal_setting, "trigger", {})] : []
-            content {
-              dynamic "requests" {
-                for_each = lookup(trigger.value, "requests", {}) != {} ? [lookup(trigger.value, "requests", {})] : []
-                content {
-                  count    = lookup(requests.value, "count", null)
-                  interval = lookup(requests.value, "interval", null)
-                }
-              }
-              dynamic "slow_request" {
-                for_each = lookup(trigger.value, "slow_request", {}) != {} ? [lookup(trigger.value, "slow_request", {})] : []
-                content {
-                  count      = lookup(slow_request.value, "count", null)
-                  interval   = lookup(slow_request.value, "interval", null)
-                  time_taken = lookup(slow_request.value, "time_taken", null)
-                  path       = lookup(slow_request.value, "path", null)
-                }
-              }
-              dynamic "status_code" {
-                for_each = lookup(trigger.value, "status_code", {}) != {} ? [lookup(trigger.value, "status_code", {})] : []
-                content {
-                  count             = lookup(status_code.value, "count", null)
-                  interval          = lookup(status_code.value, "interval", null)
-                  status_code_range = lookup(status_code.value, "status_code_range", null)
-                  path              = lookup(status_code.value, "path", null)
-                  sub_status        = lookup(status_code.value, "sub_status", null)
-                  win32_status_code = lookup(status_code.value, "win32_status_code", null)
-
-                }
-              }
-              dynamic "slow_request_with_path" {
-                for_each = lookup(trigger.value, "slow_request_with_path", {}) != {} ? [lookup(trigger.value, "slow_request_with_path", {})] : []
-                content {
-                  count      = lookup(slow_request_with_path.value, "count", null)
-                  interval   = lookup(slow_request_with_path.value, "interval", null)
-                  time_taken = lookup(slow_request_with_path.value, "time_taken", null)
-                  path       = lookup(slow_request_with_path.value, "path", null)
-                }
-              }
-            }
-          }
-        }
-      }
-
 
       auto_swap_slot_name                           = lookup(var.settings.site_config, "auto_swap_slot_name", null)
       container_registry_managed_identity_client_id = lookup(var.settings.site_config, "container_registry_managed_identity_client_id", null)
@@ -194,7 +122,6 @@ resource "azurerm_linux_function_app_slot" "slots" {
       websockets_enabled            = lookup(var.settings.site_config, "websockets_enabled", null)
       worker_count                  = lookup(var.settings.site_config, "worker_count", null)
       load_balancing_mode           = lookup(var.settings.site_config, "load_balancing_mode", null)
-      local_mysql_enabled           = lookup(var.settings.site_config, "local_mysql_enabled", null)
       managed_pipeline_mode         = lookup(var.settings.site_config, "managed_pipeline_mode", null)
       minimum_tls_version           = lookup(var.settings.site_config, "minimum_tls_version", null)
       remote_debugging_enabled      = lookup(var.settings.site_config, "remote_debugging_enabled", null)
@@ -428,53 +355,12 @@ resource "azurerm_linux_function_app_slot" "slots" {
     }
   }
 
-  dynamic "logs" {
-    for_each = lookup(var.settings, "logs", {}) != {} ? [1] : []
+  dynamic "app_service_logs" {
+    for_each = lookup(var.settings, "app_service_logs", {}) != {} ? [1] : []
 
     content {
-      detailed_error_messages = try(var.settings.logs.detailed_error_messages, null)
-      failed_request_tracing  = try(var.settings.logs.failed_request_tracing, null)
-
-      dynamic "application_logs" {
-        for_each = lookup(var.settings.logs, "application_logs", {}) != {} ? [1] : []
-
-        content {
-          file_system_level = try(var.settings.logs.application_logs.file_system_level, null)
-
-          dynamic "azure_blob_storage" {
-            for_each = lookup(var.settings.logs.application_logs, "azure_blob_storage", {}) != {} ? [1] : []
-
-            content {
-              level             = var.settings.logs.application_logs.azure_blob_storage.level
-              sas_url           = try(var.settings.logs.application_logs.azure_blob_storage.sas_url, local.logs_sas_url)
-              retention_in_days = var.settings.logs.application_logs.azure_blob_storage.retention_in_days
-            }
-          }
-        }
-      }
-
-      dynamic "http_logs" {
-        for_each = lookup(var.settings.logs, "http_logs", {}) != {} ? [1] : []
-
-        content {
-          dynamic "azure_blob_storage" {
-            for_each = lookup(var.settings.logs.http_logs, "azure_blob_storage", {}) != {} ? [1] : []
-
-            content {
-              sas_url           = try(var.settings.logs.http_logs.azure_blob_storage.sas_url, local.http_logs_sas_url)
-              retention_in_days = var.settings.logs.http_logs.azure_blob_storage.retention_in_days
-            }
-          }
-          dynamic "file_system" {
-            for_each = lookup(var.settings.logs.http_logs, "file_system", {}) != {} ? [1] : []
-
-            content {
-              retention_in_days = var.settings.logs.http_logs.file_system.retention_in_days
-              retention_in_mb   = var.settings.logs.http_logs.file_system.retention_in_mb
-            }
-          }
-        }
-      }
+      disk_quota_mb         = try(var.settings.app_service_logs.disk_quota_mb, null)
+      retention_period_days = try(var.settings.app_service_logs.retention_period_days, null)
     }
   }
 
