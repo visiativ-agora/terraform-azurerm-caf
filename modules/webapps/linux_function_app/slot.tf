@@ -33,10 +33,31 @@ resource "azurerm_linux_function_app_slot" "slots" {
       api_definition_url    = lookup(var.settings.site_config, "api_definition_url", null)
       app_command_line      = lookup(var.settings.site_config, "app_command_line", null)
 
+
+      dynamic "app_service_logs" {
+        for_each = lookup(var.settings, "app_service_logs", {}) != {} ? [1] : []
+
+        content {
+          disk_quota_mb         = try(var.settings.app_service_logs.disk_quota_mb, null)
+          retention_period_days = try(var.settings.app_service_logs.retention_period_days, null)
+        }
+      }
+
       dynamic "application_stack" {
         for_each = lookup(var.settings.site_config, "application_stack", {}) != {} ? [1] : []
         content {
-          docker                      = lookup(var.settings.site_config.application_stack, "docker", null)
+
+          dynamic "docker" {
+            for_each = lookup(var.settings.site_config.application_stack, "docker", {}) != {} ? [lookup(var.settings.site_config.application_stack, "docker", {})] : []
+            content {
+              registry_url      = docker.value.registry_url
+              image_name        = docker.value.image_name
+              image_tag         = docker.value.image_tag
+              registry_username = lookup(docker.value, "registry_username", null)
+              registry_password = lookup(docker.value, "registry_password", null)
+            }
+          }
+
           dotnet_version              = lookup(var.settings.site_config.application_stack, "dotnet_version", null)
           use_dotnet_isolated_runtime = lookup(var.settings.site_config.application_stack, "use_dotnet_isolated_runtime", null)
           java_version                = lookup(var.settings.site_config.application_stack, "java_version", null)
@@ -352,15 +373,6 @@ resource "azurerm_linux_function_app_slot" "slots" {
           start_time               = lookup(var.settings.backup.schedule, "start_time", null)
         }
       }
-    }
-  }
-
-  dynamic "app_service_logs" {
-    for_each = lookup(var.settings, "app_service_logs", {}) != {} ? [1] : []
-
-    content {
-      disk_quota_mb         = try(var.settings.app_service_logs.disk_quota_mb, null)
-      retention_period_days = try(var.settings.app_service_logs.retention_period_days, null)
     }
   }
 
