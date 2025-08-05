@@ -95,7 +95,7 @@ output "site_credential_password" {
 output "slot" {
   value = {
     for key, value in try(var.slots, {}) : key => {
-      id = azurerm_app_service_slot.slots[key].id
+      id = azurerm_linux_function_app_slot.slots[key].id
     }
   }
 }

@@ -120,7 +120,8 @@ module "linux_function_apps" {
   settings                   = each.value.settings
   application_insight        = try(each.value.application_insight_key, null) == null ? null : module.azurerm_application_insights[each.value.application_insight_key]
   identity                   = try(each.value.identity, null)
-  connection_string         = try(each.value.connection_string, {})
+  slots                      = try(each.value.slots, {})
+  connection_string          = try(each.value.connection_string, {})
   storage_account_name       = try(data.azurerm_storage_account.linux_function_apps[each.key].name, null)
   storage_account_access_key = try(data.azurerm_storage_account.linux_function_apps[each.key].primary_access_key, null)
   tags                       = try(each.value.tags, null)
