@@ -18,3 +18,10 @@ output "identity" {
   value       = try(azurerm_linux_web_app.linux_web_apps.identity.0.principal_id, null)
   description = "The identity id of the linux web app."
 }
+output "slot" {
+  value = {
+    for key, value in try(var.slots, {}) : key => {
+      id = azurerm_app_service_slot.slots[key].id
+    }
+  }
+}

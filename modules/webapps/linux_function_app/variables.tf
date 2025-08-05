@@ -41,7 +41,7 @@ variable "app_settings" {
 
 }
 
-variable "connection_strings" {
+variable "connection_string" {
   description = "Connection strings for the Azure Function App"
 
 }
@@ -119,4 +119,8 @@ variable "diagnostic_profiles" {
 
 variable "diagnostics" {
   default = null
+}
+
+variable "slots" {
+  default = {}
 }

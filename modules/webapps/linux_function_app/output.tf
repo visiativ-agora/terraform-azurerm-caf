@@ -92,3 +92,10 @@ output "site_credential_password" {
   value       = azurerm_linux_function_app.linux_function_app.site_credential[0].password
   sensitive   = true
 }
+output "slot" {
+  value = {
+    for key, value in try(var.slots, {}) : key => {
+      id = azurerm_app_service_slot.slots[key].id
+    }
+  }
+}
