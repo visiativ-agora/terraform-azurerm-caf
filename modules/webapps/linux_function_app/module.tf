@@ -383,7 +383,7 @@ resource "azurerm_linux_function_app" "linux_function_app" {
   client_certificate_exclusion_paths = try(var.settings.client_certificate_exclusion_paths, null)
   # Create connection strings.
   dynamic "connection_string" {
-    for_each = var.connection_string
+    for_each = var.connection_strings
     content {
       name  = connection_string.value.name
       type  = connection_string.value.type
