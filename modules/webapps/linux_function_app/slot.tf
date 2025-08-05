@@ -12,6 +12,8 @@ resource "azurerm_linux_function_app_slot" "slots" {
   https_only                         = lookup(var.settings, "https_only", null)
   public_network_access_enabled      = lookup(var.settings, "public_network_access_enabled", null)
   key_vault_reference_identity_id    = can(var.settings.key_vault_reference_identity.key) ? var.combined_objects.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.key_vault_reference_identity.key].id : try(var.settings.key_vault_reference_identity.id, null)
+  storage_account_access_key         = try(var.storage_account_access_key, null)
+  storage_account_name               = try(var.storage_account_name, null)
   tags                               = local.tags
 
   dynamic "identity" {
