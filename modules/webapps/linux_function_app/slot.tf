@@ -156,7 +156,7 @@ resource "azurerm_linux_function_app_slot" "slots" {
   app_settings = var.app_settings
 
   dynamic "connection_string" {
-    for_each = var.connection_string
+    for_each = var.connection_strings
 
     content {
       name  = connection_string.value.name

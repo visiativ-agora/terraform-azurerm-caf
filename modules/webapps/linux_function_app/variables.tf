@@ -41,7 +41,7 @@ variable "app_settings" {
 
 }
 
-variable "connection_string" {
+variable "connection_strings" {
   description = "Connection strings for the Azure Function App"
 
 }

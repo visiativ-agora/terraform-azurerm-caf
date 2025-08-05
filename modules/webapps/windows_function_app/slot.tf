@@ -33,16 +33,6 @@ resource "azurerm_windows_web_app_slot" "slots" {
       api_definition_url    = lookup(var.settings.site_config, "api_definition_url", null)
       app_command_line      = lookup(var.settings.site_config, "app_command_line", null)
 
-
-      dynamic "app_service_logs" {
-        for_each = lookup(var.settings, "app_service_logs", {}) != {} ? [1] : []
-
-        content {
-          disk_quota_mb         = try(var.settings.app_service_logs.disk_quota_mb, null)
-          retention_period_days = try(var.settings.app_service_logs.retention_period_days, null)
-        }
-      }
-
       dynamic "application_stack" {
         for_each = lookup(var.settings.site_config, "application_stack", {}) != {} ? [1] : []
         content {
@@ -150,7 +140,7 @@ resource "azurerm_windows_web_app_slot" "slots" {
   app_settings = var.app_settings
 
   dynamic "connection_string" {
-    for_each = var.connection_string
+    for_each = var.connection_strings
 
     content {
       name  = connection_string.value.name
