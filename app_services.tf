@@ -63,6 +63,7 @@ module "windows_web_apps" {
   settings             = each.value.settings
   identity             = try(each.value.identity, null)
   app_settings         = try(each.value.app_settings, null)
+  slots                = try(each.value.slots, {})
   connection_string    = try(each.value.connection_string, {})
   vnets                = local.combined_objects_networking
   virtual_subnets      = local.combined_objects_virtual_subnets
@@ -101,6 +102,7 @@ module "linux_web_apps" {
   settings             = each.value.settings
   identity             = try(each.value.identity, null)
   app_settings         = try(each.value.app_settings, null)
+  slots                = try(each.value.slots, {})
   connection_string    = try(each.value.connection_string, {})
   vnets                = local.combined_objects_networking
   virtual_subnets      = local.combined_objects_virtual_subnets
