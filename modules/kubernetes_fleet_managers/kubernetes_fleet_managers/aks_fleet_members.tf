@@ -8,23 +8,23 @@ resource "azurerm_kubernetes_fleet_member" "kfme" {
 }
 
 
-resource "null_resource" "example1" {
+# resource "null_resource" "example1" {
 
-  provisioner "local-exec" {
+#   provisioner "local-exec" {
 
-    command = "echo '${jsonencode(var.kubernetes_cluster_id["aks"])}'"
+#     command = "echo '${jsonencode(var.kubernetes_cluster_id["aks"])}'"
 
-  }
+#   }
 
-}
+# }
 
 
-resource "null_resource" "example2" {
+# resource "null_resource" "example2" {
 
-  provisioner "local-exec" {
+#   provisioner "local-exec" {
 
-    command = "echo '${jsonencode(local.fleet_members)}'"
+#     command = "echo '${jsonencode(local.fleet_members)}'"
 
-  }
+#   }
 
-}
+# }
