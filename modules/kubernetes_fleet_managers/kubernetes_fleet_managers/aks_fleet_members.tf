@@ -9,11 +9,11 @@
 # }
 
 
-resource "null_resource" "example10" {
+resource "null_resource" "example11" {
 
   provisioner "local-exec" {
 
-    command = "echo '${jsonencode(var.aks_clusters)}'"
+    command = "echo '${jsonencode(var.aks_clusters["aks"])}'"
 
   }
 
