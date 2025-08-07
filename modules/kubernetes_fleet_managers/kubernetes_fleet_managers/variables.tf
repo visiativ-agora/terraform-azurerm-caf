@@ -2,10 +2,7 @@ variable "location" {
   description = "(Required) The Azure Region where the Kubernetes Fleet Manager should exist. Changing this forces a new Kubernetes Fleet Manager to be created."
   type        = string
 }
-# variable "name" {
-#   description = "(Required) Specifies the name of this Kubernetes Fleet Manager. Changing this forces a new Kubernetes Fleet Manager to be created."
-#   type        = string
-# }
+
 variable "resource_group_name" {
   description = "(Required) Specifies the name of the Resource Group within which this Kubernetes Fleet Manager should exist. Changing this forces a new Kubernetes Fleet Manager to be created."
   type        = string
@@ -25,11 +22,5 @@ variable "client_config" {
   description = "Client configuration object (see module README.md)."
 }
 variable "settings" {}
-# variable "kubernetes_cluster_id" {
-#   description = "(Required) The ARM resource ID of the cluster that joins the Fleet. Changing this forces a new Kubernetes Fleet Member to be created."
-# } 
-# variable "remote_objects" {}
-variable "combined_resources" {
-  description = "Provide a map of combined resources for environment_variables_from_resources"
-  default     = {}
-}
+
+variable "aks_clusters" {}
