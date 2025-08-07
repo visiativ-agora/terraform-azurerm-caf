@@ -63,9 +63,11 @@ module "windows_web_apps" {
   settings             = each.value.settings
   identity             = try(each.value.identity, null)
   app_settings         = try(each.value.app_settings, null)
+  slots                = try(each.value.slots, {})
   connection_string    = try(each.value.connection_string, {})
   vnets                = local.combined_objects_networking
   virtual_subnets      = local.combined_objects_virtual_subnets
+  storage_accounts     = local.combined_objects_storage_accounts
   subnet_id            = can(each.value.subnet_id) || can(each.value.vnet_key) == false ? try(each.value.subnet_id, null) : local.combined_objects_networking[try(each.value.lz_key, local.client_config.landingzone_key)][each.value.vnet_key].subnets[each.value.subnet_key].id
   remote_objects = {
     subnets = try(local.combined_objects_networking[try(each.value.settings.lz_key, local.client_config.landingzone_key)][each.value.settings.vnet_key].subnets, null)
@@ -100,9 +102,11 @@ module "linux_web_apps" {
   settings             = each.value.settings
   identity             = try(each.value.identity, null)
   app_settings         = try(each.value.app_settings, null)
+  slots                = try(each.value.slots, {})
   connection_string    = try(each.value.connection_string, {})
   vnets                = local.combined_objects_networking
   virtual_subnets      = local.combined_objects_virtual_subnets
+  storage_accounts     = local.combined_objects_storage_accounts
   subnet_id            = can(each.value.subnet_id) || can(each.value.vnet_key) == false ? try(each.value.subnet_id, null) : local.combined_objects_networking[try(each.value.lz_key, local.client_config.landingzone_key)][each.value.vnet_key].subnets[each.value.subnet_key].id
   remote_objects = {
     subnets = try(local.combined_objects_networking[try(each.value.settings.lz_key, local.client_config.landingzone_key)][each.value.settings.vnet_key].subnets, null)

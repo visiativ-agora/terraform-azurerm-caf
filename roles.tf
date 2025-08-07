@@ -8,6 +8,10 @@ module "custom_roles" {
   assignable_scopes    = local.assignable_scopes[each.key]
 }
 
+output "custom_roles" {
+  value = module.custom_roles
+}
+
 #
 # Roles assignments
 #
@@ -20,8 +24,9 @@ resource "azurerm_role_assignment" "for" {
     if contains(keys(local.services_roles), value.scope_resource_key)
   }
 
-  principal_id         = each.value.object_id_resource_type == "object_ids" ? each.value.object_id_key_resource : each.value.object_id_lz_key == null ? local.services_roles[each.value.object_id_resource_type][var.current_landingzone_key][each.value.object_id_key_resource].rbac_id : local.services_roles[each.value.object_id_resource_type][each.value.object_id_lz_key][each.value.object_id_key_resource].rbac_id
-  role_definition_id   = each.value.mode == "custom_role_mapping" ? module.custom_roles[each.value.role_definition_name].role_definition_resource_id : null
+  principal_id = each.value.object_id_resource_type == "object_ids" ? each.value.object_id_key_resource : each.value.object_id_lz_key == null ? local.services_roles[each.value.object_id_resource_type][var.current_landingzone_key][each.value.object_id_key_resource].rbac_id : local.services_roles[each.value.object_id_resource_type][each.value.object_id_lz_key][each.value.object_id_key_resource].rbac_id
+  # role_definition_id   = each.value.mode == "custom_role_mapping" ? module.custom_roles[each.value.role_definition_name].role_definition_resource_id : null
+  role_definition_id   = each.value.mode == "custom_role_mapping" ? try(local.combined_objects_custom_roles[coalesce(each.value.role_lz_key, local.client_config.landingzone_key)][each.value.role_definition_name].role_definition_resource_id, module.custom_roles[each.value.role_definition_name], null) : null
   role_definition_name = each.value.mode == "built_in_role_mapping" ? each.value.role_definition_name : null
   scope                = each.value.scope_lz_key == null ? local.services_roles[each.value.scope_resource_key][var.current_landingzone_key][each.value.scope_key_resource].id : local.services_roles[each.value.scope_resource_key][each.value.scope_lz_key][each.value.scope_key_resource].id
   condition_version    = try(each.value.condition, null) == null ? null : "2.0"
@@ -220,17 +225,18 @@ locals {
   roles_to_process = {
     for mapping in
     flatten(
-      [                                                                 # Variable
-        for key_mode, all_role_mapping in var.role_mapping : [          #  built_in_role_mapping = {
-          for key, role_mappings in all_role_mapping : [                #       aks_clusters = {
-            for scope_key_resource, role_mapping in role_mappings : [   #         seacluster = {
-              for role_definition_name, resources in role_mapping : [   #           "Azure Kubernetes Service Cluster Admin Role" = {
-                for object_id_key, object_resources in resources : [    #             azuread_group_keys = {
-                  for object_id_key_resource in object_resources.keys : #               keys = [ "aks_admins" ] ----End of variable
-                  {                                                     # "seacluster_Azure_Kubernetes_Service_Cluster_Admin_Role_aks_admins" = {
-                    mode                    = key_mode                  #   "mode" = "built_in_role_mapping"
+      [                                                                                                   # Variable
+        for key_mode, all_role_mapping in var.role_mapping : [                                            #  built_in_role_mapping = {
+          for key, role_mappings in all_role_mapping : [                                                  #       aks_clusters = {
+            for scope_key_resource, role_mapping in role_mappings : [                                     #         seacluster = {
+              for role_definition_name, resources in role_mapping : [                                     #           "Azure Kubernetes Service Cluster Admin Role" = {
+                for object_id_key, object_resources in resources : [                                      #             azuread_group_keys = {
+                  for object_id_key_resource in can(object_resources.keys) ? object_resources.keys : [] : #               keys = [ "aks_admins" ] ----End of variable
+                  {                                                                                       # "seacluster_Azure_Kubernetes_Service_Cluster_Admin_Role_aks_admins" = {
+                    mode                    = key_mode                                                    #   "mode" = "built_in_role_mapping"
                     scope_resource_key      = key
                     scope_lz_key            = try(role_mapping.lz_key, null)
+                    role_lz_key             = try(resources.lz_key, null)
                     scope_key_resource      = scope_key_resource
                     role_definition_name    = role_definition_name
                     object_id_resource_type = object_id_key
@@ -239,7 +245,7 @@ locals {
                     condition               = try(object_id_key_resource.condition, null)
                   }
                 ]
-              ] if role_definition_name != "lz_key"
+              ] if role_definition_name != "lz_key" && can(length(resources))
             ]
           ]
         ]

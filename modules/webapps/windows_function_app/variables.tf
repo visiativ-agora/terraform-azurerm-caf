@@ -118,3 +118,7 @@ variable "diagnostic_profiles" {
 variable "diagnostics" {
   default = null
 }
+
+variable "slots" {
+  default = {}
+}
