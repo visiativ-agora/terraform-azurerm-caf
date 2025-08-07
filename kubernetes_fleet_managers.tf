@@ -10,8 +10,13 @@ module "kubernetes_fleet_managers" {
   resource_group_name = can(each.value.resource_group.name) || can(each.value.resource_group_name) ? try(each.value.resource_group.name, each.value.resource_group_name) : local.combined_objects_resource_groups[try(each.value.resource_group.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group_key, each.value.resource_group.key)].name
   # aks_clusters                = local.combined_objects_aks_clusters
 
-  remote_objects = {
-    aks_clusters                           = try(local.combined_objects_aks_clusters, null)
+  # remote_objects = {
+  #   aks_clusters                           = try(local.combined_objects_aks_clusters, null)
+  # }
+
+
+  combined_resources = {
+    aks_clusters                              = local.combined_objects_aks_clusters
   }
 
   base_tags = try(local.global_settings.inherit_tags, false) ? try(local.combined_objects_resource_groups[try(each.value.resource_group.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group.key, each.value.resource_group_key)].tags, {}) : {}

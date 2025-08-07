@@ -28,4 +28,8 @@ variable "settings" {}
 # variable "kubernetes_cluster_id" {
 #   description = "(Required) The ARM resource ID of the cluster that joins the Fleet. Changing this forces a new Kubernetes Fleet Member to be created."
 # } 
-variable "remote_objects" {}
+# variable "remote_objects" {}
+variable "combined_resources" {
+  description = "Provide a map of combined resources for environment_variables_from_resources"
+  default     = {}
+}
