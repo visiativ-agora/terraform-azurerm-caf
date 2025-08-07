@@ -11,7 +11,3 @@ output "client_config" {
 output "global_settings" {
   value = local.global_settings
 }
-
-output "combined_objects_aks_clusters" {
-  value = local.combined_objects_aks_clusters
-}
