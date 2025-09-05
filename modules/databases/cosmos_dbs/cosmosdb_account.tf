@@ -26,6 +26,7 @@ resource "azurerm_cosmosdb_account" "cosmos_account" {
   public_network_access_enabled      = try(var.settings.public_network_access_enabled, true)
   access_key_metadata_writes_enabled = try(var.settings.access_key_metadata_writes_enabled, null)
   local_authentication_disabled      = try(var.settings.local_authentication_disabled, null)
+  mongo_server_version               = try(var.settings.mongo_server_version, null)
 
   dynamic "consistency_policy" {
     for_each = lookup(var.settings, "consistency_policy", {}) == {} ? [] : [1]
