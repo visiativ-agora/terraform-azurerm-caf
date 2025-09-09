@@ -109,3 +109,4 @@ output "primary_key" {
   value     = data.azurerm_function_app_host_keys.function_app_host_keys.primary_key
   sensitive = true
 }
+

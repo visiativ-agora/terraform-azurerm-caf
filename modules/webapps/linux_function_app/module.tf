@@ -444,7 +444,6 @@ resource "azurerm_app_service_virtual_network_swift_connection" "vnet_config" {
   )
 }
 
-
 data "azurerm_function_app_host_keys" "function_app_host_keys" {
   depends_on = [azurerm_linux_function_app.linux_function_app]
 
