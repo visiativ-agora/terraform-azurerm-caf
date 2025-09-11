@@ -12,7 +12,7 @@ resource "azurerm_container_app_environment" "cae" {
   name                                        = azurecaf_name.cae.result
   location                                    = local.location
   resource_group_name                         = local.resource_group_name
-  log_analytics_workspace_id                  = can(var.settings.log_analytics_workspace_id) ? var.settings.log_analytics_workspace_id : try(var.diagnostics.log_analytics[var.settings.log_analytics_key].id, null)  
+  log_analytics_workspace_id                  = can(var.settings.log_analytics_workspace_id) ? var.settings.log_analytics_workspace_id : try(var.diagnostics.log_analytics[var.settings.log_analytics_key].id, null)
   dapr_application_insights_connection_string = try(var.settings.dapr_application_insights_connection_string, null)
   infrastructure_subnet_id                    = try(var.subnet_id, null)
   internal_load_balancer_enabled              = try(var.settings.internal_load_balancer_enabled, null)
