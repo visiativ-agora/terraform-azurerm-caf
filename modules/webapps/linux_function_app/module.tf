@@ -406,7 +406,8 @@ resource "azurerm_linux_function_app" "linux_function_app" {
 
   key_vault_reference_identity_id = can(var.settings.key_vault_reference_identity.key) ? var.combined_objects.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.key_vault_reference_identity.key].id : try(var.settings.key_vault_reference_identity.id, null)
   dynamic "storage_account" {
-    for_each = try(var.settings.storage_account, {})
+    # for_each = try(var.settings.storage_account, {})
+    for_each = try(var.settings.storage_account, null) == null ? [] : [1]
     content {
       name         = var.settings.storage_account.name
       type         = var.settings.storage_account.type
