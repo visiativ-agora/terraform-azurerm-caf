@@ -406,16 +406,16 @@ resource "azurerm_linux_function_app" "linux_function_app" {
 
   key_vault_reference_identity_id = can(var.settings.key_vault_reference_identity.key) ? var.combined_objects.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.key_vault_reference_identity.key].id : try(var.settings.key_vault_reference_identity.id, null)
   dynamic "storage_account" {
-    for_each = lookup(var.settings, "storage_account", {})
+    for_each = try(var.settings.storage_account, {})
     content {
-      access_key   = var.settings.storage_account.access_key
-      account_name = var.settings.storage_account.account_name
       name         = var.settings.storage_account.name
-      share_name   = var.settings.storage_account.share_name
       type         = var.settings.storage_account.type
-      mount_path   = lookup(var.settings.storage_account.mount_path, null)
+      account_name = can(var.settings.storage_account.account_key) ? var.settings.storage_account.account_key : var.storage_accounts[try(var.settings.storage_account.lz_key, var.client_config.landingzone_key)][var.settings.storage_account.access_key].account
+      share_name   = var.settings.storage_account.share_name
+      access_key   = can(var.settings.storage_account.account_key) ? var.settings.storage_account.account_key : var.storage_accounts[try(var.settings.storage_account.lz_key, var.client_config.landingzone_key)][var.settings.storage_account.access_key].primary_access_key
+      mount_path   = try(var.settings.storage_account.mount_path, null)
     }
-  }
+  }  
   # Create a variable to hold the list of app setting names that the Linux Function App will not swap between Slots when a swap operation is triggered.
   dynamic "sticky_settings" {
     for_each = lookup(var.settings, "sticky_settings", {}) != {} ? [1] : []
