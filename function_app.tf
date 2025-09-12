@@ -68,6 +68,7 @@ module "windows_function_apps" {
   identity                   = try(each.value.identity, null)
   slots                      = try(each.value.slots, {})
   connection_strings         = try(each.value.connection_strings, {})
+  storage_accounts           = local.combined_objects_storage_accounts
   storage_account_name       = try(data.azurerm_storage_account.windows_function_apps[each.key].name, null)
   storage_account_access_key = try(data.azurerm_storage_account.windows_function_apps[each.key].primary_access_key, null)
   tags                       = try(each.value.tags, null)
@@ -123,6 +124,7 @@ module "linux_function_apps" {
   identity                   = try(each.value.identity, null)
   slots                      = try(each.value.slots, {})
   connection_strings         = try(each.value.connection_strings, {})
+  storage_accounts           = local.combined_objects_storage_accounts
   storage_account_name       = try(data.azurerm_storage_account.linux_function_apps[each.key].name, null)
   storage_account_access_key = try(data.azurerm_storage_account.linux_function_apps[each.key].primary_access_key, null)
   tags                       = try(each.value.tags, null)

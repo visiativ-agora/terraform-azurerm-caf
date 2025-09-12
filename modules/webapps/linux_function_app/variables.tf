@@ -124,3 +124,7 @@ variable "diagnostics" {
 variable "slots" {
   default = {}
 }
+
+variable "storage_accounts" {
+  default = {}
+}

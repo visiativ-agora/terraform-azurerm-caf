@@ -381,16 +381,17 @@ resource "azurerm_windows_function_app" "windows_function_app" {
 
   key_vault_reference_identity_id = can(var.settings.key_vault_reference_identity.key) ? var.combined_objects.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.key_vault_reference_identity.key].id : try(var.settings.key_vault_reference_identity.id, null)
   dynamic "storage_account" {
-    for_each = lookup(var.settings, "storage_account", {})
+    for_each = try(var.settings.storage_account, {})
     content {
-      access_key   = var.settings.storage_account.access_key
-      account_name = var.settings.storage_account.account_name
-      name         = var.settings.storage_account.name
-      share_name   = var.settings.storage_account.share_name
-      type         = var.settings.storage_account.type
-      mount_path   = lookup(var.settings.storage_account.mount_path, null)
+      name         = storage_account.value.name
+      type         = storage_account.value.type
+      account_name = can(storage_account.value.account_name) ? storage_account.value.account_name : var.storage_accounts[try(storage_account.value.lz_key, var.client_config.landingzone_key)][storage_account.value.key].account
+      share_name   = storage_account.value.share_name
+      access_key   = can(storage_account.value.access_key) ? storage_account.value.access_key : var.storage_accounts[try(storage_account.value.lz_key, var.client_config.landingzone_key)][storage_account.value.key].primary_access_key
+      mount_path   = try(storage_account.value.mount_path, null)
     }
   }
+
   # Create a variable to hold the list of app setting names that the Windows Function App will not swap between Slots when a swap operation is triggered.
   dynamic "sticky_settings" {
     for_each = lookup(var.settings, "sticky_settings", {}) != {} ? [1] : []
