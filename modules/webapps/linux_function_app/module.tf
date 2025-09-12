@@ -411,12 +411,13 @@ resource "azurerm_linux_function_app" "linux_function_app" {
     content {
       name         = storage_account.value.name
       type         = storage_account.value.type
-      account_name = can(storage_account.value.account_name ? storage_account.value.account_name : var.storage_accounts[try(storage_account.value.lz_key, var.client_config.landingzone_key)][storage_account.value.key].account
+      account_name = can(storage_account.value.account_name) ? storage_account.value.account_name : var.storage_accounts[try(storage_account.value.lz_key, var.client_config.landingzone_key)][storage_account.value.key].account
       share_name   = storage_account.value.share_name
       access_key   = can(storage_account.value.access_key) ? storage_account.value.access_key : var.storage_accounts[try(storage_account.value.lz_key, var.client_config.landingzone_key)][storage_account.value.key].primary_access_key
       mount_path   = try(storage_account.value.mount_path, null)
     }
   }
+
 
   # Create a variable to hold the list of app setting names that the Linux Function App will not swap between Slots when a swap operation is triggered.
   dynamic "sticky_settings" {
