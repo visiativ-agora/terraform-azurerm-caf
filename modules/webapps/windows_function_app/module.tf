@@ -38,10 +38,10 @@ resource "azurerm_windows_function_app" "windows_function_app" {
       }
     }
     dynamic "app_service_logs" {
-      for_each = lookup(local.site_config, "app_service_logs", {}) != {} ? [1] : []
+      for_each = try(local.site_config.app_service_logs) != null ? [local.site_config.app_service_logs] : []
       content {
-        disk_quota_mb         = lookup(app_service_logs.value, "disk_quota_mb", 35)
-        retention_period_days = lookup(app_service_logs.value, "retention_period_days", null)
+        disk_quota_mb         = try(app_service_logs.value.disk_quota_mb, 35)
+        retention_period_days = try(app_service_logs.value.retention_period_days, null)
       }
     }
     dynamic "cors" {

@@ -58,15 +58,6 @@ resource "azurerm_linux_function_app" "linux_function_app" {
         use_custom_runtime          = lookup(local.site_config.application_stack, "use_custom_runtime", null)
       }
     }
-    # dynamic "app_service_logs" {
-    #   for_each = lookup(local.site_config, "app_service_logs", {}) != {} ? [1] : []
-    #   content {
-    #     disk_quota_mb         = lookup(app_service_logs.value, "disk_quota_mb", 35)
-    #     retention_period_days = lookup(app_service_logs.value, "retention_period_days", null)
-    #   }
-    # }
-
-
     dynamic "app_service_logs" {
       for_each = try(local.site_config.app_service_logs) != null ? [local.site_config.app_service_logs] : []
       content {
@@ -74,8 +65,6 @@ resource "azurerm_linux_function_app" "linux_function_app" {
         retention_period_days = try(app_service_logs.value.retention_period_days, null)
       }
     }
-
-
 
     container_registry_managed_identity_client_id = lookup(local.site_config, "container_registry_managed_identity_client_id", null)
     container_registry_use_managed_identity       = lookup(local.site_config, "container_registry_use_managed_identity", null)
