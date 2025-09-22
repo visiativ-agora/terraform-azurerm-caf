@@ -4,14 +4,14 @@ resource "azurerm_cdn_frontdoor_profile" "cdn_frontdoor_profile" {
   sku_name                 = var.settings.sku_name
   response_timeout_seconds = try(var.settings.response_timeout_seconds, null)
 
-  dynamic "identity" {
-    for_each = try(var.settings.identity, null) == null ? [] : [var.settings.identity]
+  # dynamic "identity" {
+  #   for_each = try(var.settings.identity, null) == null ? [] : [var.settings.identity]
 
-    content {
-      type         = var.settings.identity.type
-      identity_ids = contains(["userassigned", "systemassigned", "systemassigned, userassigned"], lower(var.settings.identity.type)) ? local.managed_identities : null
-    }
-  }
+  #   content {
+  #     type         = var.settings.identity.type
+  #     identity_ids = contains(["userassigned", "systemassigned", "systemassigned, userassigned"], lower(var.settings.identity.type)) ? local.managed_identities : null
+  #   }
+  # }
 
   tags = merge(local.tags, try(var.settings.tags, null))
 
