@@ -6,13 +6,13 @@ resource "azurerm_cdn_frontdoor_profile" "profile" {
   resource_group_name = local.resource_group_name
   sku_name            = var.settings.sku_name
 
-  dynamic "identity" {
-    for_each = try(var.settings.identity, null) == null ? [] : [var.settings.identity]
-    content {
-      type         = var.settings.identity.type
-      identity_ids = contains(["userassigned", "systemassigned", "systemassigned, userassigned"], lower(var.settings.identity.type)) ? local.managed_identities : null
-    }
-  }
+  # dynamic "identity" {
+  #   for_each = try(var.settings.identity, null) == null ? [] : [var.settings.identity]
+  #   content {
+  #     type         = var.settings.identity.type
+  #     identity_ids = contains(["userassigned", "systemassigned", "systemassigned, userassigned"], lower(var.settings.identity.type)) ? local.managed_identities : null
+  #   }
+  # }
 
   response_timeout_seconds = try(var.settings.response_timeout_seconds, null)
 
