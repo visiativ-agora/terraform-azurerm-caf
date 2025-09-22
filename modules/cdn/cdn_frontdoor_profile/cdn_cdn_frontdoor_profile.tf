@@ -1,5 +1,5 @@
 module "cdn_frontdoor_profile" {
-  source   = "./modules/cdn/cdn_frontdoor_profile"
+  source   = "./cdn/cdn_frontdoor_profile"
   for_each = local.cdn.cdn_frontdoor_profile
 
   client_config   = local.client_config
