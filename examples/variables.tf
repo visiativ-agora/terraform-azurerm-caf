@@ -1146,3 +1146,8 @@ variable "search_services" {
 variable "load_test" {
   default = {}
 }
+variable "cdn_frontdoor_profiles" {
+  description = "Configuring Front Door Profiles."
+  default     = {}
+  type        = any
+}
