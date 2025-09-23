@@ -53,7 +53,7 @@ resource "null_resource" "assign_identity_to_frontdoor" {
 
   provisioner "local-exec" {
     command = <<EOT
-      az afd profile identity assign --resource-group ${local.resource_group_name} --profile-name ${azurecaf_name.cdn_frontdoor_profile.result} ${local.system_assigned ? "--mi-system-assigned" : ""} ${length(local.managed_identities) > 0 ? "--mi-user-assigned ${join(" ", local.managed_identities)}" : ""}
+      az afd profile identity assign --resource-group ${local.resource_group_name} --profile-name ${azurecaf_name.cdn_frontdoor_profile.result} ${local.system_assigned ? "--system-assigned" : ""} ${length(local.managed_identities) > 0 ? "--user-assigned ${join(" ", local.managed_identities)}" : ""}
     EOT
   }
 }
