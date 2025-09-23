@@ -54,10 +54,12 @@ output "custom_domain_associations" {
   value = module.custom_domain_associations
 }
 
-output "assign_identity_command" {
-  value = try(var.settings.identity, null) == null ? "" : 
-    "az afd profile identity assign --resource-group ${local.resource_group_name} --profile-name ${azurecaf_name.cdn_frontdoor_profile.result} ${local.system_assigned ? "--system-assigned" : ""} ${length(local.managed_identities) > 0 ? "--user-assigned ${join(" ", local.managed_identities)}" : ""}"
-  description = "Commande az afd profile identity assign si identity est présent"
-  sensitive = false
+locals {
+  assign_command = try(var.settings.identity, null) == null ? "" : "az afd profile identity assign --resource-group ${local.resource_group_name} --profile-name ${azurecaf_name.cdn_frontdoor_profile.result} ${local.system_assigned ? "--system-assigned" : ""} ${length(local.managed_identities) > 0 ? "--user-assigned ${join(" ", local.managed_identities)}" : ""}"
 }
 
+output "assign_identity_command" {
+  value       = local.assign_command
+  description = "Commande az afd profile identity assign si identity est présent"
+  sensitive   = false
+}
