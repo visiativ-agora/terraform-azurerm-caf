@@ -253,7 +253,7 @@ locals {
   }
 
   cdn = {
-    cdn_frontdoor_profiles = try(var.cdn.cdn_frontdoor_profiles)
+    cdn_frontdoor_profiles = try(var.cdn.cdn_frontdoor_profiles, {})
   }
 
   cognitive_services = {
