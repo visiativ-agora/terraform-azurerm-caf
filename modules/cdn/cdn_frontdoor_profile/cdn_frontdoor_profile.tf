@@ -48,6 +48,8 @@ locals {
 
 resource "null_resource" "assign_identity_to_frontdoor" {
   depends_on = [azurerm_cdn_frontdoor_profile.cdn_frontdoor_profile]
+  for_each = try(var.settings.identity, null) == null ? {} : { "identity" = var.settings.identity }
+  # count = contains(keys(var.settings), "identity") && var.settings.identity != null ? 1 : 0
 
   provisioner "local-exec" {
     command = <<EOT
