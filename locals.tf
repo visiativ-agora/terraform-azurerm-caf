@@ -252,8 +252,8 @@ locals {
     logic_app_standard              = try(var.logic_app.logic_app_standard, {})
   }
 
-  cdn = {
-    cdn_frontdoor_profiles = try(var.cdn.cdn_frontdoor_profiles, {})
+  cdn_frontdoor_profiles {
+    cdn_frontdoor_profiles = try(var.cdn_frontdoor_profiles.cdn_frontdoor_profiles, {})
   }
 
   cognitive_services = {
@@ -293,7 +293,7 @@ locals {
     azurerm_firewall_policies                               = try(var.networking.azurerm_firewall_policies, {})
     azurerm_firewall_policy_rule_collection_groups          = try(var.networking.azurerm_firewall_policy_rule_collection_groups, {})
     azurerm_firewalls                                       = try(var.networking.azurerm_firewalls, {})
-    azurerm_routes                                          = try(var.networking.azurerm_routes, {})    
+    azurerm_routes                                          = try(var.networking.azurerm_routes, {})
     ddos_services                                           = try(var.networking.ddos_services, {})
     dns_zone_records                                        = try(var.networking.dns_zone_records, {})
     dns_zones                                               = try(var.networking.dns_zones, {})

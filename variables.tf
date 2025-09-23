@@ -16,7 +16,7 @@ variable "client_config" {
   default = {}
 }
 
-variable "cdn" {
+variable "cdn_frontdoor_profiles" {
   default     = {}
 }
 
