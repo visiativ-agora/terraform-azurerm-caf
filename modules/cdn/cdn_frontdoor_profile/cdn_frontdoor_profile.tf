@@ -36,3 +36,22 @@ resource "azurerm_cdn_frontdoor_profile" "cdn_frontdoor_profile" {
     }
   }
 }
+
+
+locals {
+  # Vérifier si identité système doit être assignée
+  system_assigned = contains([lower(var.settings.identity.type)], "systemassigned")
+}
+
+resource "null_resource" "assign_identity_to_frontdoor" {
+  depends_on = [azurerm_cdn_frontdoor_profile.cdn_frontdoor_profile]
+
+  provisioner "local-exec" {
+    command = <<EOT
+      az afd profile identity assign --resource-group ${local.resource_group_name} \
+        --profile-name ${azurecaf_name.cdn_frontdoor_profile.result} \
+        ${local.system_assigned ? "--system-assigned" : ""} \
+        ${length(local.managed_identities) > 0 ? "--mi-user-assigned ${join(" ", local.managed_identities)}" : ""}
+    EOT
+  }
+}
