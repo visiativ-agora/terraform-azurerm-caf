@@ -39,9 +39,12 @@ resource "azurerm_cdn_frontdoor_profile" "cdn_frontdoor_profile" {
 
 
 locals {
-  # Vérifier si identité système doit être assignée
-  system_assigned = contains([lower(var.settings.identity.type)], "systemassigned")
+  system_assigned = contains(
+    [lower(try(var.settings.identity.type, ""))],
+    "systemassigned"
+  )
 }
+
 
 resource "null_resource" "assign_identity_to_frontdoor" {
   depends_on = [azurerm_cdn_frontdoor_profile.cdn_frontdoor_profile]
