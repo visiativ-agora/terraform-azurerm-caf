@@ -12,11 +12,13 @@ resource "azurerm_cdn_frontdoor_custom_domain" "custom_domain" {
   # pre_validated_cdn_frontdoor_custom_domain_id = try(var.settings.pre_validated_cdn_frontdoor_custom_domain_id, null)
 
   tls {
-    certificate_type = try(var.settings.tls.certificate_type, "ManagedCertificate")
+    certificate_type    = try(var.settings.tls.certificate_type, null)
+    minimum_tls_version = try(var.settings.tls.min_tls_version, null)
     cdn_frontdoor_secret_id = coalesce(
       try(var.settings.tls.cdn_frontdoor_secret_id, null),
       try(var.remote_objects.cdn_frontdoor_secrets[try(var.settings.tls.cdn_frontdoor_secret.lz_key, var.client_config.landingzone_key)][var.settings.tls.cdn_frontdoor_secret.key].id, null),
-      try(var.remote_objects.cdn_frontdoor_secrets[var.settings.tls.secret_key].id, null)
+      try(var.remote_objects.cdn_frontdoor_secrets[var.settings.tls.secret_key].id, null),
+      null
     )
   }
 
@@ -31,3 +33,4 @@ resource "azurerm_cdn_frontdoor_custom_domain" "custom_domain" {
     }
   }
 }
+
