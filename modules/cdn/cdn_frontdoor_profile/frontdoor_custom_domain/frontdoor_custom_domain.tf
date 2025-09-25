@@ -14,7 +14,7 @@ resource "azurerm_cdn_frontdoor_custom_domain" "custom_domain" {
   tls {
     certificate_type    = try(var.settings.tls.certificate_type, null)
     minimum_tls_version = try(var.settings.tls.min_tls_version, null)
-    cdn_frontdoor_secret_id = coalesce(
+    cdn_frontdoor_secret_id = try(
       try(var.settings.tls.cdn_frontdoor_secret_id, null),
       try(var.remote_objects.cdn_frontdoor_secrets[try(var.settings.tls.cdn_frontdoor_secret.lz_key, var.client_config.landingzone_key)][var.settings.tls.cdn_frontdoor_secret.key].id, null),
       try(var.remote_objects.cdn_frontdoor_secrets[var.settings.tls.secret_key].id, null),
