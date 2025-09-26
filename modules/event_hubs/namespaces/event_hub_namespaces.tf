@@ -33,6 +33,7 @@ resource "azurerm_eventhub_namespace" "evh" {
     content {
       default_action                 = network_rulesets.value.default_action #Possible values are Allow and Deny. Defaults to Deny.
       trusted_service_access_enabled = try(network_rulesets.value.trusted_service_access_enabled, null)
+      public_network_access_enabled = try(var.settings.public_network_access_enabled, null)
 
       dynamic "virtual_network_rule" {
         for_each = try(network_rulesets.value.virtual_network_rule, {})
