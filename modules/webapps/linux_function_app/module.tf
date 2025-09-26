@@ -58,8 +58,7 @@ resource "azurerm_linux_function_app" "linux_function_app" {
         use_custom_runtime          = lookup(local.site_config.application_stack, "use_custom_runtime", null)
       }
     }
-    dynamic "app_service_logs" {
-      # for_each = try(local.site_config.app_service_logs) != null ? [local.site_config.app_service_logs] : []
+    dynamic "app_service_logs" {      
       for_each = lookup(local.site_config, "app_service_logs", null) != null ? [local.site_config["app_service_logs"]] : []
 
       content {
