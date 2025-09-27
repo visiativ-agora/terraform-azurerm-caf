@@ -79,7 +79,8 @@ resource "azurerm_site_recovery_replicated_vm" "replication" {
     for_each = lookup(var.settings, "data_disks", {})
     content {
 
-      disk_id = replace(replace(lower(var.virtual_machine_data_disks[managed_disk.key]), "microsoft.compute", "Microsoft.Compute"), "resourcegroups", "resourceGroups")
+      //disk_id = replace(replace(lower(var.virtual_machine_data_disks[managed_disk.key]), "microsoft.compute", "Microsoft.Compute"), "resourcegroups", "resourceGroups")
+      disk_id = var.virtual_machine_data_disks[managed_disk.key]
 
       staging_storage_account_id = coalesce(
         try(var.storage_accounts[var.client_config.landingzone_key][var.settings.replication.staging_storage_account_key].id, null),
