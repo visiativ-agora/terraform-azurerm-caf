@@ -78,9 +78,9 @@ resource "azurerm_site_recovery_replicated_vm" "replication" {
   dynamic "managed_disk" {
     for_each = lookup(var.settings, "data_disks", {})
     content {
-      
+
       disk_id = format("/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Compute/disks/%s", var.client_config.subscription_id, lower(var.virtual_machine_data_disks[managed_disk.key].resource_group_name), lower(var.virtual_machine_data_disks[managed_disk.key].name))
-      
+
       staging_storage_account_id = coalesce(
         try(var.storage_accounts[var.client_config.landingzone_key][var.settings.replication.staging_storage_account_key].id, null),
         try(var.storage_accounts[var.settings.replication.staging_storage_account.lz_key][var.settings.replication.staging_storage_account.key].id, null)
