@@ -15,6 +15,7 @@ module "cdn_frontdoor_profiles" {
     keyvault_certificates         = local.combined_objects_keyvault_certificates
     managed_identities            = local.combined_objects_managed_identities
     storage_accounts              = local.combined_objects_storage_accounts
+    dns_zones                     = local.combined_objects_dns_zones
   }
 }
 
