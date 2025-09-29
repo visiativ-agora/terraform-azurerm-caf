@@ -7,7 +7,7 @@ resource "azurerm_cdn_frontdoor_custom_domain" "custom_domain" {
   )
   host_name   = var.settings.host_name
   # dns_zone_id = try(var.settings.dns_zone_id, null)
-  dns_zone_id = try(var.settings.dns_zone.lz_key, null) == null ? var.remote_objects.dns_zones[local.client_config.landingzone_key][var.settings.dns_zone.key].id : var.remote_objects.dns_zones[var.settings.dns_zone.lz_key][var.settings.dns_zone.key].id
+  dns_zone_id = try(var.settings.dns_zone.lz_key, null) == null ? var.remote_objects.dns_zones[var.client_config.landingzone_key][var.settings.dns_zone.key].id : var.remote_objects.dns_zones[var.settings.dns_zone.lz_key][var.settings.dns_zone.key].id
 
   # Pre-validated custom domain (for Azure services like Static Web App)
   # pre_validated_cdn_frontdoor_custom_domain_id = try(var.settings.pre_validated_cdn_frontdoor_custom_domain_id, null)
