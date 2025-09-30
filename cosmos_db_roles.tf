@@ -197,7 +197,7 @@ locals {
           ] if !contains(["lz_key", "account_key"], role_definition_name)
         ]
       ]
-    ]) : format("%s_%s_%s_%s", mapping.object_id_resource_type, mapping.account_key, replace(mapping.role_definition_name, " ", "_"), mapping.object_id_key_resource) => mapping
+    ]) : format("%s_%s_%s_%s", mapping.object_id_resource_type, mapping.account_key, replace(mapping.role_definition_name, " ", "_"), mapping.object_id_key_resource.key) => mapping
   }
 
   cosmosdb_sql_database_roles = {
