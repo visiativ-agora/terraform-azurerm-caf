@@ -35,15 +35,15 @@ resource "azurerm_cdn_frontdoor_custom_domain" "custom_domain" {
   }
 }
 
-resource "azurerm_dns_txt_record" "b2c" {
-  count = can(var.settings.dns_zone.key) ? 1 : 0
+# resource "azurerm_dns_txt_record" "b2c" {
+#   count = can(var.settings.dns_zone.key) ? 1 : 0
   
-  name                = join(".", ["_dnsauth", "b2c"])
-  zone_name           = module.dns_zones[var.settings.dns_zone.key].name
-  resource_group_name = module.dns_zones[var.settings.dns_zone.key].resource_group_name
-  ttl                 = 60
+#   name                = join(".", ["_dnsauth", local.subdomain_for_txt])
+#   zone_name           = module.dns_zones[var.settings.dns_zone.key].name
+#   resource_group_name = module.dns_zones[var.settings.dns_zone.key].resource_group_name
+#   ttl                 = 60
 
-  record {
-    value = azurerm_cdn_frontdoor_custom_domain.custom_domain.validation_token
-  }
-}
+#   record {
+#     value = azurerm_cdn_frontdoor_custom_domain.custom_domain.validation_token
+#   }
+# }

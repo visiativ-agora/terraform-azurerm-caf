@@ -6,3 +6,7 @@ terraform {
     }
   }
 }
+locals {
+  domain_parts      = split(".", var.settings.host_name)
+  subdomain_for_txt = local.domain_parts[0]
+}
