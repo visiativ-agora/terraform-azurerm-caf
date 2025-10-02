@@ -28,3 +28,75 @@ resource "azurerm_container_app_environment" "cae" {
     }
   }
 }
+
+# resource "null_resource" "containerappenv_azuremonitor" {
+#   depends_on = [azurerm_container_app_environment.cae]
+#   for_each = var.settings.logs_destination == "azure-monitor" ? { "logs_destination" = var.settings.logs_destination } : {}
+
+#   triggers = {
+#     logs_destination = jsonencode(var.settings.logs_destination)
+#   }
+  
+#   provisioner "local-exec" {
+#     command = "az containerapp env update --name ${azurecaf_name.cae.result} --resource-group  ${local.resource_group_name} --logs-destination azure-monitor"
+#   }
+# }
+
+
+resource "null_resource" "containerappenv_azuremonitor" {
+  depends_on = [azurerm_container_app_environment.cae]
+
+  triggers = {
+    # On surveille les changements sur ces deux variables
+    destination  = var.settings.logs_destination
+    workspace_id = try(var.settings.log_analytics_workspace_id, null)
+  }
+
+  provisioner "local-exec" {
+    # On utilise une expression conditionnelle pour construire la bonne commande
+    command = self.triggers.destination == "log-analytics" ? \
+      "az containerapp env update --name ${azurecaf_name.cae.result} --resource-group ${local.resource_group_name} --logs-destination ${self.triggers.destination} --logs-workspace-id ${self.triggers.workspace_id}" : "az containerapp env update --name ${azurecaf_name.cae.result} --resource-group ${local.resource_group_name} --logs-destination ${self.triggers.destination}"
+  }
+}
+
+
+# resource "null_resource" "containerappenv_logs_azure_monitor" {
+#   depends_on = [azurerm_container_app_environment.cae]
+#   for_each   = var.settings.logs_destination == "azure-monitor" ? { "logs" = true } : {}
+
+#   triggers = {
+#     destination = var.settings.logs_destination
+#   }
+
+#   provisioner "local-exec" {
+#     command = "az containerapp env update --name ${azurecaf_name.cae.result} --resource-group ${local.resource_group_name} --logs-destination azure-monitor"
+#   }
+# }
+
+# resource "null_resource" "containerappenv_logs_log_analytics" {
+#   depends_on = [azurerm_container_app_environment.cae]
+#   for_each   = var.settings.logs_destination == "log-analytics" && try(var.settings.log_analytics_workspace_id, null) != null ? { "logs" = true } : {}
+
+#   triggers = {
+#     destination  = var.settings.logs_destination
+#     workspace_id = var.settings.log_analytics_workspace_id
+#   }
+
+#   provisioner "local-exec" {
+#     command = "az containerapp env update --name ${azurecaf_name.cae.result} --resource-group ${local.resource_group_name} --logs-destination log-analytics --logs-workspace-id ${var.settings.log_analytics_workspace_id}"
+#   }
+# }
+
+# resource "null_resource" "containerappenv_logs_none" {
+#   depends_on = [azurerm_container_app_environment.cae]
+#   for_each   = contains(["azure-monitor", "log-analytics"], var.settings.logs_destination) ? {} : { "logs" = true }
+
+#   triggers = {
+#     destination = var.settings.logs_destination
+#   }
+
+#   provisioner "local-exec" {
+#     command = "az containerapp env update --name ${azurecaf_name.cae.result} --resource-group ${local.resource_group_name} --logs-destination none"
+#   }
+# }
+
