@@ -29,20 +29,6 @@ resource "azurerm_container_app_environment" "cae" {
   }
 }
 
-# resource "null_resource" "containerappenv_azuremonitor" {
-#   depends_on = [azurerm_container_app_environment.cae]
-#   for_each = var.settings.logs_destination == "azure-monitor" ? { "logs_destination" = var.settings.logs_destination } : {}
-
-#   triggers = {
-#     logs_destination = jsonencode(var.settings.logs_destination)
-#   }
-  
-#   provisioner "local-exec" {
-#     command = "az containerapp env update --name ${azurecaf_name.cae.result} --resource-group  ${local.resource_group_name} --logs-destination azure-monitor"
-#   }
-# }
-
-
 resource "null_resource" "containerappenv_azuremonitor" {
   depends_on = [azurerm_container_app_environment.cae]
 
@@ -54,8 +40,7 @@ resource "null_resource" "containerappenv_azuremonitor" {
 
   provisioner "local-exec" {
     # On utilise une expression conditionnelle pour construire la bonne commande
-    command = self.triggers.destination == "log-analytics" ? \
-      "az containerapp env update --name ${azurecaf_name.cae.result} --resource-group ${local.resource_group_name} --logs-destination ${self.triggers.destination} --logs-workspace-id ${self.triggers.workspace_id}" : "az containerapp env update --name ${azurecaf_name.cae.result} --resource-group ${local.resource_group_name} --logs-destination ${self.triggers.destination}"
+    command = self.triggers.destination == "log-analytics" ? "az containerapp env update --name ${azurecaf_name.cae.result} --resource-group ${local.resource_group_name} --logs-destination ${self.triggers.destination} --logs-workspace-id ${self.triggers.workspace_id}" : "az containerapp env update --name ${azurecaf_name.cae.result} --resource-group ${local.resource_group_name} --logs-destination ${self.triggers.destination}"
   }
 }
 
