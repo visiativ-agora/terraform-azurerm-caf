@@ -45,7 +45,7 @@ locals {
   )
 }
 
-
+# Only because we use old AzureRm provider
 resource "null_resource" "assign_identity_to_frontdoor" {
   depends_on = [azurerm_cdn_frontdoor_profile.cdn_frontdoor_profile]
   for_each = try(var.settings.identity, null) == null ? {} : { "identity" = var.settings.identity }
