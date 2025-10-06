@@ -18,6 +18,13 @@ resource_groups = {
   }
 }
 
+managed_identities = {
+  mi1 = {
+    name               = "redis_mi1"
+    resource_group_key = "redis_region1"
+  }
+}
+
 azurerm_redis_caches = {
   r1 = {
     resource_group_key = "redis_region1"
@@ -27,12 +34,17 @@ azurerm_redis_caches = {
       family        = "C"
       sku_name      = "Standard"
       redis_version = 6
-
+      
+      redis_configuration = {
+        rdb_backup_enabled = false
+        active_directory_authentication_enabled = true
+      }
+            
       redis_role_assignment = {
         "Data Contributor" = {
           managed_identities = {
             # lz_key = ""
-            keys = ["dce"]
+            keys = ["mi1"]
           }
         }
       }

@@ -105,6 +105,7 @@
     "redis_cache/101-redis-diagnostics",
     "redis_cache/102-redis-private",
     "redis_cache/103-redis-private-endpoints",
+    "redis_cache/104-redis-advanced",
     "role_mapping/100-simple-role-mapping",
     "role_mapping/101-function-app-managed-identity",
     "role_mapping/103-abac",
