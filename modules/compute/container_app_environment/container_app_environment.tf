@@ -33,7 +33,7 @@ resource "null_resource" "containerappenv_azuremonitor" {
   depends_on = [azurerm_container_app_environment.cae]
 
   triggers = {
-    destination  = try(var.settings.logs_destination, "none")
+    destination  = try(var.settings.logs_destination, "none")
     workspace_id = try(var.settings.log_analytics_workspace_id, "")
   }
 
