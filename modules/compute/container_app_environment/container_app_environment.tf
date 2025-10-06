@@ -31,13 +31,15 @@ resource "azurerm_container_app_environment" "cae" {
 
 resource "null_resource" "containerappenv_azuremonitor" {
   depends_on = [azurerm_container_app_environment.cae]
-  for_each   = var.settings.logs_destination == "azure-monitor" ? { "logs_destination" = var.settings.logs_destination } : {}
 
   triggers = {
-    logs_destination = jsonencode(var.settings.logs_destination)
+    destination  = try(var.settings.logs_destination, "none")
+    workspace_id = try(var.settings.log_analytics_workspace_id, "")
   }
 
   provisioner "local-exec" {
-    command = "az containerapp env update --name ${azurecaf_name.cae.result} --resource-group  ${local.resource_group_name} --logs-destination azure-monitor"
+    command = self.triggers.destination == "log-analytics" ? "az containerapp env update --name ${azurecaf_name.cae.result} --resource-group ${local.resource_group_name} --logs-destination ${self.triggers.destination} --logs-workspace-id ${self.triggers.workspace_id}" : self.triggers.destination != "none" ? "az containerapp env update --name ${azurecaf_name.cae.result} --resource-group ${local.resource_group_name} --logs-destination ${self.triggers.destination}" : "echo 'No logs destination, skipping update'"
   }
 }
+
+
