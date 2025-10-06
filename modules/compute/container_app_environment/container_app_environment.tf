@@ -34,7 +34,7 @@ resource "null_resource" "containerappenv_azuremonitor" {
 
   triggers = {
     # On surveille les changements sur ces deux variables
-    destination  = var.settings.logs_destination
+    destination  = try(var.settings.logs_destination, null)
     workspace_id = try(var.settings.log_analytics_workspace_id, null)
   }
 
