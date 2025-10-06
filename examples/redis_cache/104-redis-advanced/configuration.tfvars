@@ -34,12 +34,12 @@ azurerm_redis_caches = {
       family        = "C"
       sku_name      = "Standard"
       redis_version = 6
-      
+
       redis_configuration = {
-        rdb_backup_enabled = false
+        rdb_backup_enabled                      = false
         active_directory_authentication_enabled = true
       }
-            
+
       redis_role_assignment = {
         "Data Contributor" = {
           managed_identities = {

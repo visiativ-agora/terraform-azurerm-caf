@@ -16,5 +16,5 @@ locals {
     ]
   }
 
-  redis_role_assignments_merged = flatten([for v in values(local.redis_role_assignments_flat) : v])  
+  redis_role_assignments_merged = flatten([for v in values(local.redis_role_assignments_flat) : v])
 }
