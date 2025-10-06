@@ -33,14 +33,12 @@ resource "null_resource" "containerappenv_azuremonitor" {
   depends_on = [azurerm_container_app_environment.cae]
 
   triggers = {
-    # On surveille les changements sur ces deux variables
-    destination  = try(var.settings.logs_destination, null)
-    workspace_id = try(var.settings.log_analytics_workspace_id, null)
+    destination  = try(var.settings.logs_destination, "none")
+    workspace_id = try(var.settings.log_analytics_workspace_id, "")
   }
 
   provisioner "local-exec" {
-    # On utilise une expression conditionnelle pour construire la bonne commande
-    command = self.triggers.destination == "log-analytics" ? "az containerapp env update --name ${azurecaf_name.cae.result} --resource-group ${local.resource_group_name} --logs-destination ${self.triggers.destination} --logs-workspace-id ${self.triggers.workspace_id}" : "az containerapp env update --name ${azurecaf_name.cae.result} --resource-group ${local.resource_group_name} --logs-destination ${self.triggers.destination}"
+    command = self.triggers.destination == "log-analytics" ? "az containerapp env update --name ${azurecaf_name.cae.result} --resource-group ${local.resource_group_name} --logs-destination ${self.triggers.destination} --logs-workspace-id ${self.triggers.workspace_id}" : self.triggers.destination != "none" ? "az containerapp env update --name ${azurecaf_name.cae.result} --resource-group ${local.resource_group_name} --logs-destination ${self.triggers.destination}" : "echo 'No logs destination, skipping update'"
   }
 }
 
