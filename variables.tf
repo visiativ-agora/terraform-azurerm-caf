@@ -17,7 +17,7 @@ variable "client_config" {
 }
 
 variable "cdn_frontdoor_profiles" {
-  default     = {}
+  default = {}
 }
 
 ## Cloud variables

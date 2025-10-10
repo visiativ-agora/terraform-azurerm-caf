@@ -14,11 +14,11 @@ data "azurerm_key_vault_certificate" "manual_certs" {
     can(each.value.keyvault_id) && each.value.keyvault_id != ""
     ? each.value.keyvault_id
     : try(
-        var.remote_objects.keyvault_certificates[
-          try(each.value.lz_key, var.client_config.landingzone_key)
-        ][each.value.key].id,
-        null
-      )
+      var.remote_objects.keyvault_certificates[
+        try(each.value.lz_key, var.client_config.landingzone_key)
+      ][each.value.key].id,
+      null
+    )
   )
 }
 
@@ -54,7 +54,7 @@ data "azurerm_key_vault_certificate" "manual_certs" {
 resource "azurerm_cdn_frontdoor_secret" "secret" {
   for_each = try(var.settings.secrets, {})
 
-  name                    = each.value.name
+  name = each.value.name
   cdn_frontdoor_profile_id = coalesce(
     try(var.settings.cdn_frontdoor_profile_id, null),
     try(var.remote_objects.cdn_frontdoor_profile.id, null),
