@@ -31,6 +31,8 @@
     "automation/103-automation-private-endpoints",
     "automation/104-automation-schedule-runbook",
     "automation/105-automation-powershell-module",
+    "cdn/cdn_frontdoor_profile/100-basic",
+    "cdn/cdn_frontdoor_profile/200-full-setup-managed-certificates",    
     "communication/communication_services/101-communication_service",
     "diagnostics_profiles/100-multiple-destinations",
     "diagnostics_profiles/100-multiple-destinations",
