@@ -57,6 +57,7 @@ locals {
     dedicated_host_groups                          = try(local.combined_objects_dedicated_host_groups, null)
     dedicated_hosts                                = try(local.combined_objects_dedicated_hosts, null)
     diagnostic_storage_accounts                    = try(local.combined_objects_diagnostic_storage_accounts, null)
+    diagnostic_event_hub_namespaces                = try(local.combined_objects_diagnostic_event_hub_namespaces, null)
     disk_encryption_sets                           = try(local.combined_objects_disk_encryption_sets, null)
     dns_zones                                      = try(local.combined_objects_dns_zones, null)
     ddos_services                                  = try(local.combined_objects_ddos_services, null)
