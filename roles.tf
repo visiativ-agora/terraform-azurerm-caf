@@ -232,7 +232,7 @@ locals {
             for scope_key_resource, role_mapping in role_mappings : [                                     #         seacluster = {
               for role_definition_name, resources in role_mapping : [                                     #           "Azure Kubernetes Service Cluster Admin Role" = {
                 for object_id_key, object_resources in resources : [                                      #             azuread_group_keys = {
-                  for object_id_key_resource in can(object_resources.keys) ? object_resources.keys : [] : #               keys = [ "aks_admins" ] ----End of variable
+                  for object_id_key_resource in try(object_resources.keys, []) :                          #               keys = [ "aks_admins" ] ----End of variable
                   {                                                                                       # "seacluster_Azure_Kubernetes_Service_Cluster_Admin_Role_aks_admins" = {
                     mode                    = key_mode                                                    #   "mode" = "built_in_role_mapping"
                     scope_resource_key      = key
