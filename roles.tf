@@ -189,7 +189,7 @@ locals {
   )
   current_objects_diagnostic_event_hub_namespaces = tomap(
     {
-      (var.current_landingzone_key) = merge(local.combined_objects_diagnostic_event_hub_namespaces, local.combined_diagnostics.storage_accounts)
+      (var.current_landingzone_key) = merge(local.combined_objects_diagnostic_event_hub_namespaces, local.combined_diagnostics.event_hub_namespaces)
     }
   )
   current_objects_diagnostic_storage_accounts = tomap(
