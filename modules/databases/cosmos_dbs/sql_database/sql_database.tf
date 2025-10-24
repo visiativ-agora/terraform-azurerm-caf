@@ -6,23 +6,6 @@ resource "random_integer" "ri" {
 }
 
 # Create database
-# resource "azurerm_cosmosdb_sql_database" "database" {
-#   name                = try(var.settings.add_rnd_num, true) == false ? var.settings.name : format("%s-%s", var.settings.name, random_integer.ri.result)
-#   resource_group_name = var.resource_group_name
-#   account_name        = var.cosmosdb_account_name
-#   # Note : throughput and autoscale_settings conflict and autoscale_settings will take precedence if set
-#   throughput = try(var.settings.autoscale_settings, null) != null ? null : var.settings.throughput
-
-#   # Note : throughput and autoscale_settings conflict and autoscale_settings will take precedence if set
-#   dynamic "autoscale_settings" {
-#     for_each = try(var.settings.autoscale_settings, null) != null ? [var.settings.autoscale_settings] : []
-
-#     content {
-#       max_throughput = autoscale_settings.value.max_throughput
-#     }
-#   }
-# }
-
 resource "azurerm_cosmosdb_sql_database" "database" {
   name                = try(var.settings.add_rnd_num, true) == false ? var.settings.name : format("%s-%s", var.settings.name, random_integer.ri.result)
   resource_group_name = var.resource_group_name
