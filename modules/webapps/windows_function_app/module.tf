@@ -129,6 +129,16 @@ resource "azurerm_windows_function_app" "windows_function_app" {
     websockets_enabled          = lookup(local.site_config, "websockets_enabled", false)
     worker_count                = lookup(local.site_config, "worker_count", null)
   }
+
+  dynamic "sticky_settings" {
+    for_each = lookup(var.settings, "sticky_settings", {}) != {} ? [1] : []
+
+    content {
+      app_setting_names       = lookup(var.settings.sticky_settings, "app_setting_names", null)
+      connection_string_names = lookup(var.settings.sticky_settings, "connection_string_names", null)
+    }
+  }
+
   app_settings = local.app_settings
   dynamic "auth_settings" {
     for_each = lookup(var.settings, "auth_settings", {}) != {} ? [1] : []
