@@ -194,6 +194,15 @@ resource "azurerm_linux_web_app" "linux_web_apps" {
     }
   }
 
+  dynamic "sticky_settings" {
+    for_each = lookup(var.settings, "sticky_settings", {}) != {} ? [1] : []
+
+    content {
+      app_setting_names       = lookup(var.settings.sticky_settings, "app_setting_names", null)
+      connection_string_names = lookup(var.settings.sticky_settings, "connection_string_names", null)
+    }
+  }
+
   app_settings = local.app_settings
 
   dynamic "connection_string" {

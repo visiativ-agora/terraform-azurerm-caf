@@ -38,6 +38,14 @@ resource "azurerm_cosmosdb_account" "cosmos_account" {
     }
   }
 
+  dynamic "virtual_network_rule" {
+    for_each = try(var.settings.network_rules, {})
+    content {
+      id                                   = can(virtual_network_rule.value.id) ? virtual_network_rule.value.id : var.vnets[try(virtual_network_rule.value.lz_key, var.client_config.landingzone_key)][virtual_network_rule.value.vnet_key].subnets[virtual_network_rule.value.subnet_key].id
+      ignore_missing_vnet_service_endpoint = try(virtual_network_rule.value.ignore_missing_vnet_service_endpoint, null)
+    }
+  }
+
   # Primary location (Write Region)
   dynamic "geo_location" {
     for_each = var.settings.geo_locations
