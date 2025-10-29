@@ -453,6 +453,10 @@ variable "load_test" {
   description = "Configuration object - Load Test resources"
   default     = {}
 }
+variable "kubernetes_fleet_managers" {
+  default = {}
+}
+
 variable "recovery_plans" {
   default = {}
 }
