@@ -28,6 +28,7 @@
     "compute/kubernetes_services/108-single-cluster-remote-adgroup-admin",
     "compute/kubernetes_services/109-single-cluster-istio",
     "compute/kubernetes_services/110-single-federated-credentials",
+    "compute/kubernetes_services/111-single-cluster-fleet-manager",    
     "compute/proximity_placement_group",
     "compute/virtual_machine_scale_set/100-linux-win-vmss-lb",
     "compute/virtual_machine_scale_set/101-linux-win-vmss-agw",

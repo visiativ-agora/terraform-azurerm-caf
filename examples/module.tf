@@ -109,6 +109,7 @@ module "example" {
     container_app_environment_certificates = var.container_app_environment_certificates
     container_app_environment_storages     = var.container_app_environment_storages
     container_groups                       = var.container_groups
+    kubernetes_fleet_managers              = var.kubernetes_fleet_managers
     dedicated_host_groups                  = var.dedicated_host_groups
     dedicated_hosts                        = var.dedicated_hosts
     machine_learning_compute_instance      = var.machine_learning_compute_instance

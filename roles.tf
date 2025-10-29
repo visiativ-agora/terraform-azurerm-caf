@@ -144,6 +144,7 @@ locals {
     function_apps                              = local.combined_objects_function_apps
     iot_hub                                    = local.combined_objects_iot_hub
     iot_hub_dps                                = local.combined_objects_iot_hub_dps
+    kubernetes_fleet_managers                  = local.combined_objects_kubernetes_fleet_managers
     keyvaults                                  = local.combined_objects_keyvaults
     kusto_clusters                             = local.combined_objects_kusto_clusters
     log_analytics                              = local.current_objects_log_analytics
