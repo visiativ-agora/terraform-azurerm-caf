@@ -7,10 +7,10 @@ kubernetes_fleet_managers = {
     members = {
       cluster_a = {
         # lz_key = ""
-        key    = "cluster_re1"
-        group  = "dev" # Optionnal
+        key   = "cluster_re1"
+        group = "dev" # Optionnal
       }
-    }    
+    }
   }
 }
 

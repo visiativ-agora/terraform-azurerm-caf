@@ -39,7 +39,7 @@ locals {
 module "kubernetes_fleet_members" {
   depends_on = [module.kubernetes_fleet_managers]
   source     = "./modules/kubernetes_fleet_managers/fleet_members"
-  for_each = local.fleet_members_for_each
+  for_each   = local.fleet_members_for_each
 
   global_settings = var.global_settings
   client_config   = var.client_config

@@ -85,8 +85,8 @@ aks_clusters = {
 
     fleet_manager = {
       # lz_key = ""
-      key = "afm1"
+      key   = "afm1"
       group = "dev"
-    }    
+    }
   }
 }
