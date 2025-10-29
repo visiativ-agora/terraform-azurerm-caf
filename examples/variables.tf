@@ -1151,3 +1151,6 @@ variable "cdn_frontdoor_profiles" {
   default     = {}
   type        = any
 }
+variable "kubernetes_fleet_managers" {
+  default = {}
+}

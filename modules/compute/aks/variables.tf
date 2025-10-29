@@ -50,3 +50,6 @@ variable "mi_federated_credentials" {
   default = {}
 }
 variable "azuread_applications" {}
+
+variable "fleet_manager" {
+}
