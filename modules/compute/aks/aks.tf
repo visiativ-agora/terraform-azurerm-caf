@@ -298,6 +298,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   local_account_disabled = try(var.settings.local_account_disabled, false)
 
+  # Existing maintenance window (deprecated - to be retained for compatibility)
   dynamic "maintenance_window" {
     for_each = try(var.settings.maintenance_window, null) == null ? [] : [1]
     content {
@@ -313,6 +314,54 @@ resource "azurerm_kubernetes_cluster" "aks" {
         content {
           end   = var.settings.maintenance_window.not_allowed.end
           start = var.settings.maintenance_window.not_allowed.start
+        }
+      }
+    }
+  }
+
+  # NEW: Maintenance window for Kubernetes updates
+  dynamic "maintenance_window_auto_upgrade" {
+    for_each = try(var.settings.maintenance_window_auto_upgrade, null) == null ? [] : [1]
+    content {
+      frequency    = var.settings.maintenance_window_auto_upgrade.frequency
+      interval     = var.settings.maintenance_window_auto_upgrade.interval
+      duration     = var.settings.maintenance_window_auto_upgrade.duration
+      day_of_week  = try(var.settings.maintenance_window_auto_upgrade.day_of_week, null)
+      day_of_month = try(var.settings.maintenance_window_auto_upgrade.day_of_month, null)
+      week_index   = try(var.settings.maintenance_window_auto_upgrade.week_index, null)
+      start_time   = var.settings.maintenance_window_auto_upgrade.start_time
+      utc_offset   = var.settings.maintenance_window_auto_upgrade.utc_offset
+      start_date   = try(var.settings.maintenance_window_auto_upgrade.start_date, null)
+
+      dynamic "not_allowed" {
+        for_each = try(var.settings.maintenance_window_auto_upgrade.not_allowed, [])
+        content {
+          start = not_allowed.value.start
+          end   = not_allowed.value.end
+        }
+      }
+    }
+  }
+
+  # NEW: Maintenance window for Node OS updates
+  dynamic "maintenance_window_node_os" {
+    for_each = try(var.settings.maintenance_window_node_os, null) == null ? [] : [1]
+    content {
+      frequency    = var.settings.maintenance_window_node_os.frequency
+      interval     = var.settings.maintenance_window_node_os.interval
+      duration     = var.settings.maintenance_window_node_os.duration
+      day_of_week  = try(var.settings.maintenance_window_node_os.day_of_week, null)
+      day_of_month = try(var.settings.maintenance_window_node_os.day_of_month, null)
+      week_index   = try(var.settings.maintenance_window_node_os.week_index, null)
+      start_time   = var.settings.maintenance_window_node_os.start_time
+      utc_offset   = var.settings.maintenance_window_node_os.utc_offset
+      start_date   = try(var.settings.maintenance_window_node_os.start_date, null)
+
+      dynamic "not_allowed" {
+        for_each = try(var.settings.maintenance_window_node_os.not_allowed, [])
+        content {
+          start = not_allowed.value.start
+          end   = not_allowed.value.end
         }
       }
     }
