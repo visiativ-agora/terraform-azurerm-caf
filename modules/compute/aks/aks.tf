@@ -329,7 +329,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
       day_of_week  = try(var.settings.maintenance_window_auto_upgrade.day_of_week, null)
       day_of_month = try(var.settings.maintenance_window_auto_upgrade.day_of_month, null)
       week_index   = try(var.settings.maintenance_window_auto_upgrade.week_index, null)
-      start_time   = try(var.settings.maintenance_window_auto_upgrade.start_time,null)
+      start_time   = try(var.settings.maintenance_window_auto_upgrade.start_time, null)
       utc_offset   = try(var.settings.maintenance_window_auto_upgrade.utc_offset, null)
       start_date   = try(var.settings.maintenance_window_auto_upgrade.start_date, null)
 
