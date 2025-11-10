@@ -77,7 +77,7 @@ cdn_frontdoor_profiles = {
         forwarding_protocol = "HttpsOnly"
 
         # Associate with custom domain (commented for simplicity)
-        # custom_domain_keys = ["domain1"]
+        # custom_domain_ids = ["domain1"]
 
         # Specify origin IDs explicitly
         origin_ids = ["origin1"]
