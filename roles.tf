@@ -141,7 +141,6 @@ locals {
     diagnostic_event_hub_namespaces            = local.current_objects_diagnostic_event_hub_namespaces
     dns_zones                                  = local.combined_objects_dns_zones
     event_hub_namespaces                       = local.combined_objects_event_hub_namespaces
-    eventgrid_system_topic                     = local.combined_objects_eventgrid_system_topics
     function_apps                              = local.combined_objects_function_apps
     iot_hub                                    = local.combined_objects_iot_hub
     iot_hub_dps                                = local.combined_objects_iot_hub_dps
