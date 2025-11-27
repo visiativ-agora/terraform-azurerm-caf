@@ -33,12 +33,11 @@ resource "azurerm_cdn_frontdoor_custom_domain" "custom_domain" {
     }
   }
 }
-
 resource "azurerm_dns_txt_record" "b2c" {
   count = can(var.settings.dns_zone.key) ? 1 : 0
 
-  name                = join(".", ["_dnsauth", local.subdomain_for_txt])
-  zone_name           = try(var.settings.dns_zone.lz_key, null) == null ? var.remote_objects.dns_zones[var.client_config.landingzone_key][var.settings.dns_zone.key].name : var.remote_objects.dns_zones[var.settings.dns_zone.lz_key][var.settings.dns_zone.key].name
+  name                = "_dnsauth.${local.subdomain_for_txt}"
+  zone_name           = local.zone_name
   resource_group_name = try(var.settings.dns_zone.lz_key, null) == null ? var.remote_objects.dns_zones[var.client_config.landingzone_key][var.settings.dns_zone.key].resource_group_name : var.remote_objects.dns_zones[var.settings.dns_zone.lz_key][var.settings.dns_zone.key].resource_group_name
   ttl                 = 60
 
