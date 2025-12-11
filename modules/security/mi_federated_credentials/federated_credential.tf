@@ -12,11 +12,8 @@
 
 resource "azurerm_federated_identity_credential" "fed_cred" {
   name                = var.settings.name
-  resource_group_name = coalesce(
-    try(var.settings.managed_identity.resource_group_name, null),
-    try(var.settings.resource_group.name, null), 
-    var.resource_group_name
-  )
+  resource_group_name = var.resource_group_name
+
   audience            = try(var.settings.audience, ["api://AzureADTokenExchange"])
   
   # Parent ID avec ordre de priorité correct
