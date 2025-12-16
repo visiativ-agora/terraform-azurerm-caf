@@ -109,10 +109,16 @@ application_gateway_waf_policies = {
           rule_group_override = {
             rgo1 = {
               rule_group_name = "REQUEST-920-PROTOCOL-ENFORCEMENT"
-              disabled_rules = [
-                "920300",
-                "920440"
-              ]
+              rule = {
+                rule1 = {
+                  id      = "920300"
+                  enabled = false
+                }
+                rule2 = {
+                  id      = "920440"
+                  enabled = false
+                }
+              }
             }
           }
         }
