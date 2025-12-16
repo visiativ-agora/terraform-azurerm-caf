@@ -1,24 +1,26 @@
-resource "azurecaf_name" "ca" {
+resource "azurecaf_name" "caj" {
   name          = var.settings.name
   prefixes      = var.global_settings.prefixes
-  resource_type = "azurerm_container_app"
+  resource_type = "azurerm_container_app_job"
   random_length = var.global_settings.random_length
   clean_input   = true
   passthrough   = var.global_settings.passthrough
   use_slug      = var.global_settings.use_slug
 }
 
-resource "azurerm_container_app" "ca" {
-  name                         = azurecaf_name.ca.result
+resource "azurerm_container_app_job" "caj" {
+  name                         = azurecaf_name.caj.result
   resource_group_name          = local.resource_group_name
+  location                     = local.location
   container_app_environment_id = var.container_app_environment_id
-  workload_profile_name        = try(var.workload_profile_name, null)
-  revision_mode                = var.settings.revision_mode
+  workload_profile_name        = try(var.settings.workload_profile_name, null)
+  replica_timeout_in_seconds   = var.settings.replica_timeout_in_seconds
+  replica_retry_limit          = try(var.settings.replica_retry_limit, null)
   tags                         = merge(local.tags, try(var.settings.tags, null))
 
   template {
     dynamic "container" {
-      for_each = var.settings.template.container
+      for_each = try(var.settings.template.container, {})
 
       content {
         name    = container.value.name
@@ -122,79 +124,37 @@ resource "azurerm_container_app" "ca" {
       }
     }
 
-    dynamic "azure_queue_scale_rule" {
-      for_each = try(var.settings.template.azure_queue_scale_rule, {})
-      content {
-        name         = azure_queue_scale_rule.value.name
-        queue_name   = azure_queue_scale_rule.value.queue_name
-        queue_length = azure_queue_scale_rule.value.queue_length
+    dynamic "init_container" {
+      for_each = try(var.settings.template.init_container, {})
 
-        dynamic "authentication" {
-          for_each = azure_queue_scale_rule.value.authentication
+      content {
+        name    = init_container.value.name
+        image   = init_container.value.image
+        args    = try(init_container.value.args, null)
+        command = try(init_container.value.command, null)
+        cpu     = init_container.value.cpu
+        memory  = init_container.value.memory
+
+        dynamic "env" {
+          for_each = try(init_container.value.env, {})
 
           content {
-            secret_name       = authentication.value.secret_name
-            trigger_parameter = authentication.value.trigger_parameter
+            name        = env.value.name
+            secret_name = try(env.value.secret_name, null)
+            value       = try(env.value.value, null)
+          }
+        }
+
+        dynamic "volume_mounts" {
+          for_each = try(init_container.value.volume_mounts, {})
+
+          content {
+            name = volume_mounts.value.name
+            path = volume_mounts.value.path
           }
         }
       }
     }
-
-    dynamic "custom_scale_rule" {
-      for_each = try(var.settings.template.custom_scale_rule, {})
-      content {
-        name             = custom_scale_rule.value.name
-        custom_rule_type = custom_scale_rule.value.custom_rule_type
-        metadata         = custom_scale_rule.value.metadata
-
-        dynamic "authentication" {
-          for_each = try(custom_scale_rule.value.authentication, {})
-
-          content {
-            secret_name       = authentication.value.secret_name
-            trigger_parameter = authentication.value.trigger_parameter
-          }
-        }
-      }
-    }
-
-    dynamic "http_scale_rule" {
-      for_each = try(var.settings.template.http_scale_rule, {})
-      content {
-        name                = http_scale_rule.value.name
-        concurrent_requests = http_scale_rule.value.concurrent_requests
-
-        dynamic "authentication" {
-          for_each = try(http_scale_rule.value.authentication, {})
-
-          content {
-            secret_name       = authentication.value.secret_name
-            trigger_parameter = authentication.value.trigger_parameter
-          }
-        }
-      }
-    }
-
-    dynamic "tcp_scale_rule" {
-      for_each = try(var.settings.template.tcp_scale_rule, {})
-      content {
-        name                = tcp_scale_rule.value.name
-        concurrent_requests = tcp_scale_rule.value.concurrent_requests
-
-        dynamic "authentication" {
-          for_each = try(tcp_scale_rule.value.authentication, {})
-
-          content {
-            secret_name       = authentication.value.secret_name
-            trigger_parameter = authentication.value.trigger_parameter
-          }
-        }
-      }
-    }
-
-    min_replicas    = try(var.settings.template.min_replicas, null)
-    max_replicas    = try(var.settings.template.max_replicas, null)
-    revision_suffix = try(var.settings.template.revision_suffix, null)
 
     dynamic "volume" {
       for_each = try(var.settings.template.volume, {})
@@ -207,46 +167,60 @@ resource "azurerm_container_app" "ca" {
     }
   }
 
-  dynamic "ingress" {
-    for_each = can(var.settings.ingress) ? [var.settings.ingress] : []
+  dynamic "manual_trigger_config" {
+    for_each = can(var.settings.manual_trigger_config) ? [var.settings.manual_trigger_config] : []
 
     content {
-      allow_insecure_connections = try(ingress.value.allow_insecure_connections, null)
-      external_enabled           = try(ingress.value.external_enabled, null)
-      fqdn                       = try(ingress.value.fqdn, null)
-      target_port                = ingress.value.target_port
-      transport                  = ingress.value.transport
+      parallelism              = try(manual_trigger_config.value.parallelism, null)
+      replica_completion_count = try(manual_trigger_config.value.replica_completion_count, null)
+    }
+  }
 
-      dynamic "custom_domain" {
-        for_each = try(ingress.value.custom_domain, {})
+  dynamic "event_trigger_config" {
+    for_each = can(var.settings.event_trigger_config) ? [var.settings.event_trigger_config] : []
 
-        content {
-          certificate_binding_type = try(custom_domain.value.certificate_binding_type, null)
-          certificate_id           = can(custom_domain.value.certificate_id) ? custom_domain.value.certificate_id : var.combined_resources.container_app_environment_certificates[try(custom_domain.value.lz_key, var.client_config.landingzone_key)][custom_domain.value.certificate_key].id
-          name                     = custom_domain.value.name
-        }
-      }
+    content {
+      parallelism              = try(event_trigger_config.value.parallelism, null)
+      replica_completion_count = try(event_trigger_config.value.replica_completion_count, null)
 
-      dynamic "traffic_weight" {
-        for_each = try(ingress.value.traffic_weight, {})
+      dynamic "scale" {
+        for_each = can(event_trigger_config.value.scale) ? [event_trigger_config.value.scale] : []
 
         content {
-          label           = try(traffic_weight.value.label, null)
-          latest_revision = try(traffic_weight.value.latest_revision, null)
-          revision_suffix = try(traffic_weight.value.revision_suffix, null)
-          percentage      = traffic_weight.value.percentage
+          max_executions              = try(scale.value.max_executions, null)
+          min_executions              = try(scale.value.min_executions, null)
+          polling_interval_in_seconds = try(scale.value.polling_interval_in_seconds, null)
+
+          dynamic "rules" {
+            for_each = try(scale.value.rules, {})
+
+            content {
+              name             = try(rules.value.name, null)
+              custom_rule_type = try(rules.value.custom_rule_type, null)
+              metadata         = try(rules.value.metadata, null)
+
+              dynamic "authentication" {
+                for_each = try(rules.value.authentication, {})
+
+                content {
+                  secret_name       = try(authentication.value.secret_name, null)
+                  trigger_parameter = try(authentication.value.trigger_parameter, null)
+                }
+              }
+            }
+          }
         }
       }
     }
   }
 
-  dynamic "dapr" {
-    for_each = can(var.settings.dapr) ? [var.settings.dapr] : []
+  dynamic "schedule_trigger_config" {
+    for_each = can(var.settings.schedule_trigger_config) ? [var.settings.schedule_trigger_config] : []
 
     content {
-      app_id       = dapr.value.app_id
-      app_port     = try(dapr.value.app_port, null)
-      app_protocol = try(dapr.value.app_protocol, null)
+      cron_expression          = schedule_trigger_config.value.cron_expression
+      parallelism              = try(schedule_trigger_config.value.parallelism, null)
+      replica_completion_count = try(schedule_trigger_config.value.replica_completion_count, null)
     }
   }
 
