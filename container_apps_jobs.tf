@@ -1,4 +1,3 @@
-# Dans le root module
 module "container_app_jobs" {
   source   = "./modules/compute/container_app_job"
   for_each = local.compute.container_app_jobs
