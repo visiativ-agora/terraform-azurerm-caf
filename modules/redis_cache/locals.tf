@@ -10,8 +10,8 @@ locals {
 
         lz_key = contains(keys(role_data.managed_identities), "lz_key") ? role_data.managed_identities.lz_key : var.client_config.landingzone_key
 
-        principal_id = var.managed_identities[try(role_data.managed_identities.value.lz_key, var.client_config.landingzone_key)][key].principal_id
-        alias        = var.managed_identities[try(role_data.managed_identities.value.lz_key, var.client_config.landingzone_key)][key].name
+        principal_id = var.managed_identities[try(role_data.managed_identities.lz_key, var.client_config.landingzone_key)][key].principal_id
+        alias        = var.managed_identities[try(role_data.managed_identities.lz_key, var.client_config.landingzone_key)][key].name
       }
     ]
   }
