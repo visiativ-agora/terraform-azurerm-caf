@@ -8,6 +8,10 @@ module "aks_clusters" {
   depends_on = [null_resource.register_feature_preview, module.networking, module.routes, module.azurerm_firewall_policies, module.application_gateways, module.application_gateway_platforms, module.application_gateway_applications]
   for_each   = local.compute.aks_clusters
 
+  providers = {    
+    azurerm.gitops = azurerm.gitops
+  }
+
   client_config       = local.client_config
   diagnostic_profiles = try(each.value.diagnostic_profiles, {})
   diagnostics         = local.combined_diagnostics
