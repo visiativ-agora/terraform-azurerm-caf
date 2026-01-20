@@ -33,7 +33,7 @@ resource "azurerm_container_group" "acg" {
   tags                = merge(local.tags, try(var.settings.tags, null))
   ip_address_type     = try(var.settings.ip_address_type, "Public")
   restart_policy      = try(var.settings.restart_policy, "Always")
-  network_profile_id  = try(var.combined_resources.network_profiles[try(var.settings.network_profile.lz_key, var.client_config.landingzone_key)][var.settings.network_profile.key].id, null)
+  subnet_ids          = try(var.settings.subnet_id, var.remote_objects.virtual_subnets[try(var.settings.lz_key, var.client_config.landingzone_key)][var.settings.subnet_key].id, var.remote_objects.vnets[try(var.settings.lz_key, var.client_config.landingzone_key)][var.settings.vnet_key].subnets[var.settings.subnet_key].id, null)
 
   dynamic "exposed_port" {
     for_each = try(var.settings.exposed_port, [])
@@ -65,14 +65,6 @@ resource "azurerm_container_group" "acg" {
 
       commands = try(container.value.commands, null)
 
-      dynamic "gpu" {
-        for_each = try(container.value.gpu, null) == null ? [] : [1]
-
-        content {
-          count = gpu.value.count
-          sku   = gpu.value.sku
-        }
-      }
 
       dynamic "ports" {
         for_each = try(container.value.ports, {})
@@ -194,8 +186,13 @@ resource "azurerm_container_group" "acg" {
   #   }
   # }
 
-  timeouts {
-    create = "2h"
-    update = "2h"
+  dynamic "timeouts" {
+    for_each = try(var.settings.timeouts, null) != null ? [var.settings.timeouts] : []
+    content {
+      create = try(timeouts.value.create, null)
+      update = try(timeouts.value.update, null)
+      read   = try(timeouts.value.read, null)
+      delete = try(timeouts.value.delete, null)
+    }
   }
 }

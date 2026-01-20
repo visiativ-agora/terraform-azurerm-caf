@@ -12,34 +12,10 @@ resource "azurerm_container_app_environment" "cae" {
   name                                        = azurecaf_name.cae.result
   location                                    = local.location
   resource_group_name                         = local.resource_group_name
-  log_analytics_workspace_id                  = can(var.settings.log_analytics_workspace_id) ? var.settings.log_analytics_workspace_id : try(var.diagnostics.log_analytics[var.settings.log_analytics_key].id, null)
+  log_analytics_workspace_id                  = can(var.settings.log_analytics_workspace_id) ? var.settings.log_analytics_workspace_id : var.diagnostics.log_analytics[var.settings.log_analytics_key].id
   dapr_application_insights_connection_string = try(var.settings.dapr_application_insights_connection_string, null)
   infrastructure_subnet_id                    = try(var.subnet_id, null)
   internal_load_balancer_enabled              = try(var.settings.internal_load_balancer_enabled, null)
   zone_redundancy_enabled                     = try(var.settings.zone_redundancy_enabled, null)
   tags                                        = merge(local.tags, try(var.settings.tags, null))
-  dynamic "workload_profile" {
-    for_each = try(var.settings.workload_profile, null) != null ? [var.settings.workload_profile] : []
-    content {
-      name                  = workload_profile.value.name
-      workload_profile_type = workload_profile.value.workload_profile_type
-      minimum_count         = workload_profile.value.minimum_count
-      maximum_count         = workload_profile.value.maximum_count
-    }
-  }
 }
-
-resource "null_resource" "containerappenv_azuremonitor" {
-  depends_on = [azurerm_container_app_environment.cae]
-
-  triggers = {
-    destination  = try(var.settings.logs_destination, "none")
-    workspace_id = try(var.settings.log_analytics_workspace_id, "")
-  }
-
-  provisioner "local-exec" {
-    command = self.triggers.destination == "log-analytics" ? "az containerapp env update --name ${azurecaf_name.cae.result} --resource-group ${local.resource_group_name} --logs-destination ${self.triggers.destination} --logs-workspace-id ${self.triggers.workspace_id}" : self.triggers.destination != "none" ? "az containerapp env update --name ${azurecaf_name.cae.result} --resource-group ${local.resource_group_name} --logs-destination ${self.triggers.destination}" : "echo 'No logs destination, skipping update'"
-  }
-}
-
-

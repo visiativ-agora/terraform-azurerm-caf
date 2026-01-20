@@ -1,8 +1,8 @@
 # This file is maintained for legacy purposes. Please do not modify this file.
-terraform {
-  required_providers {
-    azurecaf = {
-      source = "aztfmod/azurecaf"
-    }
-  }
-}
+# terraform {
+#   required_providers {
+#     azurecaf = {
+#       source = "aztfmod/azurecaf"
+#     }
+#   }
+# }
