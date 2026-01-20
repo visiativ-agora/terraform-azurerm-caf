@@ -1,21 +1,33 @@
 variable "global_settings" {
   description = "Global settings object (see module README.md)"
+  type        = any
 }
-variable "client_config" {}
-variable "diagnostics" {}
-variable "settings" {}
-variable "vnets" {}
-variable "admin_group_object_ids" {}
+variable "client_config" {
+  description = "Client configuration object (see module README.md)."
+  type        = any
+}
+variable "settings" {
+  description = "The settings for the Azure resource."
+  type        = any
+}
+variable "admin_group_object_ids" {
+  description = "Admin group object ids to be used in the module."
+  default     = []
+  type        = list(string)
+}
 variable "location" {
   description = "location of the resource if different from the resource group."
+  type        = string
   default     = null
 }
 variable "resource_group_name" {
-  description = "Resource group object to deploy the virtual machine"
+  description = "Resource group object to deploy the Azure resource"
+  type        = string
   default     = null
 }
 variable "resource_group" {
-  description = "Resource group object to deploy the virtual machine"
+  description = "Resource group object to deploy the Azure resource"
+  type        = any
 }
 variable "resource_groups" {
   description = "Resource group object to deploy the mi federated credentials"
@@ -26,10 +38,14 @@ variable "base_tags" {
   type        = bool
 }
 variable "diagnostic_profiles" {
-  default = {}
+  description = "Diagnostic settings for the resource."
+  default     = {}
+  type        = any
 }
 variable "private_dns_zone_id" {
-  default = null
+  description = "Private DNS zone id to be used in the module."
+  default     = null
+  type        = string
 }
 variable "managed_identities" {
   default = {}
@@ -38,10 +54,14 @@ variable "application_gateway" {
   default = {}
 }
 variable "private_endpoints" {
-  default = {}
+  description = "Private endpoints to be used in the module."
+  default     = {}
+  type        = any
 }
 variable "private_dns" {
-  default = {}
+  description = "Private DNS zones to be used in the module."
+  default     = {}
+  type        = any
 }
 variable "azuread_federated_credentials" {
   default = {}
@@ -52,4 +72,9 @@ variable "mi_federated_credentials" {
 variable "azuread_applications" {}
 
 variable "fleet_manager" {
+}
+variable "remote_objects" {
+  description = "Remote objects to be used in the module."
+  default     = {}
+  type        = any
 }

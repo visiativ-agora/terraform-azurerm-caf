@@ -1,5 +1,6 @@
 variable "settings" {
   default = {}
+  type    = any
 }
 
 variable "profile_id" {
@@ -11,6 +12,7 @@ variable "target_resource_id" {
 }
 
 variable "remote_objects" {
-  description = "(Required) Specifies the supported Azure location where to create the resource. Changing this forces a new resource to be created."
+  description = "Remote objects configuration."
+  type        = any
   default     = {}
 }

@@ -5,6 +5,7 @@ variable "resource_group_name" {
 
 variable "global_settings" {
   description = "Global settings object (see module README.md)"
+  type        = any
 }
 
 variable "tags" {

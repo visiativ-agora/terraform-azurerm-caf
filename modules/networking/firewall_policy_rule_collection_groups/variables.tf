@@ -4,6 +4,7 @@ variable "policy_settings" {
 
 variable "global_settings" {
   description = "Global settings object (see module README.md)"
+  type        = any
 }
 
 variable "firewall_policy_id" {

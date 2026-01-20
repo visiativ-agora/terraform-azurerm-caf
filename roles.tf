@@ -24,8 +24,7 @@ resource "azurerm_role_assignment" "for" {
     if contains(keys(local.services_roles), value.scope_resource_key)
   }
 
-  principal_id = each.value.object_id_resource_type == "object_ids" ? each.value.object_id_key_resource : each.value.object_id_lz_key == null ? local.services_roles[each.value.object_id_resource_type][var.current_landingzone_key][each.value.object_id_key_resource].rbac_id : local.services_roles[each.value.object_id_resource_type][each.value.object_id_lz_key][each.value.object_id_key_resource].rbac_id
-  # role_definition_id   = each.value.mode == "custom_role_mapping" ? module.custom_roles[each.value.role_definition_name].role_definition_resource_id : null
+  principal_id         = each.value.object_id_resource_type == "object_ids" ? each.value.object_id_key_resource : each.value.object_id_lz_key == null ? local.services_roles[each.value.object_id_resource_type][var.current_landingzone_key][each.value.object_id_key_resource].rbac_id : local.services_roles[each.value.object_id_resource_type][each.value.object_id_lz_key][each.value.object_id_key_resource].rbac_id
   role_definition_id   = each.value.mode == "custom_role_mapping" ? try(local.combined_objects_custom_roles[coalesce(each.value.role_lz_key, local.client_config.landingzone_key)][each.value.role_definition_name].role_definition_resource_id, module.custom_roles[each.value.role_definition_name], null) : null
   role_definition_name = each.value.mode == "built_in_role_mapping" ? each.value.role_definition_name : null
   scope                = each.value.scope_lz_key == null ? local.services_roles[each.value.scope_resource_key][var.current_landingzone_key][each.value.scope_key_resource].id : local.services_roles[each.value.scope_resource_key][each.value.scope_lz_key][each.value.scope_key_resource].id
@@ -120,7 +119,10 @@ locals {
     app_service_environments                   = local.combined_objects_app_service_environments
     app_service_environments_v3                = local.combined_objects_app_service_environments_v3
     app_service_plans                          = local.combined_objects_app_service_plans
-    app_services                               = local.combined_objects_app_services
+    linux_web_apps                             = local.combined_objects_linux_web_apps
+    windows_web_apps                           = local.combined_objects_windows_web_apps
+    linux_function_apps                        = local.combined_objects_linux_function_apps
+    windows_function_apps                      = local.combined_objects_windows_function_apps
     application_gateway_platforms              = local.combined_objects_application_gateway_platforms
     application_gateways                       = local.combined_objects_application_gateways
     automations                                = local.combined_objects_automations
@@ -130,6 +132,7 @@ locals {
     azuread_apps                               = local.combined_objects_azuread_apps
     azuread_groups                             = local.combined_objects_azuread_groups
     azuread_service_principals                 = local.combined_objects_azuread_service_principals
+    azuread_service_principal_names            = local.combined_objects_azuread_service_principal_names
     azurerm_firewalls                          = local.combined_objects_azurerm_firewalls
     backup_vaults                              = local.combined_objects_backup_vaults
     batch_accounts                             = local.combined_objects_batch_accounts
@@ -141,7 +144,6 @@ locals {
     diagnostic_event_hub_namespaces            = local.current_objects_diagnostic_event_hub_namespaces
     dns_zones                                  = local.combined_objects_dns_zones
     event_hub_namespaces                       = local.combined_objects_event_hub_namespaces
-    function_apps                              = local.combined_objects_function_apps
     iot_hub                                    = local.combined_objects_iot_hub
     iot_hub_dps                                = local.combined_objects_iot_hub_dps
     kubernetes_fleet_managers                  = local.combined_objects_kubernetes_fleet_managers
@@ -160,7 +162,7 @@ locals {
     mssql_managed_instances                    = local.combined_objects_mssql_managed_instances
     mssql_servers                              = local.combined_objects_mssql_servers
     maintenance_configuration                  = local.combined_objects_maintenance_configuration
-    mysql_servers                              = local.combined_objects_mysql_servers
+    mysql_flexible_servers                     = local.combined_objects_mysql_flexible_servers
     network_watchers                           = local.combined_objects_network_watchers
     networking                                 = local.combined_objects_networking
     postgresql_servers                         = local.combined_objects_postgresql_servers
@@ -171,6 +173,7 @@ locals {
     recovery_vaults                            = local.combined_objects_recovery_vaults
     resource_groups                            = local.combined_objects_resource_groups
     route_tables                               = local.combined_objects_route_tables
+    service_plans                              = local.combined_objects_service_plans
     servicebus_namespaces                      = local.combined_objects_servicebus_namespaces
     servicebus_queues                          = local.combined_objects_servicebus_queues
     servicebus_topics                          = local.combined_objects_servicebus_topics

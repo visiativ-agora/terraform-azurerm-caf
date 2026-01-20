@@ -4,19 +4,21 @@
 #
 
 name: standalone-regressor-tf100
+permissions:
+  contents: read
 
 on:
   workflow_dispatch:
     inputs:
       base_version:
-        description: 'Select the base version to use as baseline (refer to tags)'
+        description: Select the base version to use as baseline (refer to tags)
         required: true
         type: string
       scenario:
         description: 'Select the scenario you want to run:'
         required: false
         type: choice
-        default: 'standalone-scenarios.json'
+        default: standalone-scenarios.json
         options:
         - standalone-azuread.json
         - standalone-scenarios.json
@@ -24,8 +26,8 @@ on:
         - standalone-networking.json
 
 env:
-  TF_CLI_ARGS: '-no-color'
-  TF_CLI_ARGS_destroy: '-auto-approve -refresh=false'
+  TF_CLI_ARGS: -no-color
+  TF_CLI_ARGS_destroy: -auto-approve -refresh=false
   ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
   ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
   ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
@@ -40,7 +42,7 @@ jobs:
     outputs:
       matrix: ${{ steps.load_scenarios.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - id: load_scenarios
         run: |
           cases=$((
@@ -62,7 +64,7 @@ jobs:
 
     steps:
       - name: Checkout with tag ${{ github.event.inputs.base_version }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.event.inputs.base_version }}
 
@@ -106,7 +108,7 @@ jobs:
             ${{ env.PLAN_FILE }}
 
       - name: Checkout from selected branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Terraform Init example with selected branch
         run: |

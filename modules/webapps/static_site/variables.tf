@@ -1,21 +1,26 @@
 variable "client_config" {
   description = "Client configuration object (see module README.md)."
+  type        = any
 }
 
 variable "tags" {
   description = "(Required) map of tags for the deployment"
+  type        = map(any)
 }
 
 variable "name" {
   description = "(Required) Name of the Static Site"
+  type        = string
 }
 
 variable "location" {
   description = "(Required) Resource Location"
+  type        = string
 }
 
 variable "resource_group_name" {
   description = "(Required) Resource group of the Static Site"
+  type        = string
 }
 
 variable "sku_tier" {
@@ -41,10 +46,12 @@ variable "sku_size" {
 }
 variable "identity" {
   default = null
+  type    = any
 }
 
 variable "global_settings" {
   description = "Global settings object (see module README.md)"
+  type        = any
 }
 
 variable "base_tags" {
@@ -54,12 +61,25 @@ variable "base_tags" {
 
 variable "diagnostic_profiles" {
   default = {}
+  type    = map(any)
 }
 
 variable "diagnostics" {
   default = null
+  type    = any
 }
 
 variable "custom_domains" {
   default = {}
+  type    = map(any)
+}
+
+variable "remote_objects" {
+  description = "Remote objects configuration."
+  type        = any
+}
+
+variable "settings" {
+  description = "The settings for the Azure resource."
+  type        = any
 }

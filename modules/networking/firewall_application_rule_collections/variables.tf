@@ -13,6 +13,7 @@ variable "rule_collections" {
 variable "azurerm_firewall_application_rule_collection_definition" {}
 variable "global_settings" {
   description = "Global settings object (see module README.md)"
+  type        = any
 }
 
 variable "ip_groups" {

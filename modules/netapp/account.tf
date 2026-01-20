@@ -13,6 +13,7 @@ resource "azurerm_netapp_account" "account" {
   name                = azurecaf_name.account.result
   resource_group_name = var.resource_group_name
   location            = var.location
+  tags                = local.tags
   lifecycle {
     ignore_changes = [resource_group_name, location, name]
   }

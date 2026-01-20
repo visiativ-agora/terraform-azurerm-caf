@@ -1,128 +1,87 @@
-variable "name" {
-  description = "The name of the resource"
-
-}
-
+## Global settings
 variable "global_settings" {
-  description = "Global settings for the Azure resources"
+  description = <<DESCRIPTION
+  The global_settings object is a map of settings that can be used to configure the naming convention for Azure resources. It allows you to specify a default region, environment, and other settings that will be used when generating names for resources.
+  Any non-compliant characters will be removed from the name, suffix, or prefix. The generated name will be compliant with the set of allowed characters for each Azure resource type.
+  
+  These are the key naming settings:
+  - prefixes - (Optional) A list of prefixes to append as the first characters of the generated name.
+  - suffixes - (Optional) A list of suffixes to append after the basename of the resource.
+  - use_slug - (Optional) A boolean value that indicates whether a slug should be added to the name. Defaults to true.
+  - separator - (Optional) The separator character to use between prefixes, resource type, name, suffixes, and random characters. Defaults to "-".
+  - clean_input - (Optional) A boolean value that indicates whether to remove non-compliant characters from the name. Defaults to true.
+  DESCRIPTION
+  type        = any
 }
 
-variable "service_plan_id" {
-  description = "The ID of the Service Plan"
+## Client configuration
 
-}
+variable "client_config" {
 
-variable "settings" {
-  description = "Settings for the Azure Function App"
+  description = <<DESCRIPTION
+    Client configuration object primarily used for specifying the Azure client context in non-interactive environments,
+    such as CI/CD pipelines running under a Service Principal.
+
+    If this variable is left as an empty map (the default), the module will attempt to derive the client configuration
+    (like client_id, tenant_id, subscription_id, object_id) from the current Azure provider context
+    (e.g., credentials from Azure CLI, VS Code Azure login, or environment variables).
+
+    If you provide a map, it should contain the necessary authentication and context details. The structure used
+    when the default is derived includes keys like:
+    - client_id
+    - landingzone_key
+    - logged_aad_app_objectId
+    - logged_user_objectId
+    - object_id
+    - subscription_id
+    - tenant_id
+
+    Example of providing explicit configuration (e.g., for a Service Principal):
+    client_config = {
+      client_id       = "your-service-principal-client-id"
+      object_id       = "your-service-principal-object-id"
+      subscription_id = "your-target-subscription-id"
+      tenant_id       = "your-azure-ad-tenant-id"
+      landingzone_key = "my_landingzone" # Optional, defaults to var.current_landingzone_key if needed elsewhere
+      # Add other relevant keys if needed by the specific module context
+    }
+  DESCRIPTION
+  type        = any
 
 }
 
 variable "location" {
-  description = "The location of the Azure resources"
-
+  description = "(Required) Specifies the supported Azure location where to create the resource. Changing this forces a new resource to be created."
+  type        = string
 }
 
-variable "resource_group_name" {
-  description = "The name of the resource group in which the resources will be created"
+# Complete the rest of settings in variable settings
+variable "settings" {
+  description = <<DESCRIPTION
+  Settings of the Windows Function App module:
+
+  DESCRIPTION
+  type        = any
 
 }
 
 variable "resource_group" {
-  description = "The resource group object in which the resources will be created"
-}
-
-variable "tags" {
-  description = "A mapping of tags to assign to the resource"
-
-}
-
-variable "app_settings" {
-  description = "App settings for the Azure Function App"
-
-}
-
-variable "connection_strings" {
-  description = "Connection strings for the Azure Function App"
-
-}
-
-variable "identity" {
-  description = "Managed Service Identity for the Azure Function App"
-
-}
-
-variable "combined_objects" {
-  description = "Combined objects for the Azure Function App"
-}
-
-variable "client_config" {
-  description = "Client configuration for the Azure Function App"
-
-}
-
-variable "application_insight" {
-  description = "Application Insight for the Azure Function App"
-
-}
-
-variable "private_endpoints" {
-  description = "Private endpoints for the Azure Function App"
-
+  description = "Resource group object"
+  type        = any
 }
 
 variable "base_tags" {
-  description = "Base tags for the resource to be inherited from the resource group."
   type        = bool
+  description = "Flag to determine if tags should be inherited"
 }
 
 variable "remote_objects" {
-  default = null
+  type        = any
+  description = "Remote objects"
 }
 
-variable "virtual_subnets" {
-  description = "Map of virtual_subnets objects"
+variable "private_endpoints" {
+  description = "A map of objects representing the private endpoints to create."
+  type        = any
   default     = {}
-  nullable    = false
-}
-
-variable "private_dns" {
-  description = "Map of private_dns objects"
-  default     = {}
-  nullable    = false
-}
-
-variable "vnets" {
-  description = "Map of vnets objects"
-  default     = {}
-  nullable    = false
-}
-
-variable "storage_account_name" {
-  description = "The name of the storage account"
-
-}
-
-variable "storage_account_access_key" {
-  description = "The access key of the storage account"
-
-}
-
-variable "dynamic_app_settings" {
-  default = {}
-}
-
-variable "diagnostic_profiles" {
-  default = {}
-}
-
-variable "diagnostics" {
-  default = null
-}
-
-variable "slots" {
-  default = {}
-}
-
-variable "storage_accounts" {
-  default = {}
 }

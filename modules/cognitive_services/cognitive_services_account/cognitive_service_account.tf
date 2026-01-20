@@ -1,87 +1,76 @@
 resource "azurecaf_name" "service" {
   name          = var.settings.name
   prefixes      = var.global_settings.prefixes
-  resource_type = "azurerm_cognitive_account"
+  suffixes      = var.global_settings.suffixes
   random_length = var.global_settings.random_length
+  random_seed   = var.global_settings.random_seed
+  resource_type = "azurerm_cognitive_account"
   clean_input   = true
   passthrough   = var.global_settings.passthrough
   use_slug      = var.global_settings.use_slug
 }
 
 resource "azurerm_cognitive_account" "service" {
-  name                          = azurecaf_name.service.result
-  location                      = var.location
-  resource_group_name           = var.resource_group_name
-  kind                          = var.settings.kind
-  sku_name                      = var.settings.sku_name
-  public_network_access_enabled = try(var.settings.public_network_access_enabled, true)
-  custom_subdomain_name         = try(var.settings.custom_subdomain_name, null)
-  tags                          = merge(local.tags, try(var.settings.tags, null))
-  qna_runtime_endpoint          = var.settings.kind == "QnAMaker" ? var.settings.qna_runtime_endpoint : try(var.settings.qna_runtime_endpoint, null)
+  name                = azurecaf_name.service.result
+  resource_group_name = local.resource_group_name
+  location            = local.location
+  kind                = var.settings.kind
+  sku_name            = var.settings.sku_name
 
-  dynamic "identity" {
-    for_each = lookup(var.settings, "identity", {}) != {} ? [1] : []
+  # all of `custom_subdomain_name,network_acls` must be specified
+  custom_subdomain_name      = try(var.settings.custom_subdomain_name, null)
+  dynamic_throttling_enabled = try(var.settings.dynamic_throttling_enabled, null)
+  #checkov:skip=CKV2_AZURE_22:Ensure that Cognitive Services enables customer-managed key for encryption. This is a conditional resource
+  dynamic "customer_managed_key" {
+    for_each = can(var.settings.customer_managed_key) ? [var.settings.customer_managed_key] : []
     content {
-      type         = lookup(var.settings.identity, "type", null)
-      identity_ids = can(var.settings.identity.ids) ? var.settings.identity.ids : can(var.settings.identity.key) ? [var.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.identity.key].id] : null
+      key_vault_key_id   = customer_managed_key.value.key_vault_key_id
+      identity_client_id = try(customer_managed_key.value.identity_client_id, null)
     }
   }
-
+  fqdns = try(var.settings.fqdns, [])
+  dynamic "identity" {
+    for_each = can(var.settings.identity) ? [var.settings.identity] : []
+    content {
+      type         = identity.value.type
+      identity_ids = concat(local.managed_identities, try(identity.value.identity_ids, []))
+    }
+  }
+  local_auth_enabled              = try(var.settings.local_auth_enabled, true)
+  metrics_advisor_aad_client_id   = (var.settings.kind == "MetricsAdvisor" || var.settings.kind == "QnAMaker") ? try(var.settings.metrics_advisor_aad_client_id, null) : null
+  metrics_advisor_super_user_name = (var.settings.kind == "MetricsAdvisor" || var.settings.kind == "QnAMaker") ? try(var.settings.metrics_advisor_super_user_name, null) : null
+  metrics_advisor_website_name    = (var.settings.kind == "MetricsAdvisor" || var.settings.kind == "QnAMaker") ? try(var.settings.metrics_advisor_website_name, null) : null
   dynamic "network_acls" {
     for_each = can(var.settings.network_acls) ? [var.settings.network_acls] : []
     content {
       default_action = network_acls.value.default_action
       ip_rules       = try(network_acls.value.ip_rules, null)
-
       dynamic "virtual_network_rules" {
-        for_each = try(network_acls.value.subnets, {})
+        for_each = can(network_acls.value.virtual_network_rules) ? [network_acls.value.virtual_network_rules] : []
         content {
-          subnet_id                            = can(virtual_network_rules.value.subnet_id) || can(virtual_network_rules.value.virtual_subnet_key) ? try(virtual_network_rules.value.subnet_id, var.virtual_subnets[try(virtual_network_rules.value.lz_key, var.client_config.landingzone_key)][virtual_network_rules.value.virtual_subnet_key].id) : var.vnets[try(virtual_network_rules.value.lz_key, var.client_config.landingzone_key)][virtual_network_rules.value.vnet_key].subnets[virtual_network_rules.value.subnet_key].id
+          subnet_id = can(virtual_network_rules.value.subnet_id) || can(virtual_network_rules.value.subnet_key) ? try(virtual_network_rules.value.subnet_id, var.remote_objects.virtual_subnets[try(virtual_network_rules.value.lz_key, var.client_config.landingzone_key)][virtual_network_rules.value.subnet_key].id) : var.remote_objects.vnets[try(virtual_network_rules.value.lz_key, var.client_config.landingzone_key)][virtual_network_rules.value.vnet_key].subnets[virtual_network_rules.value.subnet_key].id
+          # Depurar en algún moment, error: The given key does not identify an element in this collection value.
+          # subnet_id = var.remote_objects.subnet_id
+          #  Try virtual_network_rules.value.subnet_id and if it is null, try to get the subnet_id from the remote_objects and if it is null, use null
+          # subnet_id = try(virtual_network_rules.value.subnet_id, try(var.remote_objects.subnet_id, null))
           ignore_missing_vnet_service_endpoint = try(virtual_network_rules.value.ignore_missing_vnet_service_endpoint, null)
         }
       }
-
-      # # to support migration from 2.99.0 to 3.7.0
-      # dynamic "virtual_network_rules" {
-      #   for_each = can(network_acls.value.virtual_network_subnet_ids) ? toset(network_acls.value.virtual_network_subnet_ids) : []
-
-      #   content {
-      #     subnet_id = virtual_network_rules.value
-      #   }
-      # }
-
-      # dynamic "virtual_network_rules" {
-      #   for_each = try(network_acls.value.virtual_network_rules, {})
-
-      #   content {
-      #     subnet_id                            = virtual_network_rules.value.subnet_id
-      #     ignore_missing_vnet_service_endpoint = try(virtual_network_rules.value.ignore_missing_vnet_service_endpoint, null)
-      #   }
-      # }
     }
   }
-}
+  outbound_network_access_restricted           = try(var.settings.outbound_network_access_restricted, false)
+  public_network_access_enabled                = try(var.settings.public_network_access_enabled, true)
+  qna_runtime_endpoint                         = var.settings.kind == "QnAMaker" ? var.settings.qna_runtime_endpoint : try(var.settings.qna_runtime_endpoint, null)
+  custom_question_answering_search_service_id  = var.settings.kind == "TextAnalytics" ? var.settings.custom_question_answering_search_service_id : try(var.settings.custom_question_answering_search_service_id, null)
+  custom_question_answering_search_service_key = var.settings.kind == "TextAnalytics" ? var.settings.custom_question_answering_search_service_key : try(var.settings.custom_question_answering_search_service_key, null)
+  dynamic "storage" {
+    for_each = can(var.settings.storage) ? [var.settings.storage] : []
 
-resource "azurerm_cognitive_deployment" "deployment" {
-  depends_on = [azurerm_cognitive_account.service]
-
-  for_each               = try(var.settings.deployment, {})
-  name                   = each.value.name
-  cognitive_account_id   = azurerm_cognitive_account.service.id
-  rai_policy_name        = try(each.value.rai_policy, null)
-  version_upgrade_option = try(each.value.version_upgrade_option, null)
-
-  model {
-    name    = each.value.model.name
-    format  = each.value.model.format
-    version = try(each.value.model.version, null)
+    content {
+      storage_account_id = storage.value.storage_account_id
+      identity_client_id = try(storage.value.identity_client_id, null)
+    }
   }
 
-  scale {
-    type     = each.value.scale.type
-    tier     = try(each.value.scale.tier, null)
-    size     = try(each.value.scale.size, null)
-    family   = try(each.value.scale.family, null)
-    capacity = try(each.value.scale.capacity, null)
-  }
+  tags = try(var.settings.tags, {})
 }

@@ -17,6 +17,7 @@ variable "diagnostics" {
 
 variable "settings" {
   default = {}
+  type    = any
 }
 
 variable "global_settings" {

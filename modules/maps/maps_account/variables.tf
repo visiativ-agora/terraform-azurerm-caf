@@ -1,5 +1,6 @@
 variable "global_settings" {
   description = "Global settings object (see module README.md)"
+  type        = any
 }
 
 variable "resource_group" {
@@ -8,7 +9,10 @@ variable "resource_group" {
 variable "resource_group_name" {
   type = string
 }
-variable "settings" {}
+variable "settings" {
+  description = "The settings for the Azure resource."
+  type        = any
+}
 
 variable "remote_objects" {
   default = {}

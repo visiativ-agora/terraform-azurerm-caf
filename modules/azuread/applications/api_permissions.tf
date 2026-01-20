@@ -50,7 +50,7 @@ resource "time_sleep" "wait_for_directory_propagation" {
   create_duration = "65s"
 }
 
-resource "null_resource" "grant_admin_consent" {
+resource "terraform_data" "grant_admin_consent" {
   depends_on = [time_sleep.wait_for_directory_propagation]
 
   for_each = {
@@ -66,7 +66,12 @@ resource "null_resource" "grant_admin_consent" {
       resourceAppId = var.user_type == "user" ? null : each.value.resource_app_id
       appRoleId     = var.user_type == "user" ? null : each.value.id
       principalId   = var.user_type == "user" ? null : azuread_service_principal.app.id
-      applicationId = azuread_application.app.application_id
+      applicationId = azuread_application.app.client_id
     }
   }
+}
+
+moved {
+  from = null_resource.set_request_routing_rule
+  to   = terraform_data.set_request_routing_rule
 }

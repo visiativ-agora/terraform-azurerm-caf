@@ -54,10 +54,11 @@ module "networking" {
   # Does not support legacy load_balancers. Prefer lb
   #
   remote_dns = {
-    azurerm_firewall  = try(var.remote_objects.azurerm_firewalls, {})
-    azurerm_firewalls = try(var.remote_objects.azurerm_firewalls, {})
-    virtual_machines  = try(var.remote_objects.virtual_machines, {})
-    lb                = try(var.remote_objects.lb, {})
+    azurerm_firewall                = try(var.remote_objects.azurerm_firewalls, {})
+    azurerm_firewalls               = try(var.remote_objects.azurerm_firewalls, {})
+    virtual_machines                = try(var.remote_objects.virtual_machines, {})
+    lb                              = try(var.remote_objects.lb, {})
+    active_directory_domain_service = try(var.remote_objects.active_directory_domain_service, {})
   }
 }
 
@@ -67,16 +68,23 @@ module "virtual_subnets" {
   for_each   = local.networking.virtual_subnets
 
   global_settings = local.global_settings
+  client_config   = local.client_config
   settings        = each.value
+
 
   name                                          = each.value.name
   address_prefixes                              = try(each.value.cidr, [])
   service_endpoints                             = try(each.value.service_endpoints, [])
-  private_endpoint_network_policies_enabled     = try(each.value.private_endpoint_network_policies_enabled, each.value.enforce_private_link_endpoint_network_policies, null)
+  service_endpoint_policy_ids                   = try(each.value.service_endpoint_policy_ids, null)
+  private_endpoint_network_policies             = try(each.value.private_endpoint_network_policies, each.value.enforce_private_link_endpoint_network_policies, null)
   private_link_service_network_policies_enabled = try(each.value.private_link_service_network_policies_enabled, each.value.enforce_private_link_service_network_policies, null)
 
   resource_group_name  = can(each.value.vnet.key) ? local.combined_objects_networking[try(each.value.vnet.lz_key, local.client_config.landingzone_key)][each.value.vnet.key].resource_group_name : split("/", each.value.vnet.id)[4]
   virtual_network_name = can(each.value.vnet.key) ? local.combined_objects_networking[try(each.value.vnet.lz_key, local.client_config.landingzone_key)][each.value.vnet.key].name : split("/", each.value.vnet.id)[8]
+  remote_objects = {
+    subnet_service_endpoint_storage_policies = local.combined_objects_subnet_service_endpoint_storage_policies
+
+  }
 
 }
 
@@ -231,7 +239,7 @@ resource "azapi_resource" "virtualNetworkPeerings" {
   name      = each.value.name
   parent_id = can(each.value.from.id) ? each.value.from.id : local.combined_objects_networking[try(each.value.from.lz_key, local.client_config.landingzone_key)][each.value.from.vnet_key].id
 
-  body = jsonencode({
+  body = {
     properties = {
       allowForwardedTraffic     = try(each.value.allow_forwarded_traffic, false)
       allowGatewayTransit       = try(each.value.allow_gateway_transit, false)
@@ -242,7 +250,7 @@ resource "azapi_resource" "virtualNetworkPeerings" {
         id = can(each.value.to.remote_virtual_network_id) || can(each.value.to.id) ? try(each.value.to.remote_virtual_network_id, each.value.to.id) : local.combined_objects_networking[try(each.value.to.lz_key, local.client_config.landingzone_key)][each.value.to.vnet_key].id
       }
     }
-  })
+  }
 
 }
 
@@ -271,7 +279,7 @@ module "route_tables" {
   location                      = can(local.global_settings.regions[each.value.region]) ? local.global_settings.regions[each.value.region] : local.combined_objects_resource_groups[try(each.value.resource_group.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group.key, each.value.resource_group_key)].location
   resource_group_name           = can(each.value.resource_group.name) || can(each.value.resource_group_name) ? try(each.value.resource_group.name, each.value.resource_group_name) : local.combined_objects_resource_groups[try(each.value.resource_group.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group_key, each.value.resource_group.key)].name
   base_tags                     = try(local.global_settings.inherit_tags, false) ? try(local.combined_objects_resource_groups[try(each.value.resource_group.lz_key, local.client_config.landingzone_key)][try(each.value.resource_group.key, each.value.resource_group_key)].tags, {}) : {}
-  disable_bgp_route_propagation = try(each.value.disable_bgp_route_propagation, null)
+  bgp_route_propagation_enabled = try(each.value.bgp_route_propagation_enabled, null)
   tags                          = try(each.value.tags, null)
 }
 

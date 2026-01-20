@@ -1,13 +1,14 @@
 terraform {
+  required_version = ">= 1.6.0"
   required_providers {
     azurecaf = {
-      source = "aztfmod/azurecaf"
+      source  = "aztfmod/azurecaf"
+      version = ">= 1.0.0"
+    }
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">= 4.0.0"
     }
   }
-
 }
 
-locals {
-  resource_group_name  = can(var.settings.resource_group.key) ? var.remote_objects.resource_groups[try(var.settings.resource_group.lz_key, var.client_config.landingzone_key)][var.settings.resource_group.key].name : var.remote_objects.servicebus_namespaces[try(var.settings.servicebus_namespace.lz_key, var.client_config.landingzone_key)][var.settings.servicebus_namespace.key].resource_group_name
-  servicebus_namespace = var.remote_objects.servicebus_namespaces[try(var.settings.servicebus_namespace.lz_key, var.client_config.landingzone_key)][var.settings.servicebus_namespace.key]
-}

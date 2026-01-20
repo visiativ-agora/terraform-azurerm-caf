@@ -1,4 +1,4 @@
-# [Issue-id](https://github.com/aztfmod/terraform-azurerm-caf/issues/ISSUE-ID-GOES-HERE)
+# [Issue-id]https://github.com/aztfmodnew/terraform-azurerm-caf/issues/ISSUE-ID-GOES-HERE)
 
 ## PR Checklist
 

@@ -1,15 +1,18 @@
 variable "global_settings" {
   description = "Global settings object (see module README.md)"
+  type        = any
 }
 variable "client_config" {
   description = "Client configuration object (see module README.md)."
+  type        = any
 }
 variable "location" {
   description = "(Required) Specifies the supported Azure location where to create the resource. Changing this forces a new resource to be created."
   type        = string
 }
 variable "settings" {
-  description = "Settings configuration object (see module README.md)."
+  description = "Used for general parameter."
+  type        = any
 }
 
 variable "key_vault_id" {

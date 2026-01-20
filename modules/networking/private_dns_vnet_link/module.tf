@@ -18,5 +18,5 @@ resource "azurerm_private_dns_zone_virtual_network_link" "vnet_links" {
   private_dns_zone_name = can(each.value.private_dns_zone_name) ? each.value.private_dns_zone_name : var.private_dns[try(each.value.lz_key, var.client_config.landingzone_key)][each.value.key].name
   virtual_network_id    = var.virtual_network_id
   registration_enabled  = try(each.value.registration_enabled, false)
-  tags                  = merge(var.base_tags, local.module_tag, try(each.value.tags, null))
+  tags                  = merge(local.tags, try(each.value.tags, null))
 }

@@ -1,27 +1,17 @@
-resource "azurecaf_name" "cdn_frontdoor_profile" {
-  name          = var.settings.name
-  resource_type = "azurerm_cdn_frontdoor_profile"
-  prefixes      = var.global_settings.prefixes
-  random_length = var.global_settings.random_length
-  clean_input   = true
-  passthrough   = var.global_settings.passthrough
-  use_slug      = var.global_settings.use_slug
-}
-
 resource "azurerm_cdn_frontdoor_profile" "cdn_frontdoor_profile" {
   name                     = azurecaf_name.cdn_frontdoor_profile.result
   resource_group_name      = local.resource_group_name
   sku_name                 = var.settings.sku_name
   response_timeout_seconds = try(var.settings.response_timeout_seconds, null)
 
-  # dynamic "identity" {
-  #   for_each = try(var.settings.identity, null) == null ? [] : [var.settings.identity]
+  dynamic "identity" {
+    for_each = try(var.settings.identity, null) == null ? [] : [var.settings.identity]
 
-  #   content {
-  #     type         = var.settings.identity.type
-  #     identity_ids = contains(["userassigned", "systemassigned", "systemassigned, userassigned"], lower(var.settings.identity.type)) ? local.managed_identities : null
-  #   }
-  # }
+    content {
+      type         = var.settings.identity.type
+      identity_ids = contains(["userassigned", "systemassigned", "systemassigned, userassigned"], lower(var.settings.identity.type)) ? local.managed_identities : null
+    }
+  }
 
   tags = merge(local.tags, try(var.settings.tags, null))
 
@@ -34,28 +24,5 @@ resource "azurerm_cdn_frontdoor_profile" "cdn_frontdoor_profile" {
       read   = try(timeouts.value.read, null)
       delete = try(timeouts.value.delete, null)
     }
-  }
-}
-
-
-locals {
-  system_assigned = contains(
-    [lower(try(var.settings.identity.type, ""))],
-    "systemassigned"
-  )
-}
-
-# Only because we use old AzureRm provider
-resource "null_resource" "assign_identity_to_frontdoor" {
-  depends_on = [azurerm_cdn_frontdoor_profile.cdn_frontdoor_profile]
-  for_each   = try(var.settings.identity, null) == null ? {} : { "identity" = var.settings.identity }
-
-  triggers = {
-    identity_json = jsonencode(var.settings.identity)
-  }
-  provisioner "local-exec" {
-    command = <<EOT
-      az afd profile identity assign --resource-group ${local.resource_group_name} --profile-name ${azurecaf_name.cdn_frontdoor_profile.result} ${local.system_assigned ? "--system-assigned" : ""} ${length(local.managed_identities) > 0 ? "--user-assigned ${join(" ", local.managed_identities)}" : ""}
-    EOT
   }
 }

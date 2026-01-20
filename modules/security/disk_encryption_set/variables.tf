@@ -1,9 +1,15 @@
 variable "global_settings" {}
-variable "client_config" {}
+variable "client_config" {
+  description = "Client configuration object (see module README.md)."
+  type        = any
+}
 variable "base_tags" {
   default = {}
 }
-variable "settings" {}
+variable "settings" {
+  description = "The settings for the Azure resource."
+  type        = any
+}
 variable "keyvault_id" {
   default = null
 }

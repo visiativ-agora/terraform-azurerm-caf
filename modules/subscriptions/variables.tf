@@ -6,9 +6,13 @@ variable "settings" {
   # }
 }
 variable "subscription_key" {}
-variable "client_config" {}
+variable "client_config" {
+  description = "Client configuration object (see module README.md)."
+  type        = any
+}
 variable "global_settings" {
   description = "Global settings object (see module README.md)"
+  type        = any
 }
 
 # For diagnostics settings

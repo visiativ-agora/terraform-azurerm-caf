@@ -50,7 +50,7 @@ module "special_subnets" {
   address_prefixes                              = lookup(each.value, "cidr", [])
   service_endpoints                             = lookup(each.value, "service_endpoints", [])
   resource_group_name                           = local.resource_group_name
-  private_endpoint_network_policies_enabled     = try(each.value.private_endpoint_network_policies_enabled, each.value.enforce_private_link_endpoint_network_policies, null)
+  private_endpoint_network_policies             = try(each.value.private_endpoint_network_policies, each.value.enforce_private_link_endpoint_network_policies, null)
   private_link_service_network_policies_enabled = try(each.value.private_link_service_network_policies_enabled, each.value.enforce_private_link_service_network_policies, null)
   settings                                      = each.value
 }
@@ -65,7 +65,7 @@ module "subnets" {
   address_prefixes                              = lookup(each.value, "cidr", [])
   service_endpoints                             = lookup(each.value, "service_endpoints", [])
   virtual_network_name                          = azurerm_virtual_network.vnet.name
-  private_endpoint_network_policies_enabled     = try(each.value.private_endpoint_network_policies_enabled, each.value.enforce_private_link_endpoint_network_policies, null)
+  private_endpoint_network_policies             = try(each.value.private_endpoint_network_policies, each.value.enforce_private_link_endpoint_network_policies, null)
   private_link_service_network_policies_enabled = try(each.value.private_link_service_network_policies_enabled, each.value.enforce_private_link_service_network_policies, null)
   settings                                      = each.value
 }
@@ -124,9 +124,9 @@ locals {
       for obj in try(var.settings.vnet.dns_servers_keys, {}) : #o.ip
       coalesce(
         try(var.remote_dns[obj.resource_type][obj.lz_key][obj.key].virtual_hub[obj.interface_index].private_ip_address, null),
-        try(var.remote_dns[obj.resource_type][obj.lz_key][obj.key].virtual_hub.0.private_ip_address, null),
+        try(var.remote_dns[obj.resource_type][obj.lz_key][obj.key].virtual_hub[0].private_ip_address, null),
         try(var.remote_dns[obj.resource_type][obj.lz_key][obj.key].ip_configuration[obj.interface_index].private_ip_address, null),
-        try(var.remote_dns[obj.resource_type][obj.lz_key][obj.key].ip_configuration.0.private_ip_address, null)
+        try(var.remote_dns[obj.resource_type][obj.lz_key][obj.key].ip_configuration[0].private_ip_address, null)
       )
       if contains(["azurerm_firewall", "azurerm_firewalls"], obj.resource_type)
     ],
@@ -139,6 +139,14 @@ locals {
       for obj in try(var.settings.vnet.dns_servers_keys, {}) :
       var.remote_dns.virtual_machines[obj.lz_key][obj.key].ip_configuration[obj.nic_key].private_ip_addresses
       if contains(["virtual_machines", "virtual_machine"], obj.resource_type)
+    ],
+    [
+      for obj in try(var.settings.vnet.dns_servers_keys, {}) :
+      coalesce(
+        try(var.remote_dns.active_directory_domain_service[obj.lz_key][obj.key].domain_controller_ip_addresses, null),
+        try(var.remote_dns.active_directory_domain_service[obj.key].domain_controller_ip_address, null)
+      )
+      if contains(["active_directory_domain_service"], obj.resource_type)
     ]
   )
 }

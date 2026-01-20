@@ -1,19 +1,16 @@
 terraform {
+  required_version = ">= 1.6.0"
   required_providers {
     azurecaf = {
-      source = "aztfmod/azurecaf"
+      source  = "aztfmod/azurecaf"
+      version = ">= 1.0.0"
+    }
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">= 4.0.0"
     }
     azapi = {
       source = "azure/azapi"
-    }
-  }
-}
-
-locals {
-  fleet_member_properties = can(var.settings.group) ? {
-    clusterResourceId = var.aks_cluster.id
-    group             = var.settings.group
-    } : {
-    clusterResourceId = var.aks_cluster.id
+    }    
   }
 }

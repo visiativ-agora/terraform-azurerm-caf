@@ -1,12 +1,13 @@
 terraform {
+  required_version = ">= 1.6.0"
   required_providers {
     azurecaf = {
-      source = "aztfmod/azurecaf"
+      source  = "aztfmod/azurecaf"
+      version = ">= 1.0.0"
+    }
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">= 4.0.0"
     }
   }
-
-}
-locals {
-  base_tags = try(var.global_settings.inherit_tags, false) ? try(var.keyvaults.base_tags, {}) : {}
-  tags      = merge(local.base_tags, try(var.settings.tags, {}))
 }

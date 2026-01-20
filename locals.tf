@@ -6,9 +6,24 @@ resource "random_string" "prefix" {
   numeric = false
 }
 
+resource "random_string" "suffix" {
+  count   = try(var.global_settings.suffix, null) == null ? 1 : 0
+  length  = 4
+  special = false
+  upper   = false
+  numeric = false
+}
+
 locals {
+  analytics = {
+    fabric_capacities = try(var.analytics.fabric_capacities, {})
+  }
   aadb2c = {
     aadb2c_directory = try(var.aadb2c.aadb2c_directory, {})
+  }
+
+  cache = {
+    managed_redis = try(var.cache.managed_redis, {})
   }
 
   azuread = {
@@ -24,8 +39,13 @@ locals {
     azuread_roles                       = try(var.azuread.azuread_roles, {})
     azuread_service_principal_passwords = try(var.azuread.azuread_service_principal_passwords, {})
     azuread_service_principals          = try(var.azuread.azuread_service_principals, {})
+    azuread_service_principal_names     = try(var.azuread.azuread_service_principal_names, {})
     azuread_users                       = try(var.azuread.azuread_users, {})
     azuread_federated_credentials       = try(var.azuread.azuread_federated_credentials, {})
+  }
+
+  cdn = {
+    cdn_frontdoor_profiles = try(var.cdn.cdn_frontdoor_profiles, {})
   }
 
   client_config = var.client_config == {} ? {
@@ -44,7 +64,6 @@ locals {
     azureDatalakeAnalyticsCatalogAndJobEndpoint = try(var.cloud.azureDatalakeAnalyticsCatalogAndJobEndpoint, {})
     azureDatalakeStoreFileSystemEndpoint        = try(var.cloud.azureDatalakeStoreFileSystemEndpoint, {})
     keyvaultDns                                 = try(var.cloud.keyvaultDns, {})
-    mariadbServerEndpoint                       = try(var.cloud.mariadbServerEndpoint, {})
     mhsmDns                                     = try(var.cloud.mhsmDns, {})
     mysqlServerEndpoint                         = try(var.cloud.mysqlServerEndpoint, {})
     postgresqlServerEndpoint                    = try(var.cloud.postgresqlServerEndpoint, {})
@@ -52,6 +71,25 @@ locals {
     storageEndpoint                             = try(var.cloud.storageEndpoint, {})
     storageSyncEndpoint                         = try(var.cloud.storageSyncEndpoint, {})
     synapseAnalyticsEndpoint                    = try(var.cloud.synapseAnalyticsEndpoint, {})
+    communicationEndpoint                       = try(var.cloud.communicationEndpoint, {})
+    cosmosdbEndpoint                            = try(var.cloud.cosmosdbEndpoint, {})
+    cognitiveServicesEndpoint                   = try(var.cloud.cognitiveServicesEndpoint, {})
+    containerAppsEndpoint                       = try(var.cloud.containerAppsEndpoint, {})
+    eventgridEndpoint                           = try(var.cloud.eventgridEndpoint, {})
+    iotCentralEndpoint                          = try(var.cloud.iotCentralEndpoint, {})
+    iotHubEndpoint                              = try(var.cloud.iotHubEndpoint, {})
+    iotDpsEndpoint                              = try(var.cloud.iotDpsEndpoint, {})
+    kustoEndpoint                               = try(var.cloud.kustoEndpoint, {})
+    mapsEndpoint                                = try(var.cloud.mapsEndpoint, {})
+    powerbiEndpoint                             = try(var.cloud.powerbiEndpoint, {})
+    purviewEndpoint                             = try(var.cloud.purviewEndpoint, {})
+    redisCacheHostname                          = try(var.cloud.redisCacheHostname, {})
+    searchServiceEndpoint                       = try(var.cloud.searchServiceEndpoint, {})
+    servicebusEndpoint                          = try(var.cloud.servicebusEndpoint, {})
+    signalrEndpoint                             = try(var.cloud.signalrEndpoint, {})
+    trafficManagerEndpoint                      = try(var.cloud.trafficManagerEndpoint, {})
+    webPubsubEndpoint                           = try(var.cloud.webPubsubEndpoint, {})
+    digitalTwinsEndpoint                        = try(var.cloud.digitalTwinsEndpoint, {})
     activeDirectory                             = try(var.cloud.activeDirectory, {})
     activeDirectoryDataLakeResourceId           = try(var.cloud.activeDirectoryDataLakeResourceId, {})
     activeDirectoryGraphResourceId              = try(var.cloud.activeDirectoryGraphResourceId, {})
@@ -115,19 +153,18 @@ locals {
     purview_accounts = try(var.purview.purview_accounts, {})
   }
   database = {
-    app_config                         = try(var.database.app_config, {})
-    azurerm_redis_caches               = try(var.database.azurerm_redis_caches, {})
-    cosmos_dbs                         = try(var.database.cosmos_dbs, {})
-    cosmosdb_sql_databases             = try(var.database.cosmosdb_sql_databases, {})
-    cosmosdb_role_definitions          = try(var.database.cosmosdb_role_definitions, {})
-    cosmosdb_role_mapping              = try(var.database.cosmosdb_role_mapping, {})
-    database_migration_services        = try(var.database.database_migration_services, {})
-    database_migration_projects        = try(var.database.database_migration_projects, {})
-    databricks_workspaces              = try(var.database.databricks_workspaces, {})
-    databricks_access_connectors       = try(var.database.databricks_access_connectors, {})
+    app_config                   = try(var.database.app_config, {})
+    azurerm_redis_caches         = try(var.database.azurerm_redis_caches, {})
+    cosmos_dbs                   = try(var.database.cosmos_dbs, {})
+    cosmosdb_sql_databases       = try(var.database.cosmosdb_sql_databases, {})
+    cosmosdb_role_definitions    = try(var.database.cosmosdb_role_definitions, {})
+    cosmosdb_role_mapping        = try(var.database.cosmosdb_role_mapping, {})
+    database_migration_services  = try(var.database.database_migration_services, {})
+    database_migration_projects  = try(var.database.database_migration_projects, {})
+    databricks_workspaces        = try(var.database.databricks_workspaces, {})
+    databricks_access_connectors = try(var.database.databricks_access_connectors, {})
+    # fabric_capacities moved to analytics rail
     machine_learning_workspaces        = try(var.database.machine_learning_workspaces, {})
-    mariadb_databases                  = try(var.database.mariadb_databases, {})
-    mariadb_servers                    = try(var.database.mariadb_servers, {})
     mssql_databases                    = try(var.database.mssql_databases, {})
     mssql_elastic_pools                = try(var.database.mssql_elastic_pools, {})
     mssql_failover_groups              = try(var.database.mssql_failover_groups, {})
@@ -142,11 +179,11 @@ locals {
     mssql_mi_tdes                      = try(var.database.mssql_mi_tdes, {})
     mssql_servers                      = try(var.database.mssql_servers, {})
     mysql_databases                    = try(var.database.mysql_databases, {})
-    mysql_servers                      = try(var.database.mysql_servers, {})
+    mysql_flexible_servers             = try(var.database.mysql_flexible_servers, {})
     postgresql_flexible_servers        = try(var.database.postgresql_flexible_servers, {})
     postgresql_servers                 = try(var.database.postgresql_servers, {})
     synapse_workspaces                 = try(var.database.synapse_workspaces, {})
-    mysql_flexible_server              = try(var.database.mysql_flexible_server, {})
+
 
     data_explorer = {
       kusto_clusters                         = try(var.database.data_explorer.kusto_clusters, {})
@@ -230,14 +267,20 @@ locals {
     default_region     = try(var.global_settings.default_region, "region1")
     environment        = try(var.global_settings.environment, var.environment)
     inherit_tags       = try(var.global_settings.inherit_tags, false)
-    passthrough        = try(var.global_settings.passthrough, false)
     prefix             = try(var.global_settings.prefix, null)
+    suffix             = try(var.global_settings.suffix, null)
     prefix_with_hyphen = try(var.global_settings.prefix_with_hyphen, format("%s-", try(var.global_settings.prefix, try(var.global_settings.prefixes[0], random_string.prefix[0].result))))
     prefixes           = try(var.global_settings.prefix, null) == "" ? null : try([var.global_settings.prefix], try(var.global_settings.prefixes, [random_string.prefix[0].result]))
+    suffixes           = try(var.global_settings.suffixes, null) == "" ? null : try([var.global_settings.suffix], try(var.global_settings.suffixes, [random_string.prefix[0].result]))
     random_length      = try(var.global_settings.random_length, 0)
+    random_seed        = try(var.global_settings.random_seed, null)
+    resource_types     = try(var.global_settings.resource_types, [])
+    separator          = try(var.global_settings.separator, "-")
+    passthrough        = try(var.global_settings.passthrough, false)
     regions            = try(var.global_settings.regions, null)
     tags               = try(var.global_settings.tags, null)
-    use_slug           = try(var.global_settings.use_slug, true)
+    use_slug           = try(var.global_settings.use_slug, true),
+    clean_input        = try(var.global_settings.clean_input, true)
   }, var.global_settings)
 
   logic_app = {
@@ -257,7 +300,13 @@ locals {
   }
 
   cognitive_services = {
-    cognitive_services_account = try(var.cognitive_services.cognitive_services_account, {})
+    ai_services                            = try(var.cognitive_services.ai_services, {})
+    cognitive_services_account             = try(var.cognitive_services.cognitive_services_account, {})
+    cognitive_account_customer_managed_key = try(var.cognitive_services.cognitive_account_customer_managed_key, {})
+    cognitive_deployment                   = try(var.cognitive_services.cognitive_deployment, {})
+  }
+  bot = {
+    azure_bots = try(var.bot.azure_bots, {})
   }
   search_services = {
     search_services = try(var.search_services.search_services, {})
@@ -302,8 +351,6 @@ locals {
     express_route_circuit_peerings                          = try(var.networking.express_route_circuit_peerings, {})
     express_route_circuits                                  = try(var.networking.express_route_circuits, {})
     express_route_connections                               = try(var.networking.express_route_connections, {})
-    front_door_waf_policies                                 = try(var.networking.front_door_waf_policies, {})
-    front_doors                                             = try(var.networking.front_doors, {})
     frontdoor_custom_https_configuration                    = try(var.networking.frontdoor_custom_https_configuration, {})
     frontdoor_rules_engine                                  = try(var.networking.frontdoor_rules_engine, {})
     ip_groups                                               = try(var.networking.ip_groups, {})
@@ -319,9 +366,22 @@ locals {
     local_network_gateways                                  = try(var.networking.local_network_gateways, {})
     nat_gateways                                            = try(var.networking.nat_gateways, {})
     network_interface_backend_address_pool_association      = try(var.networking.network_interface_backend_address_pool_association, {})
+    network_managers                                        = try(var.networking.network_managers, {})
+    network_manager_admin_rules                             = try(var.networking.network_manager_admin_rules, {})
+    network_manager_admin_rule_collections                  = try(var.networking.network_manager_admin_rule_collections, {})
+    network_manager_connectivity_configurations             = try(var.networking.network_manager_connectivity_configurations, {})
+    network_manager_deployments                             = try(var.networking.network_manager_deployments, {})
+    network_manager_management_group_connections            = try(var.networking.network_manager_management_group_connections, {})
+    network_manager_network_groups                          = try(var.networking.network_manager_network_groups, {})
+    network_manager_security_admin_configurations           = try(var.networking.network_manager_security_admin_configurations, {})
+    network_manager_scope_connections                       = try(var.networking.network_manager_scope_connection, {})
+    network_manager_static_members                          = try(var.networking.network_manager_static_members, {})
+    network_manager_subscription_connections                = try(var.networking.network_manager_subscription_connections, {})
+    network_interface_ip_configurations                     = try(var.networking.network_interface_ip_configurations, {})
     network_profiles                                        = try(var.networking.network_profiles, {})
     network_security_group_definition                       = try(var.networking.network_security_group_definition, {})
     network_security_security_rules                         = try(var.networking.network_security_security_rules, {})
+    network_security_perimeters                             = try(var.networking.network_security_perimeters, {})
     network_watchers                                        = try(var.networking.network_watchers, {})
     private_dns                                             = try(var.networking.private_dns, {})
     private_dns_resolvers                                   = try(var.networking.private_dns_resolvers, {})
@@ -335,7 +395,9 @@ locals {
     relay_hybrid_connection                                 = try(var.networking.relay_hybrid_connection, {})
     relay_namespace                                         = try(var.networking.relay_namespace, {})
     public_ip_prefixes                                      = try(var.networking.public_ip_prefixes, {})
+    route_servers                                           = try(var.networking.route_servers, {})
     route_tables                                            = try(var.networking.route_tables, {})
+    subnet_service_endpoint_storage_policies                = try(var.networking.subnet_service_endpoint_storage_policies, {})
     traffic_manager_profile                                 = try(var.networking.traffic_manager_profile, {})
     traffic_manager_nested_endpoint                         = try(var.networking.traffic_manager_nested_endpoint, {})
     traffic_manager_external_endpoint                       = try(var.networking.traffic_manager_external_endpoint, {})
@@ -358,32 +420,35 @@ locals {
     vpn_sites                                               = try(var.networking.vpn_sites, {})
   }
 
+  palo_alto = {
+    cloudngfws = try(var.palo_alto.cloudngfws, {})
+  }
+
   object_id = coalesce(var.logged_user_objectId, var.logged_aad_app_objectId, try(data.azuread_client_config.current.object_id, null), try(data.azuread_service_principal.logged_in_app[0].object_id, null))
 
   security = {
-    disk_encryption_sets                  = try(var.security.disk_encryption_sets, {})
-    dynamic_keyvault_secrets              = try(var.security.dynamic_keyvault_secrets, {})
-    keyvault_certificate_issuers          = try(var.security.keyvault_certificate_issuers, {})
-    keyvault_certificate_requests         = try(var.security.keyvault_certificate_requests, {})
-    keyvault_certificates                 = try(var.security.keyvault_certificates, {})
-    keyvault_keys                         = try(var.security.keyvault_keys, {})
-    lighthouse_definitions                = try(var.security.lighthouse_definitions, {})
-    security_center_subscription_pricings = try(var.security.security_center_subscription_pricings, {})
-    sentinel_automation_rules             = try(var.security.sentinel_automation_rules, {})
-    sentinel_watchlists                   = try(var.security.sentinel_watchlists, {})
-    sentinel_watchlist_items              = try(var.security.sentinel_watchlist_items, {})
-    sentinel_ar_fusions                   = try(var.security.sentinel_ar_fusions, {})
-    sentinel_ar_ml_behavior_analytics     = try(var.security.sentinel_ar_ml_behavior_analytics, {})
-    sentinel_ar_ms_security_incidents     = try(var.security.sentinel_ar_ms_security_incidents, {})
-    sentinel_ar_scheduled                 = try(var.security.sentinel_ar_scheduled, {})
-    sentinel_dc_aad                       = try(var.security.sentinel_dc_aad, {})
-    sentinel_dc_app_security              = try(var.security.sentinel_dc_app_security, {})
-    sentinel_dc_aws                       = try(var.security.sentinel_dc_aws, {})
-    sentinel_dc_azure_threat_protection   = try(var.security.sentinel_dc_azure_threat_protection, {})
-    sentinel_dc_ms_threat_protection      = try(var.security.sentinel_dc_ms_threat_protection, {})
-    sentinel_dc_office_365                = try(var.security.sentinel_dc_office_365, {})
-    sentinel_dc_security_center           = try(var.security.sentinel_dc_security_center, {})
-    sentinel_dc_threat_intelligence       = try(var.security.sentinel_dc_threat_intelligence, {})
+    disk_encryption_sets                = try(var.security.disk_encryption_sets, {})
+    dynamic_keyvault_secrets            = try(var.security.dynamic_keyvault_secrets, {})
+    keyvault_certificate_issuers        = try(var.security.keyvault_certificate_issuers, {})
+    keyvault_certificate_requests       = try(var.security.keyvault_certificate_requests, {})
+    keyvault_certificates               = try(var.security.keyvault_certificates, {})
+    keyvault_keys                       = try(var.security.keyvault_keys, {})
+    lighthouse_definitions              = try(var.security.lighthouse_definitions, {})
+    sentinel_automation_rules           = try(var.security.sentinel_automation_rules, {})
+    sentinel_watchlists                 = try(var.security.sentinel_watchlists, {})
+    sentinel_watchlist_items            = try(var.security.sentinel_watchlist_items, {})
+    sentinel_ar_fusions                 = try(var.security.sentinel_ar_fusions, {})
+    sentinel_ar_ml_behavior_analytics   = try(var.security.sentinel_ar_ml_behavior_analytics, {})
+    sentinel_ar_ms_security_incidents   = try(var.security.sentinel_ar_ms_security_incidents, {})
+    sentinel_ar_scheduled               = try(var.security.sentinel_ar_scheduled, {})
+    sentinel_dc_aad                     = try(var.security.sentinel_dc_aad, {})
+    sentinel_dc_app_security            = try(var.security.sentinel_dc_app_security, {})
+    sentinel_dc_aws                     = try(var.security.sentinel_dc_aws, {})
+    sentinel_dc_azure_threat_protection = try(var.security.sentinel_dc_azure_threat_protection, {})
+    sentinel_dc_ms_threat_protection    = try(var.security.sentinel_dc_ms_threat_protection, {})
+    sentinel_dc_office_365              = try(var.security.sentinel_dc_office_365, {})
+    sentinel_dc_security_center         = try(var.security.sentinel_dc_security_center, {})
+    sentinel_dc_threat_intelligence     = try(var.security.sentinel_dc_threat_intelligence, {})
   }
 
   shared_services = {
@@ -408,27 +473,27 @@ locals {
   }
 
   storage = {
-    netapp_accounts             = try(var.storage.netapp_accounts, {})
-    storage_account_blobs       = try(var.storage.storage_account_blobs, {})
-    storage_account_file_shares = try(var.storage.storage_account_file_shares, {})
-    storage_account_queues      = try(var.storage.storage_account_queues, {})
-    storage_containers          = try(var.storage.storage_containers, {})
+    netapp_accounts                 = try(var.storage.netapp_accounts, {})
+    storage_account_blobs           = try(var.storage.storage_account_blobs, {})
+    storage_account_file_shares     = try(var.storage.storage_account_file_shares, {})
+    storage_account_queues          = try(var.storage.storage_account_queues, {})
+    storage_account_static_websites = try(var.storage.storage_account_static_websites, {})
+    storage_containers              = try(var.storage.storage_containers, {})
   }
 
   webapp = {
     app_service_environments                       = try(var.webapp.app_service_environments, {})
     app_service_environments_v3                    = try(var.webapp.app_service_environments_v3, {})
-    app_service_plans                              = try(var.webapp.app_service_plans, {})
-    app_services                                   = try(var.webapp.app_services, {})
-    linux_web_apps                                 = try(var.webapp.linux_web_apps, {})
-    windows_web_apps                               = try(var.webapp.windows_web_apps, {})
     azurerm_application_insights                   = try(var.webapp.azurerm_application_insights, {})
     azurerm_application_insights_web_test          = try(var.webapp.azurerm_application_insights_web_test, {})
     azurerm_application_insights_standard_web_test = try(var.webapp.azurerm_application_insights_standard_web_test, {})
-    function_apps                                  = try(var.webapp.function_apps, {})
-    windows_function_apps                          = try(var.webapp.windows_function_apps, {})
-    linux_function_apps                            = try(var.webapp.linux_function_apps, {})
-    static_sites                                   = try(var.webapp.static_sites, {})
+
+    linux_function_apps   = try(var.webapp.linux_function_apps, {})
+    linux_web_apps        = try(var.webapp.linux_web_apps, {})
+    windows_function_apps = try(var.webapp.windows_function_apps, {})
+    windows_web_apps      = try(var.webapp.windows_web_apps, {})
+    static_sites          = try(var.webapp.static_sites, {})
+    service_plans         = try(var.webapp.service_plans, {})
   }
 
   enable = {
@@ -439,6 +504,8 @@ locals {
   identity = {
     active_directory_domain_service             = try(var.identity.active_directory_domain_service, {})
     active_directory_domain_service_replica_set = try(var.identity.active_directory_domain_service_replica_set, {})
+    active_directory_domain_service_trust       = try(var.identity.active_directory_domain_service_trust, {})
+
   }
 
   apim = {
@@ -484,6 +551,10 @@ locals {
     maintenance_configuration              = try(var.maintenance.maintenance_configuration, {})
     maintenance_assignment_virtual_machine = try(var.maintenance.maintenance_assignment_virtual_machine, {})
     maintenance_assignment_dynamic_scope   = try(var.maintenance.maintenance_assignment_dynamic_scope, {})
+  }
+
+  dashboards = {
+    grafana = try(var.dashboards.grafana, {})
   }
 
   kubernetes_fleet_managers = {

@@ -12,13 +12,20 @@ variable "address_prefixes" {
   description = "(Optional) The address prefixes to use for the subnet."
   default     = []
 }
-variable "private_endpoint_network_policies_enabled" {
-  description = "(Optional) Enable or Disable network policies for the private endpoint on the subnet. Setting this to true will Enable the policy and setting this to false will Disable the policy. Defaults to true."
+variable "private_endpoint_network_policies" {
+  description = "(Optional) Enable or Disable network policies for the private endpoint on the subnet. Possible values are Disabled, Enabled, NetworkSecurityGroupEnabled and RouteTableEnabled. Defaults to Disabled."
   nullable    = true
 }
 variable "private_link_service_network_policies_enabled" {
   description = "(Optional) Enable or Disable network policies for the private link service on the subnet. Setting this to true will Enable the policy and setting this to false will Disable the policy. Defaults to true."
   nullable    = true
+}
+
+variable "default_outbound_access_enabled" {
+  description = "(Optional) Controls whether the subnet should have default outbound access enabled. Setting to false creates a private subnet without default outbound access. Defaults to null (provider default)."
+  type        = bool
+  nullable    = true
+  default     = null
 }
 # Retired
 # variable "enforce_private_link_endpoint_network_policies" {
@@ -38,7 +45,29 @@ variable "service_endpoints" {
   # }
 }
 
+variable "service_endpoint_policy_ids" {
+  description = "(Optional) The list of IDs of Service Endpoint Policies to associate with the subnet."
+  type        = list(string)
+  default     = null
+}
+
 variable "global_settings" {
   description = "Global settings object (see module README.md)"
+  type        = any
 }
-variable "settings" {}
+variable "settings" {
+  description = "The settings for the Azure resource."
+  type        = any
+}
+
+variable "remote_objects" {
+  description = "Remote objects for dependencies."
+  type        = any
+  default     = {}
+}
+
+variable "client_config" {
+  description = "Client configuration for Azure authentication."
+  type        = any
+  default     = {}
+}

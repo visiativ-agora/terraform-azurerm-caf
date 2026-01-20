@@ -1,5 +1,6 @@
 variable "global_settings" {
   description = "Global settings object (see module README.md)"
+  type        = any
 }
 variable "name" {
   description = "(Required) Name of the IP Group to be created"
@@ -26,6 +27,12 @@ variable "vnet" {
   description = "(Required) Vnet CIDRs of the IP Group to be created"
 }
 
-variable "settings" {}
+variable "settings" {
+  description = "The settings for the Azure resource."
+  type        = any
+}
 
-variable "client_config" {}
+variable "client_config" {
+  description = "Client configuration object (see module README.md)."
+  type        = any
+}

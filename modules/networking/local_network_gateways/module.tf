@@ -15,6 +15,8 @@ resource "azurerm_local_network_gateway" "lngw" {
   address_space       = var.settings.address_space
   gateway_address     = try(var.settings.gateway_address, null)
   gateway_fqdn        = try(var.settings.gateway_fqdn, null)
+  tags                = local.tags
+
 
   dynamic "bgp_settings" {
     for_each = try(var.settings.bgp_settings, {})

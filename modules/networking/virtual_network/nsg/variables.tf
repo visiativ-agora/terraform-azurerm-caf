@@ -1,4 +1,7 @@
-variable "client_config" {}
+variable "client_config" {
+  description = "Client configuration object (see module README.md)."
+  type        = any
+}
 variable "resource_group" {
   description = "(Required) Map of the resource groups to create"
   type        = string
@@ -37,6 +40,7 @@ variable "link_nsg_to_subnet" {
 
 variable "global_settings" {
   description = "Global settings object (see module README.md)"
+  type        = any
 }
 
 variable "network_watchers" {

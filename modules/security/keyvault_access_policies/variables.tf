@@ -17,6 +17,7 @@ variable "access_policies" {
 
 variable "client_config" {
   description = "Client configuration object (see module README.md)."
+  type        = any
 }
 variable "azuread_groups" {
   default = {}

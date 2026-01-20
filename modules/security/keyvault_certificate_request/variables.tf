@@ -3,7 +3,10 @@ variable "certificate_issuers" {
 }
 variable "keyvault_id" {}
 variable "keyvault_uri" {}
-variable "settings" {}
+variable "settings" {
+  description = "The settings for the Azure resource."
+  type        = any
+}
 variable "domain_name_registrations" {
   default = {}
 }

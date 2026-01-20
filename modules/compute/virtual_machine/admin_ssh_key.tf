@@ -12,9 +12,13 @@ locals {
 resource "azurerm_key_vault_secret" "ssh_private_key" {
   for_each = local.create_sshkeys ? var.settings.virtual_machine_settings : {}
 
-  name         = can(azurecaf_name.legacy_computer_name[each.key].result) ? format("%s-ssh-private-key", azurecaf_name.legacy_computer_name[each.key].result) : format("%s-ssh-private-key", data.azurecaf_name.linux_computer_name[each.key].result)
-  value        = tls_private_key.ssh[each.key].private_key_pem
-  key_vault_id = local.keyvault.id
+  name            = can(azurecaf_name.legacy_computer_name[each.key].result) ? format("%s-ssh-private-key", azurecaf_name.legacy_computer_name[each.key].result) : format("%s-ssh-private-key", data.azurecaf_name.linux_computer_name[each.key].result)
+  value           = tls_private_key.ssh[each.key].private_key_pem
+  key_vault_id    = local.keyvault.id
+  content_type    = try(each.value.ssh_private_key_content_type, null)
+  not_before_date = try(each.value.ssh_private_key_not_before_date, null)
+  expiration_date = try(each.value.ssh_private_key_expiration_date, null)
+  tags            = merge(local.tags, try(each.value.ssh_private_key_tags, {}))
 
   lifecycle {
     ignore_changes = [

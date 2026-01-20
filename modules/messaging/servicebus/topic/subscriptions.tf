@@ -13,7 +13,6 @@ module "servicebus_subscriptions" {
     servicebus_queues       = try(var.remote_objects.servicebus_queues, null)
     servicebus_topics       = try(var.remote_objects.servicebus_topics, null)
   }
-
 }
 
 output "servicebus_subscriptions" {

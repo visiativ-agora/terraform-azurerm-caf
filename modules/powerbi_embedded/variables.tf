@@ -1,8 +1,10 @@
 variable "global_settings" {
   description = "Global settings object (see module README.md)"
+  type        = any
 }
 variable "client_config" {
   description = "Client configuration object (see module README.md)."
+  type        = any
 }
 variable "tags" {
   description = "Tags to be used for this resource deployment."
@@ -55,7 +57,10 @@ variable "resource_group_name" {
   description = "Resource group object"
 }
 
-variable "settings" {}
+variable "settings" {
+  description = "The settings for the Azure resource."
+  type        = any
+}
 
 
 

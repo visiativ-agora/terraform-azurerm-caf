@@ -1,0 +1,397 @@
+#
+# Copyright (c) Microsoft Corporation
+# Licensed under the MIT License.
+#
+
+name: Monthly Integration tests
+permissions:
+  contents: read
+
+on:
+  repository_dispatch:
+    types: [int-*]
+  workflow_dispatch:
+    inputs:
+      scenario:
+        description: "Select the scenario you want to run:"
+        required: false
+        type: choice
+        default: standalone-networking.json
+        options:
+          - standalone-bot.json
+          - standalone-azuread.json
+          - standalone-scenarios.json
+          - standalone-compute.json
+          - standalone-networking.json
+          - standalone-dataplat.json
+
+env:
+  DEFAULT_SCENARIO: standalone-networking.json
+  TF_VERSION: 1.12.2
+  TF_LINT_VERSION: latest
+  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+jobs:
+  load_scenarios:
+    name: Load Test Scenarios Matrix
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.load_scenarios.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v6
+      - id: load_scenarios
+        run: |
+          echo "Scenario: ${{ github.event.client_payload.scenario }}"
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            cases=$(cat ./.github/workflows/${{ github.event.inputs.scenario }} | jq -c .)
+          else
+            cases=$(cat ./.github/workflows/${{ github.event.client_payload.scenario }} | jq -c .)
+          fi
+          echo "matrix=${cases}" >> $GITHUB_OUTPUT
+
+  mock_plan_scenarios:
+    name: Test-${{ matrix.config_files }}
+    runs-on: ubuntu-latest
+    needs: load_scenarios
+
+    strategy:
+      fail-fast: false
+      matrix: ${{fromJSON(needs.load_scenarios.outputs.matrix)}}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Create environment variables
+        run: |
+          cd ${GITHUB_WORKSPACE}/examples/${{ matrix.config_files }}
+          FILE_NAME=$(echo ${{ matrix.config_files }} | sed 's./..g' | xargs)
+          echo STATE_FILE=${HOME}/tfstates/${FILE_NAME}.tfstate  >> $GITHUB_ENV
+          echo PLAN_FILE=${HOME}/tfstates/${FILE_NAME}.plan >> $GITHUB_ENV
+          echo CURRENT_FOLDER=${GITHUB_WORKSPACE}/examples/${{ matrix.config_files }} >> $GITHUB_ENV
+          echo PARAMETER_FILES=$(find ${GITHUB_WORKSPACE}/examples/${{ matrix.config_files }} | grep .tfvars | sed 's/.*/-var-file=&/' | xargs) >> $GITHUB_ENV
+
+      - name: Install Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20.x
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Configure Terraform plugin cache
+        run: |
+          echo "TF_PLUGIN_CACHE_DIR=$HOME/.terraform.d/plugin-cache" >>"$GITHUB_ENV"
+          mkdir --parents "$HOME/.terraform.d/plugin-cache"
+
+      - name: Cache Terraform
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.terraform.d/plugin-cache
+          key: ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
+          restore-keys: |
+            ${{ runner.os }}-terraform-
+
+      - name: Terraform Init example
+        id: tf_init
+        run: |
+          terraform -chdir=examples \
+          init
+
+      - name: Terraform Test example
+        id: tf_test
+        run: |
+          terraform -chdir=examples \
+          test \
+          -test-directory=./tests/mock \
+          ${{ env.PARAMETER_FILES }} \
+          -verbose
+
+  terraform_integration_tests:
+    permissions:
+      id-token: write
+      contents: write # Required for commit-changes: push
+      pull-requests: write # Required if PRs need to be created in the future
+
+    name: Integration-${{ matrix.config_files }}
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [load_scenarios, mock_plan_scenarios]
+
+    # Groups by individual test case to allow controlled parallelization
+    concurrency:
+      group: integration-${{ matrix.config_files }}-${{ github.run_id }}
+      cancel-in-progress: false
+
+    strategy:
+      fail-fast: false
+      max-parallel: 5 # Allows up to 5 different groups in parallel
+      matrix: ${{fromJSON(needs.load_scenarios.outputs.matrix)}}
+
+    environment:
+      name: integration
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Create environment variables
+        run: |
+          cd ${GITHUB_WORKSPACE}/examples/${{ matrix.config_files }}
+          FILE_NAME=$(echo ${{ matrix.config_files }} | sed 's./..g' | xargs)
+          echo STATE_FILE=${HOME}/tfstates/${FILE_NAME}.tfstate  >> $GITHUB_ENV
+          echo PLAN_FILE=${HOME}/tfstates/${FILE_NAME}.plan >> $GITHUB_ENV
+          echo CURRENT_FOLDER=${GITHUB_WORKSPACE}/examples/${{ matrix.config_files }} >> $GITHUB_ENV
+          echo PARAMETER_FILES=$(find ${GITHUB_WORKSPACE}/examples/${{ matrix.config_files }} | grep .tfvars | sed 's/.*/-var-file=&/' | xargs) >> $GITHUB_ENV
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Configure Terraform plugin cache
+        run: |
+          echo "TF_PLUGIN_CACHE_DIR=$HOME/.terraform.d/plugin-cache" >>"$GITHUB_ENV"
+          mkdir --parents "$HOME/.terraform.d/plugin-cache"
+
+      - name: Cache Terraform
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.terraform.d/plugin-cache
+          key: ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
+          restore-keys: |
+            ${{ runner.os }}-terraform-
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Terraform Init example
+        id: tf_init
+        run: |
+          terraform -chdir=${GITHUB_WORKSPACE}/examples \
+          init | grep -P '^- (?=Downloading|Using|Finding|Installing)|^[^-]'
+
+      - name: Terraform Plan example
+        id: tf_plan
+        run: |
+          terraform -chdir=${GITHUB_WORKSPACE}/examples \
+            plan \
+            ${{ env.PARAMETER_FILES }} \
+            -var tags='{testing_job_id='"${{ github.run_id }}"'}' \
+            -var var_folder_path=${{ env.CURRENT_FOLDER }} \
+            -refresh=true \
+            -input=false \
+            -state=${{ env.STATE_FILE }} \
+            -out=${{ env.PLAN_FILE }}
+
+      - name: Terraform Apply example
+        id: tf_apply
+        continue-on-error: false
+        run: |
+          terraform -chdir=${GITHUB_WORKSPACE}/examples \
+            apply \
+            -state=${{ env.STATE_FILE }} \
+            ${{ env.PLAN_FILE }}
+
+      - name: Get Resource Groups from Terraform State
+        id: get_resource_groups
+        continue-on-error: true
+        run: |
+          # Get Resource Group IDs from Terraform state
+          RG_IDS=$(terraform -chdir=${GITHUB_WORKSPACE}/examples \
+            show \
+            -state=${{ env.STATE_FILE }} \
+            -json | jq -r '.values.root_module.resources[]? | select(.type == "azurerm_resource_group") | .values.id' | tr '\n' ' ')
+
+          if [ -n "$RG_IDS" ]; then
+            echo "RESOURCE_GROUP_IDS=$RG_IDS" >> $GITHUB_ENV
+            echo "Found Resource Groups: $RG_IDS"
+          else
+            echo "No Resource Groups found in Terraform state"
+            echo "RESOURCE_GROUP_IDS=" >> $GITHUB_ENV
+          fi
+
+      - name: Generate Azure Infrastructure Diagram
+        id: generate_diagram
+        continue-on-error: true
+        if: env.RESOURCE_GROUP_IDS != ''
+        uses: rfernandezdo/inventariographdrawio@v2
+        with:
+          include-ids: ${{ env.RESOURCE_GROUP_IDS }}
+          output-path: ${{ env.CURRENT_FOLDER }}/azure-infrastructure.drawio
+          diagram-mode: all
+          no-embed-data: true
+
+      - name: Upload Infrastructure Diagram
+        if: steps.generate_diagram.outcome == 'success'
+        uses: actions/upload-artifact@v6
+        with:
+          name: diagram-${{ matrix.config_files }}
+          path: ${{ env.CURRENT_FOLDER }}/azure-infrastructure.drawio
+          retention-days: 30
+
+      - name: Terraform Destroy Plan
+        id: tf_destroy_plan
+        run: |
+          terraform -chdir=${GITHUB_WORKSPACE}/examples \
+            plan \
+            ${{ env.PARAMETER_FILES }} \
+            -var tags='{testing_job_id='"${{ github.run_id }}"'}' \
+            -var var_folder_path=${{ env.CURRENT_FOLDER }} \
+            -refresh=true \
+            -input=false \
+            -destroy \
+            -state=${{ env.STATE_FILE }} \
+            -out=${{ env.PLAN_FILE }}-destroy
+
+      - name: Terraform Destroy Apply
+        id: tf_destroy_apply
+        run: |
+          terraform -chdir=${GITHUB_WORKSPACE}/examples \
+            apply \
+            -refresh=false \
+            -auto-approve \
+            -state=${{ env.STATE_FILE }} \
+            ${{ env.PLAN_FILE }}-destroy
+
+      - name: Cleanup Databricks Managed Resource Groups
+        if: always()
+        continue-on-error: true
+        run: |
+          # Databricks managed resource groups are not automatically deleted by Terraform
+          # Find and delete them based on the testing_job_id tag from the Databricks workspace state
+          for workspace_rg in `terraform -chdir=${GITHUB_WORKSPACE}/examples show -state=${{ env.STATE_FILE }} -json 2>/dev/null | jq -r '.values.root_module.resources[]? | select(.type == "azurerm_databricks_workspace") | .values.resource_group_name' 2>/dev/null`; do
+            for managed_rg in `az group list --query "[?contains(name, 'databricks-rg-') && tags.testing_job_id=='${{ github.run_id }}'].name" -o tsv 2>/dev/null`; do
+              echo "Cleaning up Databricks managed resource group: $managed_rg"
+              az group delete -n $managed_rg -y --no-wait || true
+            done
+          done
+
+      - name: Commit Infrastructure Diagram to Repository
+        if: steps.generate_diagram.outcome == 'success'
+        continue-on-error: true
+        run: |
+          if [ -f "${{ env.CURRENT_FOLDER }}/azure-infrastructure.drawio" ]; then
+            git config --global user.name "GitHub Actions Bot"
+            git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            git add examples/${{ matrix.config_files }}/azure-infrastructure.drawio
+            git commit -m "docs: update infrastructure diagram for ${{ matrix.config_files }} [skip ci]" || echo "No changes to commit"
+            git push || echo "Failed to push changes"
+          else
+            echo "Diagram file not found, skipping commit"
+          fi
+
+  purge:
+    permissions:
+      id-token: write
+      contents: read
+
+    name: Purge Integration Environment
+    runs-on: ubuntu-latest
+    if: ${{ failure() || cancelled() }}
+
+    needs: [load_scenarios, terraform_integration_tests]
+
+    environment:
+      name: integration
+
+    steps:
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Purge based on run_id
+        run: |
+          for i in `az monitor diagnostic-settings subscription list -o tsv --query "value[?contains(name, '${{ github.run_id }}' )].name"`; do echo "purging subscription diagnostic-settings: $i" && $(az monitor diagnostic-settings subscription delete --name $i --yes); done
+          for i in `az monitor log-profiles list -o tsv --query '[].name'`; do az monitor log-profiles delete --name $i; done
+          for i in `az ad group list --query "[?contains(displayName, '${{ github.run_id }}')].id" -o tsv`; do echo "purging Azure AD group: $i" && $(az ad group delete --verbose --group $i || true); done
+          for i in `az ad app list --query "[?contains(displayName, '${{ github.run_id }}')].appId" -o tsv`; do echo "purging Azure AD app: $i" && $(az ad app delete --verbose --id $i || true); done
+          for i in `az keyvault list-deleted --query "[?tags.testing_job_id=='${{ github.run_id }}'].name" -o tsv`; do az keyvault purge --name $i; done
+
+          # Clean Recovery Services Vaults and Backup Vaults before deleting resource groups
+          for rg in `az group list --query "[?tags.testing_job_id=='${{ github.run_id }}'].name" -o tsv`; do
+            echo "=== Processing resource group: $rg ==="
+
+            # Process Backup Vaults (Microsoft.DataProtection/BackupVaults)
+            for vault in `az dataprotection backup-vault list --resource-group $rg --query "[].name" -o tsv 2>/dev/null`; do
+              echo "  Processing Backup Vault: $vault"
+
+              # Delete backup instances first
+              for instance in `az dataprotection backup-instance list --vault-name $vault --resource-group $rg --query "[].name" -o tsv 2>/dev/null`; do
+                echo "    Deleting backup instance: $instance"
+                az dataprotection backup-instance delete --name $instance --vault-name $vault --resource-group $rg --yes 2>/dev/null || true
+              done
+
+              # Wait a bit for instances to be deleted
+              sleep 5
+
+              # Delete backup policies
+              for policy in `az dataprotection backup-policy list --vault-name $vault --resource-group $rg --query "[].name" -o tsv 2>/dev/null`; do
+                echo "    Deleting backup policy: $policy"
+                az dataprotection backup-policy delete --name $policy --vault-name $vault --resource-group $rg --yes 2>/dev/null || true
+              done
+
+              # Disable soft-delete for Backup Vaults
+              echo "    Disabling soft-delete for Backup Vault: $vault"
+              az dataprotection backup-vault update --vault-name $vault --resource-group $rg \
+                --soft-delete-state Off --soft-delete-retention 0 2>/dev/null || true
+
+              # Delete the vault
+              echo "    Deleting Backup Vault: $vault"
+              az dataprotection backup-vault delete --vault-name $vault --resource-group $rg --yes 2>/dev/null || true
+            done
+
+            # Process Recovery Services Vaults (Microsoft.RecoveryServices/vaults)
+            for vault in `az backup vault list --resource-group $rg --query "[].name" -o tsv 2>/dev/null`; do
+              echo "  Processing Recovery Services Vault: $vault"
+
+              # Disable soft delete first
+              echo "    Disabling soft-delete for Recovery Services Vault: $vault"
+              az backup vault backup-properties set --name $vault --resource-group $rg --soft-delete-feature-state Disable 2>/dev/null || true
+
+              # Delete backup items for all backup management types
+              for backup_type in AzureIaasVM AzureStorage AzureWorkload; do
+                for container in `az backup container list --vault-name $vault --resource-group $rg --backup-management-type $backup_type --query "[].name" -o tsv 2>/dev/null`; do
+                  for item in `az backup item list --vault-name $vault --resource-group $rg --container-name $container --query "[].name" -o tsv 2>/dev/null`; do
+                    echo "    Deleting backup item ($backup_type): $item"
+                    az backup protection disable --vault-name $vault --resource-group $rg --container-name $container --item-name $item --delete-backup-data true --yes 2>/dev/null || true
+                  done
+                done
+              done
+
+              # Try to delete the vault (may fail if metadata is corrupted)
+              echo "    Attempting to delete Recovery Services Vault: $vault"
+              az backup vault delete --name $vault --resource-group $rg --yes 2>/dev/null || \
+                echo "    Warning: Vault $vault could not be deleted (may have corrupted metadata). Resource group deletion will handle cleanup."
+            done
+
+            # Remove locks
+            echo "  Removing locks..."
+            for lock in `az lock list --resource-group $rg --query "[].id" -o tsv 2>/dev/null`; do
+              echo "    Deleting lock: $lock"
+              az lock delete --ids $lock 2>/dev/null || true
+            done
+
+            # Delete resource group (will eventually clean up any remaining vaults with corrupted metadata)
+            echo "  Initiating resource group deletion: $rg"
+            az group delete -n $rg -y --no-wait || true
+          done
+
+          # Log resource groups that are still in deletion state
+          echo ""
+          echo "=== Resource groups in deletion state ==="
+          az group list --query "[?tags.testing_job_id=='${{ github.run_id }}' && properties.provisioningState=='Deleting'].{Name:name, State:properties.provisioningState}" -o table || true
+
+          for i in `az role assignment list --query "[?contains(roleDefinitionName, '${{ github.run_id }}')].roleDefinitionName" -o tsv`; do echo "purging role assignment: $i" && $(az role assignment delete --role $i || true); done
+          for i in `az role definition list --query "[?contains(roleName, '${{ github.run_id }}')].roleName" -o tsv`; do echo "purging custom role definition: $i" && $(az role definition delete --name $i || true); done

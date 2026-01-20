@@ -1,8 +1,10 @@
 variable "global_settings" {
   description = "Global settings object (see module README.md)"
+  type        = any
 }
 variable "client_config" {
   description = "Client configuration object (see module README.md)."
+  type        = any
 }
 # variable "location" {
 #   description = "(Required) Specifies the supported Azure location where to create the resource. Changing this forces a new resource to be created."
@@ -10,11 +12,8 @@ variable "client_config" {
 # }
 
 variable "resource_group" {
-  description = "Resource group object to deploy the virtual machine"
-}
-
-variable "resource_groups" {
-  default = {}
+  description = "Resource group object to deploy the Azure resource"
+  type        = any
 }
 
 variable "keyvaults" {
@@ -27,7 +26,25 @@ variable "boot_diagnostics_storage_account" {
   default     = null
 }
 
-variable "settings" {}
+variable "settings" {
+  description = "The settings for the Azure resource."
+  type        = any
+  validation {
+    condition = (
+      # If shutdown_schedule is not configured -> ok
+      try(var.settings.shutdown_schedule, null) == null ||
+      # If notifications are not enabled -> ok
+      try(var.settings.shutdown_schedule.notification_settings.enabled, false) == false ||
+      # If notifications enabled, require either email or webhook_url
+      (try(var.settings.shutdown_schedule.notification_settings.enabled, false) == true && (
+        try(var.settings.shutdown_schedule.notification_settings.email, null) != null ||
+        try(var.settings.shutdown_schedule.notification_settings.webhook_url, null) != null
+      ))
+    )
+
+    error_message = "When 'shutdown_schedule.notification_settings.enabled' is true you must provide either 'email' or 'webhook_url' in settings.shutdown_schedule.notification_settings."
+  }
+}
 
 variable "vnets" {}
 

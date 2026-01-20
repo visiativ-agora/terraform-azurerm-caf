@@ -20,6 +20,7 @@ resource "azurerm_backup_protected_vm" "backup" {
     try(var.recovery_vaults[var.client_config.landingzone_key][var.settings.backup.vault_key].backup_policies.virtual_machines[var.settings.backup.policy_key].id, null),
     try(var.recovery_vaults[var.settings.backup.lz_key][var.settings.backup.vault_key].backup_policies.virtual_machines[var.settings.backup.policy_key].id, null)
   )
-
-  # tags                = local.tags      # Commented - forcing a plan to create some diff as the tag is not handled properly in 2.37.0
+  exclude_disk_luns = try(var.settings.backup.exclude_disk_luns, null)
+  include_disk_luns = try(var.settings.backup.include_disk_luns, null)
+  protection_state  = try(var.settings.backup.protection_state, null)
 }

@@ -1,8 +1,10 @@
 variable "global_settings" {
   description = "Global settings object (see module README.md)"
+  type        = any
 }
 variable "client_config" {
   description = "Client configuration object (see module README.md)."
+  type        = any
 }
 variable "location" {
   description = "(Required) Specifies the supported Azure location where to create the resource. Changing this forces a new resource to be created."
@@ -14,13 +16,17 @@ variable "resource_group_name" {
   type        = string
 }
 variable "resource_group" {
-  description = "Resource group object to deploy the virtual machine"
+  description = "Resource group object to deploy the Azure resource"
+  type        = any
 }
 variable "identity" {
   default = null
 }
 
-variable "settings" {}
+variable "settings" {
+  description = "The settings for the Azure resource."
+  type        = any
+}
 
 variable "private_endpoints" {
   default = {}

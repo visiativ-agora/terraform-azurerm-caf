@@ -1,2 +1,5 @@
 variable "database_id" {}
-variable "settings" {}
+variable "settings" {
+  description = "The settings for the Azure resource."
+  type        = any
+}

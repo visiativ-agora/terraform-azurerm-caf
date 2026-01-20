@@ -1,75 +1,16 @@
-variable "name" {
-  description = "The name of the resource"
-
-}
-
 variable "global_settings" {
-  description = "Global settings for the Azure resources"
-}
-
-variable "service_plan_id" {
-  description = "The ID of the Service Plan"
-
-}
-
-variable "settings" {
-  description = "Settings for the Azure Function App"
-
-}
-
-variable "location" {
-  description = "The location of the Azure resources"
-
-}
-
-variable "resource_group_name" {
-  description = "The name of the resource group in which the resources will be created"
-
-}
-
-variable "resource_group" {
-  description = "The resource group object in which the resources will be created"
-}
-
-variable "tags" {
-  description = "A mapping of tags to assign to the resource"
-
-}
-
-variable "app_settings" {
-  description = "App settings for the Azure Function App"
-
-}
-
-variable "connection_strings" {
-  description = "Connection strings for the Azure Function App"
-
-}
-
-variable "identity" {
-  description = "Managed Service Identity for the Azure Function App"
-
-}
-
-
-variable "combined_objects" {
-  description = "Combined objects for the Azure Function App"
+  description = "Global settings object"
+  type        = any
 }
 
 variable "client_config" {
-  description = "Client configuration for the Azure Function App"
-
+  description = "Client configuration object"
+  type        = any
 }
 
-
-variable "application_insight" {
-  description = "Application Insight for the Azure Function App"
-
-}
-
-variable "private_endpoints" {
-  description = "Private endpoints for the Azure Function App"
-
+variable "location" {
+  description = "The location of the resource."
+  type        = string
 }
 
 variable "base_tags" {
@@ -77,54 +18,38 @@ variable "base_tags" {
   type        = bool
 }
 
+variable "resource_group" {
+  description = "Resource group object"
+  type        = any
+}
+
 variable "remote_objects" {
-  default = null
+  description = "Remote objects to be passed to the module."
+  type        = any
 }
 
-variable "virtual_subnets" {
-  description = "Map of virtual_subnets objects"
+variable "settings" {
+  description = <<DESCRIPTION
+  The settings object for network manager:
+
+
+
+  ```hcl
+
+  
+  ```
+  example:
+  ```hcl
+  
+  ```
+
+  DESCRIPTION
+  type        = any
+}
+
+
+variable "private_endpoints" {
+  description = "A map of objects representing the private endpoints to create."
+  type        = any
   default     = {}
-  nullable    = false
-}
-
-variable "private_dns" {
-  description = "Map of private_dns objects"
-  default     = {}
-  nullable    = false
-}
-
-variable "vnets" {
-  description = "Map of vnets objects"
-  default     = {}
-  nullable    = false
-}
-
-variable "storage_account_name" {
-  description = "The name of the storage account"
-
-}
-
-variable "storage_account_access_key" {
-  description = "The access key of the storage account"
-
-}
-
-variable "dynamic_app_settings" {
-  default = {}
-}
-
-variable "diagnostic_profiles" {
-  default = {}
-}
-
-variable "diagnostics" {
-  default = null
-}
-
-variable "slots" {
-  default = {}
-}
-
-variable "storage_accounts" {
-  default = {}
 }

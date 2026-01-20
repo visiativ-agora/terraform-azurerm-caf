@@ -4,6 +4,7 @@ variable "name" {
 
 variable "data_factory_id" {
   description = "(Required) The Data Factory name in which to associate the Linked Service with. Changing this forces a new resource."
+  type        = string
 }
 
 variable "description" {

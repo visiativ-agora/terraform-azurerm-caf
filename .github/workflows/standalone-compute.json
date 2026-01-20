@@ -17,8 +17,6 @@
     "compute/container_registry/100-simple-acr",
     "compute/container_registry/200-acr-private-link",
     "compute/container_registry/200-acr-vnet",
-    "compute/dedicated_hosts/101-dedicated-host",
-    "compute/dedicated_hosts/102-dedicated-host-vms",
     "compute/kubernetes_services/101-single-cluster",
     "compute/kubernetes_services/102-multi-nodepools",
     "compute/kubernetes_services/103-multi-clusters",
@@ -27,8 +25,6 @@
     "compute/kubernetes_services/107-agic-brownfield",
     "compute/kubernetes_services/108-single-cluster-remote-adgroup-admin",
     "compute/kubernetes_services/109-single-cluster-istio",
-    "compute/kubernetes_services/110-single-federated-credentials",
-    "compute/kubernetes_services/111-single-cluster-fleet-manager",    
     "compute/proximity_placement_group",
     "compute/virtual_machine_scale_set/100-linux-win-vmss-lb",
     "compute/virtual_machine_scale_set/101-linux-win-vmss-agw",
@@ -51,8 +47,6 @@
     "compute/virtual_machine/214-vm-generic_extensions_complex",
     "compute/virtual_machine/215-vm-keyvault-for-windows-extension",
     "compute/virtual_machine/216-vm-linux_diagnostic_extensions",
-    "compute/virtual_machine/217-vm-disk-encryption-set-msi",
-    "compute/virtual_machine/300-single-windows-recovery-site",
-    "compute/vmware_cluster/101-vmware_cluster"
+    "compute/virtual_machine/217-vm-disk-encryption-set-msi"
   ]
 }

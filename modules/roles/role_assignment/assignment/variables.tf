@@ -11,4 +11,5 @@ variable "azuread_groups" {}
 variable "managed_identities" {}
 variable "client_config" {
   description = "Client configuration object (see module README.md)."
+  type        = any
 }

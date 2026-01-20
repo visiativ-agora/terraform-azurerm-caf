@@ -9,7 +9,8 @@ variable "global_settings" {
 }
 
 variable "remote_objects" {
-  description = "(Required) Specifies the supported Azure location where to create the resource. Changing this forces a new resource to be created."
+  description = "Remote objects configuration."
+  type        = any
   default     = {}
 }
 

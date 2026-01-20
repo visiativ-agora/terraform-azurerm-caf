@@ -1,11 +1,15 @@
-locals {
-  resource_group_name = coalesce(var.resource_group_name, var.resource_group.name)
-}
+
 
 terraform {
+  required_version = ">= 1.6.0"
   required_providers {
     azurecaf = {
-      source = "aztfmod/azurecaf"
+      source  = "aztfmod/azurecaf"
+      version = ">= 1.0.0"
+    }
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">= 4.0.0"
     }
   }
 }

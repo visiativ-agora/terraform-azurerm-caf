@@ -4,8 +4,12 @@ variable "client_config" {
 variable "name" {}
 variable "global_settings" {
   description = "Global settings object (see module README.md)"
+  type        = any
 }
-variable "settings" {}
+variable "settings" {
+  description = "The settings for the Azure resource."
+  type        = any
+}
 variable "tags" {
   default = null
 }

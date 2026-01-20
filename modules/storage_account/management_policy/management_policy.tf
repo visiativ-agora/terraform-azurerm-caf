@@ -2,7 +2,7 @@ resource "azurerm_storage_management_policy" "mgmt_policy" {
   storage_account_id = var.storage_account_id
 
   dynamic "rule" {
-    for_each = var.settings.rules
+    for_each = try(var.settings.rules, [])
 
     content {
       name    = rule.value.name
@@ -16,7 +16,7 @@ resource "azurerm_storage_management_policy" "mgmt_policy" {
           blob_types   = try(filters.value.blob_types, null)
 
           dynamic "match_blob_index_tag" {
-            for_each = try(filters.match_blob_index_tag, {})
+            for_each = try(filters.value.match_blob_index_tag, {})
 
             content {
               name      = try(match_blob_index_tag.value.name, null)
@@ -73,6 +73,15 @@ resource "azurerm_storage_management_policy" "mgmt_policy" {
           }
         }
       }
+    }
+  }
+  dynamic "timeouts" {
+    for_each = try(var.settings.timeouts, {})
+    content {
+      create = try(timeouts.value.create, null)
+      read   = try(timeouts.value.read, null)
+      update = try(timeouts.value.update, null)
+      delete = try(timeouts.value.delete, null)
     }
   }
 }

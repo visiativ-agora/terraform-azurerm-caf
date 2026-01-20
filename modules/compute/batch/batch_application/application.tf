@@ -15,4 +15,14 @@ resource "azurerm_batch_application" "application" {
   allow_updates       = try(var.settings.allow_updates, null)
   default_version     = try(var.settings.default_version, null)
   display_name        = try(var.settings.display_name, null)
+
+  dynamic "timeouts" {
+    for_each = try(var.settings.timeouts, null) != null ? [var.settings.timeouts] : []
+    content {
+      create = try(timeouts.value.create, null)
+      update = try(timeouts.value.update, null)
+      read   = try(timeouts.value.read, null)
+      delete = try(timeouts.value.delete, null)
+    }
+  }
 }

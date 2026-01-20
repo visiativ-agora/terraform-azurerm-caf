@@ -47,11 +47,11 @@ resource "azurerm_network_interface" "nic" {
   location            = local.location
   resource_group_name = local.resource_group_name
 
-  dns_servers                   = lookup(each.value, "dns_servers", null)
-  enable_ip_forwarding          = lookup(each.value, "enable_ip_forwarding", false)
-  enable_accelerated_networking = lookup(each.value, "enable_accelerated_networking", false)
-  internal_dns_name_label       = lookup(each.value, "internal_dns_name_label", null)
-  tags                          = merge(local.tags, try(each.value.tags, null))
+  dns_servers                    = lookup(each.value, "dns_servers", null)
+  ip_forwarding_enabled          = lookup(each.value, "ip_forwarding_enabled", false)
+  accelerated_networking_enabled = lookup(each.value, "accelerated_networking_enabled", false)
+  internal_dns_name_label        = lookup(each.value, "internal_dns_name_label", null)
+  tags                           = merge(local.tags, try(each.value.tags, null))
 
   ip_configuration {
     name                          = azurecaf_name.nic[each.key].result
@@ -79,6 +79,16 @@ resource "azurerm_network_interface" "nic" {
       public_ip_address_id          = can(ip_configuration.value.public_address_id) || can(try(ip_configuration.value.public_address_id.key, ip_configuration.value.public_ip_address_key)) == false ? try(ip_configuration.value.public_address_id, null) : var.public_ip_addresses[try(ip_configuration.value.public_ip_address.lz_key, var.client_config.landingzone_key)][try(ip_configuration.value.public_ip_address.key, ip_configuration.value.public_ip_address_key)].id
     }
   }
+
+  dynamic "timeouts" {
+    for_each = try(each.value.timeouts, null) == null ? [] : [each.value.timeouts]
+    content {
+      create = try(each.value.timeouts.create, null)
+      update = try(each.value.timeouts.update, null)
+      read   = try(each.value.timeouts.read, null)
+      delete = try(each.value.timeouts.delete, null)
+    }
+  }
 }
 
 # Example of a nic configuration with vnet on a remote state
@@ -91,7 +101,7 @@ resource "azurerm_network_interface" "nic" {
 #     vnet_key                = "hub_rg1"
 #     subnet_key              = "jumpbox"
 #     name                    = "0"
-#     enable_ip_forwarding    = false
+#     ip_forwarding_enabled    = false
 #     internal_dns_name_label = "nic0"
 #     // Prefer network_security_group orver nsg_key. Will be removed in version 6
 #     nsg_key                 = "data"       // requires a version 1 nsg definition (see compute/vm/210-vm-bastion-winrm example)
@@ -107,7 +117,7 @@ resource "azurerm_network_interface" "nic" {
 #         vnet_key                = "vnet_region1"
 #         subnet_key              = "bastion"
 #         name                    = "0-bastion_host"
-#         enable_ip_forwarding    = false
+#         ip_forwarding_enabled    = false
 #         internal_dns_name_label = "bastion-host-nic0"
 #         public_ip_address_key   = "bastion_host_pip1"
 #       }

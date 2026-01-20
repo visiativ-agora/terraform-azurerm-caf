@@ -8,6 +8,7 @@ variable "location" {
 }
 variable "settings" {
   default = {}
+  type    = any
 }
 variable "tags" {
   description = "(Required) Map of tags to be applied to the resource"
@@ -19,4 +20,5 @@ variable "base_tags" {
 }
 variable "global_settings" {
   description = "Global settings object (see module README.md)"
+  type        = any
 }

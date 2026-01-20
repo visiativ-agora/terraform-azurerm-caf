@@ -1,5 +1,8 @@
 variable "resource_group_name" {}
-variable "settings" {}
+variable "settings" {
+  description = "The settings for the Azure resource."
+  type        = any
+}
 variable "base_tags" {}
 variable "dns_zone_id" {
   description = "Resource ID of the Azure DNS global zone."

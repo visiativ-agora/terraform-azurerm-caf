@@ -1,4 +1,13 @@
 locals {
+	tags = var.base_tags ? merge(
+    var.global_settings.tags,
+    try(var.resource_group.tags, null),
+    try(var.redis.tags, null)
+  ) : try(var.redis.tags, null)
+
+  location            = coalesce(var.location, var.resource_group.location)
+  resource_group_name = coalesce(var.resource_group_name, var.resource_group.name)
+
   redis_url = "rediss://:${azurerm_redis_cache.redis.primary_access_key}@${azurerm_redis_cache.redis.hostname}:${azurerm_redis_cache.redis.ssl_port}"
 
   redis_role_assignments_flat = {

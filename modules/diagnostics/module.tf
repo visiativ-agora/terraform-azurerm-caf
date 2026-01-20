@@ -22,6 +22,7 @@ resource "azurerm_monitor_diagnostic_setting" "diagnostics" {
 
   log_analytics_workspace_id     = contains(try([tostring(each.value.destination_type)], tolist(each.value.destination_type)), "log_analytics") ? try(var.diagnostics.diagnostics_destinations.log_analytics[each.value.destination_key].log_analytics_resource_id, var.diagnostics.log_analytics[var.diagnostics.diagnostics_destinations.log_analytics[each.value.destination_key].log_analytics_key].id) : null
   log_analytics_destination_type = contains(try([tostring(each.value.destination_type)], tolist(each.value.destination_type)), "log_analytics") ? try(each.value.log_analytics_destination_type, lookup(var.diagnostics.diagnostics_definition[each.value.definition_key], "log_analytics_destination_type", null)) : null
+  partner_solution_id            = contains(try([tostring(each.value.destination_type)], tolist(each.value.destination_type)), "partner_solution") ? try(each.value.partner_solution_id, null) : null
 
   storage_account_id = contains(try([tostring(each.value.destination_type)], tolist(each.value.destination_type)), "storage") ? try(var.diagnostics.diagnostics_destinations.storage[each.value.destination_key][var.resource_location].storage_account_resource_id, var.diagnostics.storage_accounts[var.diagnostics.diagnostics_destinations.storage[each.value.destination_key][var.resource_location].storage_account_key].id) : null
 
@@ -34,29 +35,29 @@ resource "azurerm_monitor_diagnostic_setting" "diagnostics" {
     content {
       category = enabled_log.value[0]
 
-      dynamic "retention_policy" {
-        for_each = length(enabled_log.value) > 2 ? [1] : []
-        content {
-          enabled = enabled_log.value[2]
-          days    = enabled_log.value[3]
-        }
-      }
+      # retention_policy is deprecated. For logs sent to a Log Analytics workspace,
+      # retention is set for each table on the Tables page of your workspace
     }
   }
 
-  dynamic "metric" {
+  dynamic "enabled_metric" {
     for_each = lookup(var.diagnostics.diagnostics_definition[each.value.definition_key].categories, "metric", {})
     content {
-      category = metric.value[0]
-      enabled  = metric.value[1]
+      category = enabled_metric.value[0]
+      #enabled  = enabled_metric.value[1] is deprecated.
+      #retention_policy = enabled_metric.value[2]
 
-      dynamic "retention_policy" {
-        for_each = length(metric.value) > 2 ? [1] : []
-        content {
-          enabled = metric.value[2]
-          days    = metric.value[3]
-        }
-      }
+      # retention_policy is deprecated. For metrics sent to a storage account,
+      # manage retention using the azurerm_storage_management_policy resource.
+    }
+  }
+  dynamic "timeouts" {
+    for_each = try(var.diagnostics.diagnostics_definition[each.value.definition_key].timeouts, {})
+    content {
+      create = try(timeouts.value.create, null)
+      read   = try(timeouts.value.read, null)
+      update = try(timeouts.value.update, null)
+      delete = try(timeouts.value.delete, null)
     }
   }
 }

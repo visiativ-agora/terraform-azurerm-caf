@@ -1,19 +1,17 @@
 terraform {
-  # required_version = ">= 1.0"
+  required_version = ">= 1.6.0"
   required_providers {
     azapi = {
-      source = "Azure/azapi"
+      source  = "Azure/azapi"
+      version = ">= 1.0.0"
     }
     azurecaf = {
-      source = "aztfmod/azurecaf"
+      source  = "aztfmod/azurecaf"
+      version = ">= 1.0.0"
+    }
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">= 4.0.0"
     }
   }
 }
-
-locals {
-  module_tag = {
-    "module" = basename(abspath(path.module))
-  }
-  tags = merge(var.base_tags, local.module_tag, try(var.settings.tags, null))
-}
-

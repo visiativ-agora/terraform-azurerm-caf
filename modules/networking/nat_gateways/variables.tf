@@ -1,4 +1,7 @@
-variable "settings" {}
+variable "settings" {
+  description = "The settings for the Azure resource."
+  type        = any
+}
 variable "name" {}
 variable "location" {}
 variable "resource_group_name" {}

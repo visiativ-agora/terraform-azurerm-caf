@@ -43,4 +43,15 @@ resource "azurerm_recovery_services_vault" "asr" {
       user_assigned_identity_id         = can(var.settings.encryption.user_assigned_identity) ? var.managed_identities[try(var.settings.encryption.user_assigned_identity.lz_key, var.client_config.landingzone_key)][var.settings.encryption.user_assigned_identity.key].id : null
     }
   }
+  dynamic "timeouts" {
+    for_each = try(var.settings.timeouts, null) == null ? [] : [var.settings.timeouts]
+
+    content {
+      create = try(timeouts.value.create, null)
+      update = try(timeouts.value.update, null)
+      read   = try(timeouts.value.read, null)
+      delete = try(timeouts.value.delete, null)
+    }
+  }
+
 }

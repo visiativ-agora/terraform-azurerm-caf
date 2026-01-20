@@ -4,6 +4,7 @@ variable "location" {
 }
 variable "global_settings" {
   description = "Global settings object (see module README.md)"
+  type        = any
 }
 variable "resource_groups" {}
 variable "resource_group_name" {
@@ -17,7 +18,11 @@ variable "base_tags" {
 }
 variable "client_config" {
   description = "Client configuration object (see module README.md)."
+  type        = any
 }
 variable "identity" {}
-variable "settings" {}
+variable "settings" {
+  description = "The settings for the Azure resource."
+  type        = any
+}
 variable "storage_accounts" {}

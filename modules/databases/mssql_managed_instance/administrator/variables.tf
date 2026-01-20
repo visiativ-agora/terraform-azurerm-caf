@@ -3,7 +3,10 @@ variable "resource_group_name" {
   type        = string
 }
 variable "mi_name" {}
-variable "settings" {}
+variable "settings" {
+  description = "The settings for the Azure resource."
+  type        = any
+}
 variable "user_principal_name" {
   default = null
 }

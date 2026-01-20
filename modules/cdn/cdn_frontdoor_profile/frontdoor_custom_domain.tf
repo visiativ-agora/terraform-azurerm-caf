@@ -3,7 +3,7 @@
 
 module "frontdoor_custom_domains" {
   source   = "./frontdoor_custom_domain"
-  for_each = try(var.settings.custom_domains, {})
+  for_each = try(var.settings.frontdoor_custom_domains, {})
 
   global_settings = var.global_settings
   client_config   = var.client_config

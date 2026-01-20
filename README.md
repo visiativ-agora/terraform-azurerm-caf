@@ -1,6 +1,10 @@
 # Cloud Adoption Framework for Azure - Terraform module
 
-> :warning: This solution, offered by the Open-Source community, will no longer receive contributions from Microsoft. Customers are encouraged to transition to [Microsoft Azure Verified Modules](https://aka.ms/avm) for Microsoft support and updates.
+[![PR all-tests](https://github.com/aztfmodnew/terraform-azurerm-caf/actions/workflows/pr_tests-scenarios.yaml/badge.svg)](https://github.com/aztfmodnew/terraform-azurerm-caf/actions/workflows/pr_tests-scenarios.yaml)
+[![Monthly Integration tests](https://github.com/aztfmodnew/terraform-azurerm-caf/actions/workflows/weekly_workflow.yaml/badge.svg)](https://github.com/aztfmodnew/terraform-azurerm-caf/actions/workflows/monthly_workflow.yaml)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/aztfmodnew/terraform-azurerm-caf)
+
+> :warning: This solution, offered by the Open-Source community, it's based on [https://github.com/aztfmod](https://github.com/aztfmod) and is not supported by Microsoft. It's a community effort to keep the project alive and up to date. If you want to support the project, please consider contributing with code, documentation or any other way you can.
 
 This module allows you to create resources on Microsoft Azure, is used by the Azure Terraform SRE to provision resources in an Azure subscription and can deploy resources being directly invoked from the Terraform registry.
 
@@ -11,34 +15,38 @@ This module allows you to create resources on Microsoft Azure, is used by the Az
 
 ## Getting started
 
-This module can be used inside [:books: Azure Terraform Landing zones](https://aztfmod.github.io/documentation/), or can be used as standalone, directly from the [Terraform registry](https://registry.terraform.io/modules/aztfmod/caf/azurerm/)
+This module can be used inside [:books: Azure Terraform Landing zones](https://aztfmod.github.io/documentation/), or can be used as standalone, directly from the [Terraform registry](https://registry.terraform.io/modules/aztfmodnew/caf/azurerm/)
 
 ```terraform
 module "caf" {
-  source  = "aztfmod/caf/azurerm"
-  version = "~>5.5.0"
+  source  = "aztfmodnew/caf/azurerm"
+  version = "~>4.26.0"
   # insert the 7 required variables here
 }
 ```
 
-Fill the variables as needed and documented, there is a [quick example here](https://github.com/aztfmod/terraform-azurerm-caf/tree/master/examples/standalone.md).
+Fill the variables as needed and documented, there is a [quick example here](https://github.com/aztfmodnew/terraform-azurerm-caf/tree/master/examples/standalone.md) or [complete example here](https://github.com/aztfmodnew/terraform-azurerm-caf-deployments).
 
-For a complete set of examples you can review the [full library here](https://github.com/aztfmod/terraform-azurerm-caf/tree/master/examples).
+For a complete set of examples you can review the [full library here](https://github.com/aztfmodnew/terraform-azurerm-caf/tree/master/examples).
 
-<img src="https://aztfmod.azureedge.net/media/standalone.gif" width="720"/> <br/> <br/>
 
+## 📚 Documentation
+
+The full documentation for all modules, usage, and dependency diagrams is published automatically:
+
+- **[CAF Terraform Documentation (MkDocs)](https://aztfmodnew.github.io/terraform-azurerm-caf/)**
+
+Every merge to the `main` branch automatically updates the documentation site.
+
+---
 ## Community
 
-Feel free to open an issue for feature or bug, or to submit a PR, [Please check out the WIKI for coding standards, common patterns and PR checklist.](https://github.com/aztfmod/terraform-azurerm-caf/wiki)
+Feel free to open an issue for feature or bug, or to submit a PR, [Please check out the WIKI for coding standards, common patterns and PR checklist.](https://github.com/aztfmodnew/terraform-azurerm-caf/wiki)
 
-You can also reach us on [Gitter](https://gitter.im/aztfmod/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+You can also reach us on [GitHub Discussions](https://github.com/aztfmodnew/terraform-azurerm-caf/discussions).
 
 ## Contributing
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit <https://cla.opensource.microsoft.com>.
+This project welcomes contributions and suggestions.
 
-When you submit a pull request, a CLA bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
+---

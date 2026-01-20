@@ -11,6 +11,7 @@ locals {
 resource "azurerm_resource_group_template_deployment" "domain" {
   name                = local.dns_domain_name
   resource_group_name = var.resource_group_name
+  tags                = local.tags
   lifecycle {
     ignore_changes = [
       template_content,

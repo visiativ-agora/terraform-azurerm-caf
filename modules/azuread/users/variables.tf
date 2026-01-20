@@ -1,10 +1,15 @@
 variable "global_settings" {
   description = "Global settings object (see module README.md)"
+  type        = any
 }
 variable "client_config" {
   description = "Client configuration object (see module README.md)."
+  type        = any
 }
-variable "settings" {}
+variable "settings" {
+  description = "The settings for the Azure resource."
+  type        = any
+}
 variable "keyvaults" {}
 variable "password_policy" {
   description = "Map to define the password policy to apply"

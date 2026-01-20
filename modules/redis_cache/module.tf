@@ -20,7 +20,7 @@ resource "azurerm_redis_cache" "redis" {
   sku_name            = var.redis.sku_name
   tags                = merge(local.tags, try(var.tags, null))
 
-  enable_non_ssl_port           = lookup(var.redis, "enable_non_ssl_port", null)
+  non_ssl_port_enabled          = lookup(var.redis, "non_ssl_port_enabled", null)
   minimum_tls_version           = lookup(var.redis, "minimum_tls_version", "1.2")
   private_static_ip_address     = lookup(var.redis, "private_static_ip_address", null)
   public_network_access_enabled = lookup(var.redis, "public_network_access_enabled", null)
@@ -35,20 +35,20 @@ resource "azurerm_redis_cache" "redis" {
     for_each = lookup(var.redis, "redis_configuration", {}) != {} ? [var.redis.redis_configuration] : []
 
     content {
-      aof_backup_enabled                      = lookup(redis_configuration.value, "aof_backup_enabled", null)
-      aof_storage_connection_string_0         = lookup(redis_configuration.value, "aof_storage_connection_string_0", null)
-      aof_storage_connection_string_1         = lookup(redis_configuration.value, "aof_storage_connection_string_1", null)
-      enable_authentication                   = lookup(redis_configuration.value, "enable_authentication", null)
+      aof_backup_enabled              = lookup(redis_configuration.value, "aof_backup_enabled", null)
+      aof_storage_connection_string_0 = lookup(redis_configuration.value, "aof_storage_connection_string_0", null)
+      aof_storage_connection_string_1 = lookup(redis_configuration.value, "aof_storage_connection_string_1", null)
+      authentication_enabled          = lookup(redis_configuration.value, "authentication_enabled", null)
       active_directory_authentication_enabled = lookup(redis_configuration.value, "active_directory_authentication_enabled", null)
-      maxfragmentationmemory_reserved         = lookup(redis_configuration.value, "maxfragmentationmemory_reserved", null)
-      maxmemory_delta                         = lookup(redis_configuration.value, "maxmemory_delta", null)
-      maxmemory_policy                        = lookup(redis_configuration.value, "maxmemory_policy", null)
-      maxmemory_reserved                      = lookup(redis_configuration.value, "maxmemory_reserved", null)
-      notify_keyspace_events                  = lookup(redis_configuration.value, "notify_keyspace_events", null)
-      rdb_backup_enabled                      = lookup(redis_configuration.value, "rdb_backup_enabled", null)
-      rdb_backup_frequency                    = lookup(redis_configuration.value, "rdb_backup_frequency", null)
-      rdb_backup_max_snapshot_count           = lookup(redis_configuration.value, "rdb_backup_max_snapshot_count", null)
-      rdb_storage_connection_string           = lookup(redis_configuration.value, "rdb_storage_connection_string", null)
+      maxfragmentationmemory_reserved = lookup(redis_configuration.value, "maxfragmentationmemory_reserved", null)
+      maxmemory_delta                 = lookup(redis_configuration.value, "maxmemory_delta", null)
+      maxmemory_policy                = lookup(redis_configuration.value, "maxmemory_policy", null)
+      maxmemory_reserved              = lookup(redis_configuration.value, "maxmemory_reserved", null)
+      notify_keyspace_events          = lookup(redis_configuration.value, "notify_keyspace_events", null)
+      rdb_backup_enabled              = lookup(redis_configuration.value, "rdb_backup_enabled", null)
+      rdb_backup_frequency            = lookup(redis_configuration.value, "rdb_backup_frequency", null)
+      rdb_backup_max_snapshot_count   = lookup(redis_configuration.value, "rdb_backup_max_snapshot_count", null)
+      rdb_storage_connection_string   = lookup(redis_configuration.value, "rdb_storage_connection_string", null)
     }
   }
 

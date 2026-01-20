@@ -1,14 +1,13 @@
 terraform {
+  required_version = ">= 1.6.0"
   required_providers {
     azurecaf = {
-      source = "aztfmod/azurecaf"
+      source  = "aztfmod/azurecaf"
+      version = ">= 1.0.0"
+    }
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">= 4.0.0"
     }
   }
-
-}
-
-locals {
-  databases = [
-    for key, value in var.settings.databases : var.databases[try(value.lz_key, var.client_config.landingzone_key)][value.database_key].id
-  ]
 }

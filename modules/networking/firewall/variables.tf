@@ -1,5 +1,6 @@
 variable "global_settings" {
   description = "Global settings object (see module README.md)"
+  type        = any
 }
 variable "name" {
   description = "(Required) Name of the Azure Firewall to be created"
@@ -30,7 +31,10 @@ variable "public_ip_id" {
 variable "diagnostics" {
   default = {}
 }
-variable "settings" {}
+variable "settings" {
+  description = "The settings for the Azure resource."
+  type        = any
+}
 
 variable "diagnostic_profiles" {
   default = {}

@@ -1,4 +1,3 @@
-
 data "azurerm_key_vault_secret" "custom_data" {
   for_each = local.os_type == "linux" ? try({ for k, v in local.dynamic_custom_data_to_process["keyvaults"] : k => v }, {}) : {}
 

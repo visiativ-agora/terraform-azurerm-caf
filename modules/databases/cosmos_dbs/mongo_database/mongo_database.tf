@@ -9,7 +9,8 @@ resource "azurerm_cosmosdb_mongo_database" "database" {
 
   # Note : throughput & autoscaling are conflicting properties
   dynamic "autoscale_settings" {
-    for_each = var.settings.autoscale_settings != null ? [var.settings.autoscale_settings] : []
+    for_each = try(var.settings.autoscale_settings, {})
+
     content {
       max_throughput = autoscale_settings.value.max_throughput
     }

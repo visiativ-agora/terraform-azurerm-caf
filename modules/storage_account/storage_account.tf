@@ -14,7 +14,6 @@ resource "azurecaf_name" "stg" {
   use_slug      = var.global_settings.use_slug
 }
 
-# Tested with :  AzureRM version 2.61.0
 # Ref : https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account
 
 resource "azurerm_storage_account" "stg" {
@@ -26,7 +25,7 @@ resource "azurerm_storage_account" "stg" {
   allow_nested_items_to_be_public   = try(var.storage_account.allow_nested_items_to_be_public, var.storage_account.allow_blob_public_access, false)
   cross_tenant_replication_enabled  = try(var.storage_account.cross_tenant_replication_enabled, null)
   edge_zone                         = try(var.storage_account.edge_zone, null)
-  enable_https_traffic_only         = try(var.storage_account.enable_https_traffic_only, true)
+  https_traffic_only_enabled        = try(var.storage_account.https_traffic_only_enabled, true)
   infrastructure_encryption_enabled = try(var.storage_account.infrastructure_encryption_enabled, null)
   large_file_share_enabled          = try(var.storage_account.large_file_share_enabled, null)
   location                          = local.location
@@ -39,7 +38,36 @@ resource "azurerm_storage_account" "stg" {
   table_encryption_key_type         = try(var.storage_account.table_encryption_key_type, null)
   tags                              = merge(local.tags, try(var.storage_account.tags, null), local.caf_tags)
   public_network_access_enabled     = try(var.storage_account.public_network_access_enabled, null)
+  shared_access_key_enabled         = try(var.storage_account.shared_access_key_enabled, true)
+  default_to_oauth_authentication   = try(var.storage_account.default_to_oauth_authentication, false)
+  dns_endpoint_type                 = try(var.storage_account.dns_endpoint_type, "Standard")
+  local_user_enabled                = try(var.storage_account.local_user_enabled, true)
 
+  dynamic "immutability_policy" {
+    for_each = can(var.storage_account.immutability_policy) ? [1] : []
+
+    content {
+      allow_protected_append_writes = try(var.storage_account.immutability_policy.allow_protected_append_writes, false)
+      state                         = try(var.storage_account.immutability_policy.state, "Disabled")
+      period_since_creation_in_days = try(var.storage_account.immutability_policy.period_since_creation_in_days, 0)
+    }
+  }
+
+  dynamic "sas_policy" {
+    for_each = can(var.storage_account.sas_policy) ? [1] : []
+
+    content {
+      expiration_period = try(var.storage_account.sas_policy.expiration_period, "7.00:00:00")
+      expiration_action = try(var.storage_account.sas_policy.expiration_action, "Log")
+    }
+  }
+
+  timeouts {
+    create = try(var.storage_account.timeouts.create, "60m")
+    update = try(var.storage_account.timeouts.update, "60m")
+    read   = try(var.storage_account.timeouts.read, "5m")
+    delete = try(var.storage_account.timeouts.delete, "60m")
+  }
 
   dynamic "custom_domain" {
     for_each = lookup(var.storage_account, "custom_domain", false) == false ? [] : [1]
@@ -166,15 +194,6 @@ resource "azurerm_storage_account" "stg" {
     }
   }
 
-  dynamic "static_website" {
-    for_each = lookup(var.storage_account, "static_website", false) == false ? [] : [1]
-
-    content {
-      index_document     = try(var.storage_account.static_website.index_document, null)
-      error_404_document = try(var.storage_account.static_website.error_404_document, null)
-    }
-  }
-
   dynamic "network_rules" {
     for_each = lookup(var.storage_account, "network", null) == null ? [] : [1]
     content {
@@ -275,7 +294,7 @@ module "container" {
   source   = "./container"
   for_each = try(var.storage_account.containers, {})
 
-  storage_account_name = azurerm_storage_account.stg.name
+  storage_account_id   = azurerm_storage_account.stg.id
   settings             = each.value
   var_folder_path      = var.var_folder_path
 }
@@ -289,11 +308,9 @@ module "data_lake_filesystem" {
 }
 
 module "file_share" {
-  source     = "./file_share"
-  for_each   = try(var.storage_account.file_shares, {})
-  depends_on = [azurerm_backup_container_storage_account.container]
+  source   = "./file_share"
+  for_each = try(var.storage_account.file_shares, {})
 
-  storage_account_name = azurerm_storage_account.stg.name
   storage_account_id   = azurerm_storage_account.stg.id
   settings             = each.value
   recovery_vault       = local.recovery_vault

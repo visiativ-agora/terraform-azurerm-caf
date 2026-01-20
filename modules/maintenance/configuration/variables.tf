@@ -1,5 +1,6 @@
 variable "global_settings" {
   description = "Global settings object (see module README.md)"
+  type        = any
 }
 
 variable "client_config" {
@@ -57,7 +58,10 @@ variable "window" {}
 
 variable "install_patches" {}
 
-variable "settings" {}
+variable "settings" {
+  description = "The settings for the Azure resource."
+  type        = any
+}
 
 variable "in_guest_user_patch_mode" {
   description = "The in guest user patch mode."

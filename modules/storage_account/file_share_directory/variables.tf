@@ -1,3 +1,5 @@
-variable "storage_account_name" {}
-variable "share_name" {}
-variable "settings" {}
+variable "storage_share_id" {}
+variable "settings" {
+  description = "The settings for the Azure resource."
+  type        = any
+}

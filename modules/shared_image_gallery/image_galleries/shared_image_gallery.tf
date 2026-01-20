@@ -16,5 +16,6 @@ resource "azurerm_shared_image_gallery" "gallery" {
   resource_group_name = local.resource_group_name
   location            = local.location
   description         = var.settings.description
+  tags                = local.tags
 }
 

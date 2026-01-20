@@ -18,7 +18,6 @@ data "azurecaf_name" "linux" {
   use_slug      = var.global_settings.use_slug
 }
 
-
 # Name of the Linux computer name
 data "azurecaf_name" "linux_computer_name" {
   depends_on = [azurerm_network_interface.nic, azurerm_network_interface_security_group_association.nic_nsg]
@@ -70,7 +69,6 @@ resource "azurerm_linux_virtual_machine" "vm" {
   bypass_platform_safety_checks_on_user_schedule_enabled = try(each.value.bypass_platform_safety_checks_on_user_schedule_enabled, null)
   # (Optional) Specifies the mode of in-guest patching to this Linux Virtual Machine. Possible values are AutomaticByPlatform and ImageDefault. Defaults to ImageDefault. For more information on patch modes please see the product documentation.
   patch_mode                   = try(each.value.patch_mode, "ImageDefault")
-  patch_assessment_mode        = try(each.value.patch_assessment_mode, null)
   priority                     = try(each.value.priority, null)
   provision_vm_agent           = try(each.value.provision_vm_agent, true)
   proximity_placement_group_id = can(each.value.proximity_placement_group_key) || can(each.value.proximity_placement_group.key) ? var.proximity_placement_groups[try(var.client_config.landingzone_key, var.client_config.landingzone_key)][try(each.value.proximity_placement_group_key, each.value.proximity_placement_group.key)].id : try(each.value.proximity_placement_group_id, each.value.proximity_placement_group.id, null)
@@ -198,6 +196,16 @@ resource "azurerm_linux_virtual_machine" "vm" {
       name      = each.value.plan.name
       product   = each.value.plan.product
       publisher = each.value.plan.publisher
+    }
+  }
+
+  dynamic "timeouts" {
+    for_each = try(each.value.timeouts, null) == null ? [] : [each.value.timeouts]
+    content {
+      create = try(each.value.timeouts.create, null)
+      update = try(each.value.timeouts.update, null)
+      read   = try(each.value.timeouts.read, null)
+      delete = try(each.value.timeouts.delete, null)
     }
   }
 

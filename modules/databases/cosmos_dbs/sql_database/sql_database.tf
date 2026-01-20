@@ -24,7 +24,6 @@ resource "azurerm_cosmosdb_sql_database" "database" {
   }
 }
 
-
 # Create container
 resource "azurerm_cosmosdb_sql_container" "container" {
   for_each = var.settings.containers

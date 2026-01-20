@@ -1,6 +1,8 @@
+# trunk-ignore(tflint/terraform_unused_declarations)
 variable "settings" {
   description = "Configuration object for the Automation account Log Analytics Workspace link."
   # # optional fields supported after TF14
+  type = any
   # type = object({
   #   name                        = string
   #   resource_group_key          = string
@@ -8,8 +10,10 @@ variable "settings" {
   # })
 }
 
+# trunk-ignore(tflint/terraform_unused_declarations)
 variable "global_settings" {
   description = "Global settings object (see module README.md)"
+  type        = any
 }
 
 variable "resource_group_name" {

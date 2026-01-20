@@ -1,9 +1,17 @@
-variable "settings" {}
+variable "settings" {
+  description = "The settings for the Azure resource."
+  type        = any
+}
 variable "global_settings" {
   description = "Global settings object (see module README.md)"
+  type        = any
 }
-variable "machine_learning_workspace_name" {}
-variable "subnet_id" {}
+variable "machine_learning_workspace_name" {
+  type = string
+}
+variable "subnet_id" {
+  type = string
+}
 variable "resource_group_name" {
   description = "(Required) The name of the resource group where to create the resource."
   type        = string

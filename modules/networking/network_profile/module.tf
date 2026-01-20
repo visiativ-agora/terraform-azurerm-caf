@@ -2,7 +2,6 @@ resource "azurerm_network_profile" "this" {
   name                = var.settings.name
   location            = can(var.settings.location) ? var.settings.location : var.resource_group.location
   resource_group_name = var.resource_group.name
-
   container_network_interface {
     name = var.settings.container_network_interface.name
 
@@ -21,4 +20,5 @@ resource "azurerm_network_profile" "this" {
       }
     }
   }
+  tags = local.tags
 }
