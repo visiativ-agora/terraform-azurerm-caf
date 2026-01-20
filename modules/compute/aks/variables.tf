@@ -31,8 +31,8 @@ variable "resource_group" {
 }
 variable "resource_groups" {
   description = "Resource group object to deploy the mi federated credentials"
+  type        = any
 }
-
 variable "base_tags" {
   description = "Base tags for the resource to be inherited from the resource group."
   type        = bool
@@ -46,12 +46,6 @@ variable "private_dns_zone_id" {
   description = "Private DNS zone id to be used in the module."
   default     = null
   type        = string
-}
-variable "managed_identities" {
-  default = {}
-}
-variable "application_gateway" {
-  default = {}
 }
 variable "private_endpoints" {
   description = "Private endpoints to be used in the module."
@@ -69,8 +63,6 @@ variable "azuread_federated_credentials" {
 variable "mi_federated_credentials" {
   default = {}
 }
-variable "azuread_applications" {}
-
 variable "fleet_manager" {
 }
 variable "remote_objects" {

@@ -8,7 +8,6 @@ module "aks_clusters" {
   settings            = each.value
   diagnostic_profiles = try(each.value.diagnostic_profiles, {})
   diagnostics         = local.combined_diagnostics
-  
   fleet_manager = try(local.combined_objects_kubernetes_fleet_managers[try(each.value.fleet_manager.lz_key, local.client_config.landingzone_key)][try(each.value.fleet_manager_key, each.value.fleet_manager.key)], null)
 
   admin_group_object_ids = try(each.value.admin_groups.azuread_group_keys, null) == null ? null : try(
@@ -37,6 +36,7 @@ module "aks_clusters" {
     diagnostics            = local.combined_diagnostics
     managed_identities     = local.combined_objects_managed_identities
     vnets                  = local.combined_objects_networking
+    azuread_applications   = local.combined_objects_azuread_applications
   }
 }
 
