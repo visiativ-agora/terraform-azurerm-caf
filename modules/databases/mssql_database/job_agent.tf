@@ -84,11 +84,11 @@ resource "azapi_resource" "mssql_job_agents_job_steps" {
       credential = try(each.value.step.credential, null)
 
       executionOptions = lookup(each.value.step, "executionOptions", null) != null ? {
-        initialRetryIntervalSeconds     = try(each.value.step.executionOptions.initialRetryIntervalSeconds, null)
-        maximumRetryIntervalSeconds     = try(each.value.step.executionOptions.maximumRetryIntervalSeconds, null)
-        retryAttempts                   = try(each.value.step.executionOptions.retryAttempts, null)
-        retryIntervalBackoffMultiplier  = try(each.value.step.executionOptions.retryIntervalBackoffMultiplier, null)
-        timeoutSeconds                  = try(each.value.step.executionOptions.timeoutSeconds, null)
+        initialRetryIntervalSeconds    = try(each.value.step.executionOptions.initialRetryIntervalSeconds, null)
+        maximumRetryIntervalSeconds    = try(each.value.step.executionOptions.maximumRetryIntervalSeconds, null)
+        retryAttempts                  = try(each.value.step.executionOptions.retryAttempts, null)
+        retryIntervalBackoffMultiplier = try(each.value.step.executionOptions.retryIntervalBackoffMultiplier, null)
+        timeoutSeconds                 = try(each.value.step.executionOptions.timeoutSeconds, null)
       } : null
 
       stepId      = each.value.step.stepId

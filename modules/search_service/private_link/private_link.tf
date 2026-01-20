@@ -6,7 +6,6 @@ resource "azurerm_search_shared_private_link_service" "search_service_shared_pri
   request_message    = try(var.settings.request_message, null)
 }
 
-
 resource "time_sleep" "wait_for_private_endpoint" {
   create_duration = "2m"
   depends_on      = [azurerm_search_shared_private_link_service.search_service_shared_private_link_service]
@@ -25,8 +24,7 @@ data "azapi_resource" "target_resource" {
 }
 
 locals {
-
-  connections = try(jsondecode(data.azapi_resource.target_resource.output).properties.privateEndpointConnections, [])
+  connections = try(data.azapi_resource.target_resource.output.properties.privateEndpointConnections, [])
 
   pending_connection = try(
     [for conn in local.connections : conn if conn.properties.privateLinkServiceConnectionState.status == "Pending"][0],
@@ -37,18 +35,17 @@ locals {
 resource "azapi_update_resource" "approve_connection" {
   count = var.settings.auto_approve ? 1 : 0
 
-  type = "${var.target_resource_type}/privateEndpointConnections@${var.target_resource_api_version}"
-
+  type        = "${var.target_resource_type}/privateEndpointConnections@${var.target_resource_api_version}"
   resource_id = try(local.pending_connection.id, null)
 
-  body = jsonencode({
+  body = {
     properties = {
       privateLinkServiceConnectionState = {
         status      = "Approved"
         description = "Approved by Terraform"
       }
     }
-  })
+  }
 
   lifecycle {
     ignore_changes = all
