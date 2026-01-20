@@ -294,6 +294,7 @@ module "container" {
   source   = "./container"
   for_each = try(var.storage_account.containers, {})
 
+  storage_account_name = azurerm_storage_account.stg.name
   storage_account_id   = azurerm_storage_account.stg.id
   settings             = each.value
   var_folder_path      = var.var_folder_path
@@ -311,6 +312,7 @@ module "file_share" {
   source   = "./file_share"
   for_each = try(var.storage_account.file_shares, {})
 
+  storage_account_name = azurerm_storage_account.stg.name
   storage_account_id   = azurerm_storage_account.stg.id
   settings             = each.value
   recovery_vault       = local.recovery_vault
