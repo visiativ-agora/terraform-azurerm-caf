@@ -12,6 +12,7 @@
     "compute/container_app/101-simple-container-app-env",
     "compute/container_app/102-simple-private-container-app-env",
     "compute/container_app/103-private-container-app-env",
+    "compute/container_app_jobs/101-simple-container-app-job-env",
     "compute/container_groups/100-aci-rover-github-runner",
     "compute/container_groups/101-aci-nginx",
     "compute/container_registry/100-simple-acr",
