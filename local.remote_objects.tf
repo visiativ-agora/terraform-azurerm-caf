@@ -78,7 +78,6 @@ locals {
     express_route_circuit_peerings                 = try(local.combined_objects_express_route_circuit_peerings, null)
     express_route_circuits                         = try(local.combined_objects_express_route_circuits, null)
     eventgrid_topic                                = try(local.combined_objects_eventgrid_topics, null)
-    integration_service_environment                = try(local.combined_objects_integration_service_environment, null)
     iot_security_solution                          = try(local.combined_objects_iot_security_solution, null)
     iot_security_device_group                      = try(local.combined_objects_iot_security_device_group, null)
     iot_central_application                        = try(local.combined_objects_iot_central_application, null)
