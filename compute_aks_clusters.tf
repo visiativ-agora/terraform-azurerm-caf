@@ -7,8 +7,7 @@ module "aks_clusters" {
   global_settings     = local.global_settings
   settings            = each.value
   diagnostic_profiles = try(each.value.diagnostic_profiles, {})
-  diagnostics         = local.combined_diagnostics
-  fleet_manager = try(local.combined_objects_kubernetes_fleet_managers[try(each.value.fleet_manager.lz_key, local.client_config.landingzone_key)][try(each.value.fleet_manager_key, each.value.fleet_manager.key)], null)
+  fleet_manager       = try(local.combined_objects_kubernetes_fleet_managers[try(each.value.fleet_manager.lz_key, local.client_config.landingzone_key)][try(each.value.fleet_manager_key, each.value.fleet_manager.key)], null)
 
   admin_group_object_ids = try(each.value.admin_groups.azuread_group_keys, null) == null ? null : try(
     each.value.admin_groups.ids,
