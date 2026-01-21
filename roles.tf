@@ -118,7 +118,7 @@ locals {
     app_config                                 = local.combined_objects_app_config
     app_service_environments                   = local.combined_objects_app_service_environments
     app_service_environments_v3                = local.combined_objects_app_service_environments_v3
-    app_service_plans                          = local.combined_objects_app_service_plans
+    app_service_plans                          = local.combined_objects_service_plans
     linux_web_apps                             = local.combined_objects_linux_web_apps
     windows_web_apps                           = local.combined_objects_windows_web_apps
     linux_function_apps                        = local.combined_objects_linux_function_apps
@@ -165,7 +165,6 @@ locals {
     mysql_flexible_servers                     = local.combined_objects_mysql_flexible_servers
     network_watchers                           = local.combined_objects_network_watchers
     networking                                 = local.combined_objects_networking
-    postgresql_servers                         = local.combined_objects_postgresql_servers
     private_dns                                = local.combined_objects_private_dns
     proximity_placement_groups                 = local.combined_objects_proximity_placement_groups
     public_ip_addresses                        = local.combined_objects_public_ip_addresses
