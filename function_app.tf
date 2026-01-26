@@ -85,7 +85,8 @@ module "windows_function_apps" {
   vnets             = local.combined_objects_networking
   virtual_subnets   = local.combined_objects_virtual_subnets
   remote_objects = {
-    subnets = try(local.combined_objects_networking[try(each.value.settings.lz_key, local.client_config.landingzone_key)][each.value.settings.vnet_key].subnets, null)
+    subnets              = try(local.combined_objects_networking[try(each.value.settings.lz_key, local.client_config.landingzone_key)][each.value.settings.vnet_key].subnets, null)
+    application_insights = local.combined_objects_application_insights
   }
 
   base_tags           = local.global_settings.inherit_tags
