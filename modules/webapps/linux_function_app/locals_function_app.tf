@@ -15,7 +15,7 @@ locals {
       null),
       "ApplicationInsightsAgent_EXTENSION_VERSION" = "~3"
     },
-    try(var.settings.app_settings, {}),
+    try(var.app_settings, {}),
     try(local.dynamic_settings_to_process, {}),
   )
 }
