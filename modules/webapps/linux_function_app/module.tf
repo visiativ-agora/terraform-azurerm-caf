@@ -25,8 +25,8 @@ resource "azurerm_linux_function_app" "linux_function_app" {
     api_management_api_id                  = lookup(local.site_config, "api_management_api_id", null)
     app_command_line                       = lookup(local.site_config, "app_command_line", null)
     app_scale_limit                        = lookup(local.site_config, "app_scale_limit", null)
-    application_insights_connection_string = lookup(local.site_config, "application_insights_connection_string", null)
-    application_insights_key               = lookup(local.site_config, "application_insights_key", null)
+    application_insights_connection_string = try(var.settings.site_config.application_insights_connection_string, null)
+    application_insights_key               = try(var.settings.site_config.application_insigths_key, null)
     dynamic "application_stack" {
       for_each = lookup(local.site_config, "application_stack", {}) != {} ? [1] : []
       content {
