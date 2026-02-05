@@ -163,7 +163,7 @@ resource "time_sleep" "wait_for_private_endpoint" {
   }
 }
 locals {
-  connections = data.azapi_resource.sql_server.output).properties.privateEndpointConnection
+  connections = data.azapi_resource.sql_server.output.properties.privateEndpointConnections
 
   private_endpoint_connection_name = (
     local.connections == null || length(local.connections) == 0 ? null :
