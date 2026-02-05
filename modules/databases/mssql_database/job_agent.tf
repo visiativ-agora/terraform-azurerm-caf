@@ -163,7 +163,7 @@ resource "time_sleep" "wait_for_private_endpoint" {
   }
 }
 locals {
-  connections = jsondecode(data.azapi_resource.sql_server.output).properties.privateEndpointConnections
+  connections = data.azapi_resource.sql_server.output).properties.privateEndpointConnection
 
   private_endpoint_connection_name = (
     local.connections == null || length(local.connections) == 0 ? null :
