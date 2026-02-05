@@ -311,32 +311,31 @@ resource "azurerm_kubernetes_cluster" "aks" {
       }
     }
   }
+
   dynamic "maintenance_window_auto_upgrade" {
-    for_each = try(var.settings.maintenance_window_auto_upgrade, null) == null ? [] : [var.settings.maintenance_window_auto_upgrade]
+    for_each = try(var.settings.maintenance_window_auto_upgrade, null) == null ? [] : [1]
     content {
-      frequency    = maintenance_window_auto_upgrade.frequency
-      interval     = maintenance_window_auto_upgrade.interval
-      duration     = maintenance_window_auto_upgrade.duration
-      day_of_week  = try(maintenance_window_auto_upgrade.day_of_week, null)
-      day_of_month = try(maintenance_window_auto_upgrade.day_of_month, null)
-      week_index   = try(maintenance_window_auto_upgrade.week_index, null)
-      start_time   = try(maintenance_window_auto_upgrade.start_time, null)
-      utc_offset   = try(maintenance_window_auto_upgrade.utc_offset, null)
-      start_date   = try(maintenance_window_auto_upgrade.start_date, null)
+      frequency    = var.settings.maintenance_window_auto_upgrade.frequency
+      interval     = var.settings.maintenance_window_auto_upgrade.interval
+      duration     = var.settings.maintenance_window_auto_upgrade.duration
+      day_of_week  = try(var.settings.maintenance_window_auto_upgrade.day_of_week, null)
+      day_of_month = try(var.settings.maintenance_window_auto_upgrade.day_of_month, null)
+      week_index   = try(var.settings.maintenance_window_auto_upgrade.week_index, null)
+      start_time   = try(var.settings.maintenance_window_auto_upgrade.start_time, null)
+      utc_offset   = try(var.settings.maintenance_window_auto_upgrade.utc_offset, null)
+      start_date   = try(var.settings.maintenance_window_auto_upgrade.start_date, null)
       dynamic "not_allowed" {
-        for_each = try(var.settings.maintenance_window_auto_upgrade.maintenance_window_auto_upgrade.not_allowed, null) == null ? [] : [var.settings.maintenance_window_auto_upgrade.not_allowed]
+        for_each = try(var.settings.maintenance_window_auto_upgrade.not_allowed, [])
         content {
-          end   = not_allowed.value.end
           start = not_allowed.value.start
+          end   = not_allowed.value.end
         }
       }
-
     }
-
   }
 
   dynamic "maintenance_window_node_os" {
-    for_each = try(var.settings.maintenance_window_node_os, null) == null ? [] : [var.settings.maintenance_window_node_os]
+    for_each = try(var.settings.maintenance_window_node_os, null) == null ? [] : [1]
     content {
       frequency    = var.settings.maintenance_window_node_os.frequency
       interval     = var.settings.maintenance_window_node_os.interval
@@ -348,17 +347,14 @@ resource "azurerm_kubernetes_cluster" "aks" {
       utc_offset   = try(var.settings.maintenance_window_node_os.utc_offset, null)
       start_date   = try(var.settings.maintenance_window_node_os.start_date, null)
       dynamic "not_allowed" {
-        for_each = try(var.settings.maintenance_window_node_os.not_allowed, null)
+        for_each = try(var.settings.maintenance_window_node_os.not_allowed, [])
         content {
-          end   = not_allowed.value.end
           start = not_allowed.value.start
+          end   = not_allowed.value.end
         }
       }
-
     }
-
   }
-
   dynamic "microsoft_defender" {
     for_each = try(var.settings.microsoft_defender, null) == null ? [] : [var.settings.microsoft_defender]
 
