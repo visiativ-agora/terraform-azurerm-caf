@@ -137,10 +137,14 @@ resource "azurerm_kubernetes_cluster" "aks" {
     type                         = try(var.settings.default_node_pool.type, "VirtualMachineScaleSets")
     tags                         = merge(try(var.settings.default_node_pool.tags, {}), local.tags)
     ultra_ssd_enabled            = try(var.settings.default_node_pool.ultra_ssd_enabled, false)
+
     dynamic "upgrade_settings" {
       for_each = try(var.settings.default_node_pool.upgrade_settings, null) == null ? [] : [var.settings.default_node_pool.upgrade_settings]
       content {
-        max_surge = upgrade_settings.value.max_surge
+        drain_timeout_in_minutes      = try(upgrade_settings.value.drain_timeout_in_minutes, null)
+        node_soak_duration_in_minutes = try(upgrade_settings.value.node_soak_duration_in_minutes, null)
+        max_surge                     = try(upgrade_settings.value.max_surge, null)
+        max_unavailable               = try(upgrade_settings.value.max_unavailable, null)
       }
     }
     vnet_subnet_id   = can(var.settings.default_node_pool.vnet_subnet_id) || can(var.settings.default_node_pool.subnet.resource_id) ? try(var.settings.default_node_pool.vnet_subnet_id, var.settings.default_node_pool.subnet.resource_id) : var.remote_objects.vnets[try(var.settings.vnet.lz_key, var.settings.lz_key, var.client_config.landingzone_key)][try(var.settings.vnet.key, var.settings.vnet_key)].subnets[try(var.settings.default_node_pool.subnet_key, var.settings.default_node_pool.subnet.key)].id
