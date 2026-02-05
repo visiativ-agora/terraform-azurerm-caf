@@ -116,14 +116,14 @@ resource "azurerm_kubernetes_cluster_node_pool" "nodepools" {
   scale_down_mode              = try(each.value.scale_down_mode, null)
   ultra_ssd_enabled            = try(each.value.ultra_ssd_enabled, false)
 
-  dynamic "upgrade_settings" {
-    for_each = try(each.value.upgrade_settings, null) == null ? [] : [1]
-    content {
-      drain_timeout_in_minutes      = upgrade_settings.value.drain_timeout_in_minutes
-      node_soak_duration_in_minutes = upgrade_settings.value.node_soak_duration_in_minutes
-      max_surge                     = upgrade_settings.value.max_surge
-      max_unavailable               = try(upgrade_settings.value.max_unavailable, null)
 
+  dynamic "upgrade_settings" {
+    for_each = try(var.settings.default_node_pool.upgrade_settings, null) == null ? [] : [var.settings.default_node_pool.upgrade_settings]
+    content {
+      drain_timeout_in_minutes      = try(upgrade_settings.value.drain_timeout_in_minutes, null)
+      node_soak_duration_in_minutes = try(upgrade_settings.value.node_soak_duration_in_minutes, null)
+      max_surge                     = try(upgrade_settings.value.max_surge, null)
+      max_unavailable               = try(upgrade_settings.value.max_unavailable, null)
     }
   }
 
