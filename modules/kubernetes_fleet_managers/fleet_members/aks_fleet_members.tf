@@ -7,9 +7,18 @@ resource "azapi_resource" "kfme" {
   )
   parent_id = var.fleet_manager.id
 
-  body = jsonencode({
-    properties = local.fleet_member_properties
-  })
+  # body = jsonencode({
+  #   properties = local.fleet_member_properties
+  # })
+  body = {
+    properties = merge(
+      {
+        clusterResourceId = var.aks_cluster.id
+      },
+      can(var.settings.group) ? { group = var.settings.group } : {},
+      can(var.settings.labels) ? { labels = var.settings.labels } : {}
+    )
+  }
 
   schema_validation_enabled = false
   response_export_values    = ["properties.outputs"]
