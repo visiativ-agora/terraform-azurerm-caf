@@ -144,7 +144,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
         drain_timeout_in_minutes      = try(upgrade_settings.value.drain_timeout_in_minutes, null)
         node_soak_duration_in_minutes = try(upgrade_settings.value.node_soak_duration_in_minutes, null)
         max_surge                     = try(upgrade_settings.value.max_surge, null)
-        max_unavailable               = try(upgrade_settings.value.max_unavailable, null)
+        undrainable_node_behavior     = try(upgrade_settings.value.undrainable_node_behavior, null)
       }
     }
     vnet_subnet_id   = can(var.settings.default_node_pool.vnet_subnet_id) || can(var.settings.default_node_pool.subnet.resource_id) ? try(var.settings.default_node_pool.vnet_subnet_id, var.settings.default_node_pool.subnet.resource_id) : var.remote_objects.vnets[try(var.settings.vnet.lz_key, var.settings.lz_key, var.client_config.landingzone_key)][try(var.settings.vnet.key, var.settings.vnet_key)].subnets[try(var.settings.default_node_pool.subnet_key, var.settings.default_node_pool.subnet.key)].id
