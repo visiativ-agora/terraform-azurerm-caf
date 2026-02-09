@@ -67,6 +67,7 @@ resource "azurerm_windows_virtual_machine" "vm" {
   zone                                                   = try(each.value.zone, null)
   secure_boot_enabled                                    = try(each.value.secure_boot_enabled, null)
   vtpm_enabled                                           = try(each.value.vtpm_enabled, null)
+  vm_agent_platform_updates_enabled                      = try(each.value.vm_agent_platform_updates_enabled, null)
 
   custom_data = try(
     try(filebase64(format("%s/%s", path.cwd, each.value.custom_data)), base64encode(each.value.custom_data)),
