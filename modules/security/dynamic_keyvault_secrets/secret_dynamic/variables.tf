@@ -8,4 +8,7 @@ variable "config" {
     override_special = "_!@"
   }
 }
-variable "tags" {}
+variable "tags" {
+  type    = map(string)
+  default = {}
+}
