@@ -49,4 +49,5 @@ module "secret_dynamic" {
   value       = each.value.value
   keyvault_id = var.keyvault.id
   config      = each.value.config
+  tags        = try(each.value.tags, {})
 }
