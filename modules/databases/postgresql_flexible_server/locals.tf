@@ -38,7 +38,7 @@ locals {
             role_type     = try(mi_config.role_type, "readwrite")
             custom_grants = try(mi_config.custom_grants, "")
           }
-          if can(var.remote_objects.managed_identities[try(mi_config.lz_key, try(mi_config.object_lz_key, var.client_config.landingzone_key))][try(mi_config.key, mi_config.object_key)])
+          if try(var.remote_objects.managed_identities[try(mi_config.lz_key, try(mi_config.object_lz_key, var.client_config.landingzone_key))][try(mi_config.key, mi_config.object_key)], null) != null
         ],
         # Azure AD Groups
         [
@@ -49,7 +49,7 @@ locals {
             role_type     = try(grp_config.role_type, "readwrite")
             custom_grants = try(grp_config.custom_grants, "")
           }
-          if can(var.remote_objects.azuread_groups[try(grp_config.lz_key, try(grp_config.object_lz_key, var.client_config.landingzone_key))][try(grp_config.key, grp_config.object_key)])
+          if try(var.remote_objects.azuread_groups[try(grp_config.lz_key, try(grp_config.object_lz_key, var.client_config.landingzone_key))][try(grp_config.key, grp_config.object_key)], null) != null
         ],
         # Azure AD Users
         [
@@ -60,7 +60,7 @@ locals {
             role_type     = try(usr_config.role_type, "readonly")
             custom_grants = try(usr_config.custom_grants, "")
           }
-          if can(var.remote_objects.azuread_users[try(usr_config.lz_key, try(usr_config.object_lz_key, var.client_config.landingzone_key))][try(usr_config.key, usr_config.object_key)])
+          if try(var.remote_objects.azuread_users[try(usr_config.lz_key, try(usr_config.object_lz_key, var.client_config.landingzone_key))][try(usr_config.key, usr_config.object_key)], null) != null
         ]
       )
     } if (

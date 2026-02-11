@@ -65,3 +65,57 @@ output "resource_group_name" {
   description = "Name of the Resource Group where the resource exists."
   value       = local.resource_group_name
 }
+
+# Output temporaire pour debug
+output "debug_db_permissions_detailed" {
+  value = {
+    for db_key, db in try(var.settings.postgresql_databases, {}) : db_key => {
+      db_name = db.name
+      mi_configs = try(db.managed_identities.keys, [])
+      
+      # Test de chaque managed identity
+      mi_tests = [
+        for mi_config in try(db.managed_identities.keys, []) : {
+          lz_key_resolved = try(mi_config.lz_key, try(mi_config.object_lz_key, var.client_config.landingzone_key))
+          key_resolved    = try(mi_config.key, mi_config.object_key)
+          role_type       = try(mi_config.role_type, "readwrite")
+          
+          # Test si l'objet existe
+          can_access = can(var.remote_objects.managed_identities[try(mi_config.lz_key, try(mi_config.object_lz_key, var.client_config.landingzone_key))][try(mi_config.key, mi_config.object_key)])
+          
+          # Essayer d'accéder à l'objet
+          mi_object = try(var.remote_objects.managed_identities[try(mi_config.lz_key, try(mi_config.object_lz_key, var.client_config.landingzone_key))][try(mi_config.key, mi_config.object_key)], "NOT FOUND")
+        }
+      ]
+      
+      # Liste finale des users
+      users = local.db_permissions[db_key].users
+    }
+  }
+  sensitive = false
+}
+
+output "debug_remote_objects_check" {
+  value = {
+    landingzone_key = var.client_config.landingzone_key
+    
+    # Vérifier si la landing zone existe
+    has_lz = can(var.remote_objects.managed_identities["bbia_int_iam_rag"])
+    
+    # Lister les landing zones disponibles
+    available_lz_keys = keys(var.remote_objects.managed_identities)
+    
+    # Vérifier si la MSI existe dans la landing zone spécifiée
+    has_rag_in_target_lz = try(
+      can(var.remote_objects.managed_identities["bbia_int_iam_rag"]["rag"]),
+      "Landing zone not found"
+    )
+    
+    # Essayer d'accéder directement
+    direct_access = try(
+      var.remote_objects.managed_identities["bbia_int_iam_rag"]["rag"],
+      "Cannot access"
+    )
+  }
+  sensitive = false
+}
