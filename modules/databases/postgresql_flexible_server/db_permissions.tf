@@ -35,52 +35,45 @@
 #   }
 # }
 
-# Créer les principals Entra ID et assigner les permissions
-resource "null_resource" "set_db_permissions" {
-  for_each = local.db_permissions
+# # Créer les principals Entra ID et assigner les permissions
+# resource "null_resource" "set_db_permissions" {
+#   for_each = local.db_permissions
 
-  depends_on = [
-    azurerm_postgresql_flexible_server.postgresql,
-    azurerm_postgresql_flexible_server_database.postgresql,
-    azurerm_postgresql_flexible_server_active_directory_administrator.administrator
-  ]
+#   depends_on = [
+#     azurerm_postgresql_flexible_server.postgresql,
+#     azurerm_postgresql_flexible_server_database.postgresql,
+#     azurerm_postgresql_flexible_server_active_directory_administrator.administrator
+#   ]
 
-  triggers = {
-    db_name            = each.value.db_name
-    usernames          = join(",", [for u in each.value.users : u.username])
-    roles              = join(",", [for u in each.value.users : u.role_type])
-    object_ids         = join(",", [for u in each.value.users : u.object_id])
-    custom_grants      = join("|||", [for u in each.value.users : u.custom_grants])
-    server_id          = azurerm_postgresql_flexible_server.postgresql.id
-    ad_admin_principal = local.ad_admin != null ? local.ad_admin.principal_name : ""
-    ad_admin_type      = local.ad_admin_type != null ? local.ad_admin_type : ""
-  }
+#   triggers = {
+#     db_name            = each.value.db_name
+#     usernames          = join(",", [for u in each.value.users : u.username])
+#     roles              = join(",", [for u in each.value.users : u.role_type])
+#     object_ids         = join(",", [for u in each.value.users : u.object_id])
+#     custom_grants      = join("|||", [for u in each.value.users : u.custom_grants])
+#     server_id          = azurerm_postgresql_flexible_server.postgresql.id
+#     ad_admin_principal = local.ad_admin != null ? local.ad_admin.principal_name : ""
+#     ad_admin_type      = local.ad_admin_type != null ? local.ad_admin_type : ""
+#   }
 
-  provisioner "local-exec" {
-    command     = format("%s/scripts/set_db_permissions.sh", path.module)
-    interpreter = ["/bin/bash"]
-    on_failure  = fail
+#   provisioner "local-exec" {
+#     command     = format("%s/scripts/set_db_permissions.sh", path.module)
+#     interpreter = ["/bin/bash"]
+#     on_failure  = fail
 
-    environment = {
-      PGHOST          = azurerm_postgresql_flexible_server.postgresql.fqdn
-      PGPORT          = "5432"
-      PGDATABASE      = each.value.db_name
-      PGADMINUSER     = local.ad_admin != null ? local.ad_admin.principal_name : var.settings.administrator_login
-      PGADMINTYPE     = local.ad_admin_type != null ? local.ad_admin_type : ""
-      PGADMINOBJECTID = local.ad_admin_object_id != null ? local.ad_admin_object_id : ""
-      DBUSERNAMES     = join(",", [for u in each.value.users : u.username])
-      DBOBJECTIDS     = join(",", [for u in each.value.users : u.object_id])
-      DBROLES         = join(",", [for u in each.value.users : u.role_type])
-      CUSTOMGRANTS    = join("|||", [for u in each.value.users : u.custom_grants])
-      SQLFILEPATH     = format("%s/scripts/set_db_permissions.sql", path.module)
-    }
-  }
-}
-
-# Output pour debug (optionnel, à retirer après validation)
-output "db_permissions" {
-  value     = local.db_permissions
-  sensitive = false
-}
-
+#     environment = {
+#       PGHOST          = azurerm_postgresql_flexible_server.postgresql.fqdn
+#       PGPORT          = "5432"
+#       PGDATABASE      = each.value.db_name
+#       PGADMINUSER     = local.ad_admin != null ? local.ad_admin.principal_name : var.settings.administrator_login
+#       PGADMINTYPE     = local.ad_admin_type != null ? local.ad_admin_type : ""
+#       PGADMINOBJECTID = local.ad_admin_object_id != null ? local.ad_admin_object_id : ""
+#       DBUSERNAMES     = join(",", [for u in each.value.users : u.username])
+#       DBOBJECTIDS     = join(",", [for u in each.value.users : u.object_id])
+#       DBROLES         = join(",", [for u in each.value.users : u.role_type])
+#       CUSTOMGRANTS    = join("|||", [for u in each.value.users : u.custom_grants])
+#       SQLFILEPATH     = format("%s/scripts/set_db_permissions.sql", path.module)
+#     }
+#   }
+# }
 

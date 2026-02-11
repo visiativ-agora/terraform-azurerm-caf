@@ -66,6 +66,13 @@ output "resource_group_name" {
   value       = local.resource_group_name
 }
 
+
+output "db_permissions" {
+  value     = local.db_permissions
+  sensitive = false
+}
+
+
 # Output temporaire pour debug
 output "debug_db_permissions_detailed" {
   value = {
