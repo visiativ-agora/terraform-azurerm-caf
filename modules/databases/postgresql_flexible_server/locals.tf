@@ -33,7 +33,7 @@ locals {
         # La structure est: managed_identities = { keys = [ { lz_key = "...", key = "...", role_type = "..." } ] }
         [
           for mi_config in try(db.managed_identities.keys, []) :
-          try(var.remote_objects.managed_identities[try(mi_config.lz_key, var.client_config.landingzone_key)][mi_config.key], null) != null ? {
+          can(var.remote_objects.managed_identities[try(mi_config.lz_key, var.client_config.landingzone_key)][mi_config.key]) ? {
             username      = var.remote_objects.managed_identities[try(mi_config.lz_key, var.client_config.landingzone_key)][mi_config.key].name
             object_id     = var.remote_objects.managed_identities[try(mi_config.lz_key, var.client_config.landingzone_key)][mi_config.key].principal_id
             role_type     = try(mi_config.role_type, "readwrite")
@@ -44,7 +44,7 @@ locals {
         # La structure attendue: azuread_groups = { keys = [ { lz_key = "...", key = "...", role_type = "..." } ] }
         [
           for grp_config in try(db.azuread_groups.keys, []) :
-          try(var.remote_objects.azuread_groups[try(grp_config.lz_key, var.client_config.landingzone_key)][grp_config.key], null) != null ? {
+          can(var.remote_objects.azuread_groups[try(grp_config.lz_key, var.client_config.landingzone_key)][grp_config.key]) ? {
             username      = var.remote_objects.azuread_groups[try(grp_config.lz_key, var.client_config.landingzone_key)][grp_config.key].display_name
             object_id     = var.remote_objects.azuread_groups[try(grp_config.lz_key, var.client_config.landingzone_key)][grp_config.key].object_id
             role_type     = try(grp_config.role_type, "readwrite")
@@ -55,7 +55,7 @@ locals {
         # La structure attendue: azuread_users = { keys = [ { lz_key = "...", key = "...", role_type = "..." } ] }
         [
           for usr_config in try(db.azuread_users.keys, []) :
-          try(var.remote_objects.azuread_users[try(usr_config.lz_key, var.client_config.landingzone_key)][usr_config.key], null) != null ? {
+          can(var.remote_objects.azuread_users[try(usr_config.lz_key, var.client_config.landingzone_key)][usr_config.key]) ? {
             username      = var.remote_objects.azuread_users[try(usr_config.lz_key, var.client_config.landingzone_key)][usr_config.key].user_principal_name
             object_id     = var.remote_objects.azuread_users[try(usr_config.lz_key, var.client_config.landingzone_key)][usr_config.key].object_id
             role_type     = try(usr_config.role_type, "readonly")
