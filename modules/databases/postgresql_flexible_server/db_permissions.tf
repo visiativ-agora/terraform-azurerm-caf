@@ -46,11 +46,14 @@ resource "null_resource" "set_db_permissions" {
   ]
 
   triggers = {
-    db_name   = each.value.db_name
-    usernames = join(",", [for u in each.value.users : u.username if u.username != null])
-    roles     = join(",", [for u in each.value.users : u.role_type if u.username != null])
-    server_id = azurerm_postgresql_flexible_server.postgresql.id
-    ad_admin  = local.ad_admin != null ? local.ad_admin.principal_name : ""
+    db_name            = each.value.db_name
+    usernames          = join(",", [for u in each.value.users : u.username])
+    roles              = join(",", [for u in each.value.users : u.role_type])
+    object_ids         = join(",", [for u in each.value.users : u.object_id])
+    custom_grants      = join("|||", [for u in each.value.users : u.custom_grants])
+    server_id          = azurerm_postgresql_flexible_server.postgresql.id
+    ad_admin_principal = local.ad_admin != null ? local.ad_admin.principal_name : ""
+    ad_admin_type      = local.ad_admin_type != null ? local.ad_admin_type : ""
   }
 
   provisioner "local-exec" {
@@ -59,15 +62,25 @@ resource "null_resource" "set_db_permissions" {
     on_failure  = fail
 
     environment = {
-      PGHOST        = azurerm_postgresql_flexible_server.postgresql.fqdn
-      PGPORT        = "5432"
-      PGDATABASE    = each.value.db_name
-      PGADMINUSER   = local.ad_admin != null ? local.ad_admin.principal_name : var.settings.administrator_login
-      DBUSERNAMES   = join(",", [for u in each.value.users : u.username if u.username != null])
-      DBOBJECTIDS   = join(",", [for u in each.value.users : u.object_id if u.username != null])
-      DBROLES       = join(",", [for u in each.value.users : u.role_type if u.username != null])
-      CUSTOMGRANTS  = join("|||", [for u in each.value.users : u.custom_grants if u.username != null])
-      SQLFILEPATH   = format("%s/scripts/set_db_permissions.sql", path.module)
+      PGHOST          = azurerm_postgresql_flexible_server.postgresql.fqdn
+      PGPORT          = "5432"
+      PGDATABASE      = each.value.db_name
+      PGADMINUSER     = local.ad_admin != null ? local.ad_admin.principal_name : var.settings.administrator_login
+      PGADMINTYPE     = local.ad_admin_type != null ? local.ad_admin_type : ""
+      PGADMINOBJECTID = local.ad_admin_object_id != null ? local.ad_admin_object_id : ""
+      DBUSERNAMES     = join(",", [for u in each.value.users : u.username])
+      DBOBJECTIDS     = join(",", [for u in each.value.users : u.object_id])
+      DBROLES         = join(",", [for u in each.value.users : u.role_type])
+      CUSTOMGRANTS    = join("|||", [for u in each.value.users : u.custom_grants])
+      SQLFILEPATH     = format("%s/scripts/set_db_permissions.sql", path.module)
     }
   }
 }
+
+# Output pour debug (optionnel, à retirer après validation)
+output "db_permissions" {
+  value     = local.db_permissions
+  sensitive = false
+}
+
+
