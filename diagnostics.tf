@@ -19,7 +19,10 @@ locals {
 # Output diagnostics
 output "diagnostics" {
   value = local.combined_diagnostics
+}
 
+output "diagnostic_event_hub_namespaces" {
+  value       = module.diagnostic_event_hub_namespaces
 }
 
 module "diagnostic_storage_accounts" {
