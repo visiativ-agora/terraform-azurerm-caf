@@ -34,12 +34,13 @@ resource "azurerm_cognitive_account" "service" {
   }
   fqdns = try(var.settings.fqdns, [])
   dynamic "identity" {
-    for_each = can(var.settings.identity) ? [var.settings.identity] : []
+    for_each = lookup(var.settings, "identity", {}) != {} ? [1] : []
     content {
-      type         = identity.value.type
-      identity_ids = concat(local.managed_identities, try(identity.value.identity_ids, []))
+      type         = lookup(var.settings.identity, "type", null)
+      identity_ids = can(var.settings.identity.ids) ? var.settings.identity.ids : can(var.settings.identity.key) ? [var.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.identity.key].id] : null
     }
   }
+
   local_auth_enabled              = try(var.settings.local_auth_enabled, true)
   metrics_advisor_aad_client_id   = (var.settings.kind == "MetricsAdvisor" || var.settings.kind == "QnAMaker") ? try(var.settings.metrics_advisor_aad_client_id, null) : null
   metrics_advisor_super_user_name = (var.settings.kind == "MetricsAdvisor" || var.settings.kind == "QnAMaker") ? try(var.settings.metrics_advisor_super_user_name, null) : null
@@ -49,19 +50,35 @@ resource "azurerm_cognitive_account" "service" {
     content {
       default_action = network_acls.value.default_action
       ip_rules       = try(network_acls.value.ip_rules, null)
+
       dynamic "virtual_network_rules" {
-        for_each = can(network_acls.value.virtual_network_rules) ? [network_acls.value.virtual_network_rules] : []
+        for_each = try(network_acls.value.subnets, {})
         content {
-          subnet_id = can(virtual_network_rules.value.subnet_id) || can(virtual_network_rules.value.subnet_key) ? try(virtual_network_rules.value.subnet_id, var.remote_objects.virtual_subnets[try(virtual_network_rules.value.lz_key, var.client_config.landingzone_key)][virtual_network_rules.value.subnet_key].id) : var.remote_objects.vnets[try(virtual_network_rules.value.lz_key, var.client_config.landingzone_key)][virtual_network_rules.value.vnet_key].subnets[virtual_network_rules.value.subnet_key].id
-          # Depurar en algún moment, error: The given key does not identify an element in this collection value.
-          # subnet_id = var.remote_objects.subnet_id
-          #  Try virtual_network_rules.value.subnet_id and if it is null, try to get the subnet_id from the remote_objects and if it is null, use null
-          # subnet_id = try(virtual_network_rules.value.subnet_id, try(var.remote_objects.subnet_id, null))
+          subnet_id                            = can(virtual_network_rules.value.subnet_id) || can(virtual_network_rules.value.virtual_subnet_key) ? try(virtual_network_rules.value.subnet_id, var.virtual_subnets[try(virtual_network_rules.value.lz_key, var.client_config.landingzone_key)][virtual_network_rules.value.virtual_subnet_key].id) : var.vnets[try(virtual_network_rules.value.lz_key, var.client_config.landingzone_key)][virtual_network_rules.value.vnet_key].subnets[virtual_network_rules.value.subnet_key].id
+          ignore_missing_vnet_service_endpoint = try(virtual_network_rules.value.ignore_missing_vnet_service_endpoint, null)
+        }
+      }
+
+      # to support migration from 2.99.0 to 3.7.0
+      dynamic "virtual_network_rules" {
+        for_each = can(network_acls.value.virtual_network_subnet_ids) ? toset(network_acls.value.virtual_network_subnet_ids) : []
+
+        content {
+          subnet_id = virtual_network_rules.value
+        }
+      }
+
+      dynamic "virtual_network_rules" {
+        for_each = try(network_acls.value.virtual_network_rules, {})
+
+        content {
+          subnet_id                            = virtual_network_rules.value.subnet_id
           ignore_missing_vnet_service_endpoint = try(virtual_network_rules.value.ignore_missing_vnet_service_endpoint, null)
         }
       }
     }
   }
+
   outbound_network_access_restricted           = try(var.settings.outbound_network_access_restricted, false)
   public_network_access_enabled                = try(var.settings.public_network_access_enabled, true)
   qna_runtime_endpoint                         = var.settings.kind == "QnAMaker" ? var.settings.qna_runtime_endpoint : try(var.settings.qna_runtime_endpoint, null)
