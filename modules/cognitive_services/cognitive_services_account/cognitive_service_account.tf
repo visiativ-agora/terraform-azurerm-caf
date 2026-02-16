@@ -37,7 +37,7 @@ resource "azurerm_cognitive_account" "service" {
     for_each = lookup(var.settings, "identity", {}) != {} ? [1] : []
     content {
       type         = lookup(var.settings.identity, "type", null)
-      identity_ids = can(var.settings.identity.ids) ? var.settings.identity.ids : can(var.settings.identity.key) ? [var.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.identity.key].id] : null
+      identity_ids = can(var.settings.identity.ids) ? var.settings.identity.ids : can(var.settings.identity.key) ? [var.remote_objects.managed_identities[try(var.settings.identity.lz_key, var.client_config.landingzone_key)][var.settings.identity.key].id] : null
     }
   }
 

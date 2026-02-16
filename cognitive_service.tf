@@ -20,6 +20,7 @@ module "cognitive_services_account" {
     diagnostics         = local.combined_diagnostics
     resource_groups     = local.combined_objects_resource_groups
     private_dns         = local.combined_objects_private_dns
+    managed_identities  = local.combined_objects_managed_identities
   }
 }
 
