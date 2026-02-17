@@ -45,7 +45,7 @@ resource "azurerm_cognitive_account" "service" {
   metrics_advisor_aad_client_id   = (var.settings.kind == "MetricsAdvisor" || var.settings.kind == "QnAMaker") ? try(var.settings.metrics_advisor_aad_client_id, null) : null
   metrics_advisor_super_user_name = (var.settings.kind == "MetricsAdvisor" || var.settings.kind == "QnAMaker") ? try(var.settings.metrics_advisor_super_user_name, null) : null
   metrics_advisor_website_name    = (var.settings.kind == "MetricsAdvisor" || var.settings.kind == "QnAMaker") ? try(var.settings.metrics_advisor_website_name, null) : null
-  
+
   dynamic "network_acls" {
     for_each = can(var.settings.network_acls) ? [var.settings.network_acls] : []
     content {
@@ -60,26 +60,26 @@ resource "azurerm_cognitive_account" "service" {
         }
       }
 
-        # # to support migration from 2.99.0 to 3.7.0
-        # dynamic "virtual_network_rules" {
-        #   for_each = can(network_acls.value.virtual_network_subnet_ids) ? toset(network_acls.value.virtual_network_subnet_ids) : []
+      # # to support migration from 2.99.0 to 3.7.0
+      # dynamic "virtual_network_rules" {
+      #   for_each = can(network_acls.value.virtual_network_subnet_ids) ? toset(network_acls.value.virtual_network_subnet_ids) : []
 
-        #   content {
-        #     subnet_id = virtual_network_rules.value
-        #   }
-        # }
+      #   content {
+      #     subnet_id = virtual_network_rules.value
+      #   }
+      # }
 
-        # dynamic "virtual_network_rules" {
-        #   for_each = try(network_acls.value.virtual_network_rules, {})
+      # dynamic "virtual_network_rules" {
+      #   for_each = try(network_acls.value.virtual_network_rules, {})
 
-        #   content {
-        #     subnet_id                            = virtual_network_rules.value.subnet_id
-        #     ignore_missing_vnet_service_endpoint = try(virtual_network_rules.value.ignore_missing_vnet_service_endpoint, null)
-        #   }
-        # }
-      }
+      #   content {
+      #     subnet_id                            = virtual_network_rules.value.subnet_id
+      #     ignore_missing_vnet_service_endpoint = try(virtual_network_rules.value.ignore_missing_vnet_service_endpoint, null)
+      #   }
+      # }
     }
   }
+
 
   outbound_network_access_restricted           = try(var.settings.outbound_network_access_restricted, false)
   public_network_access_enabled                = try(var.settings.public_network_access_enabled, true)
