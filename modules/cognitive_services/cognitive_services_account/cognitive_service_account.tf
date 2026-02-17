@@ -53,7 +53,8 @@ resource "azurerm_cognitive_account" "service" {
       ip_rules       = try(network_acls.value.ip_rules, [])
 
       dynamic "virtual_network_rules" {
-        for_each = local.virtual_network_rules
+        for_each = try(network_acls.value.subnets, try(network_acls.value.virtual_network_rules, {}))
+
         content {
           subnet_id = can(virtual_network_rules.value.subnet_id) ? virtual_network_rules.value.subnet_id : (
             can(virtual_network_rules.value.virtual_subnet_key) ?
@@ -65,6 +66,7 @@ resource "azurerm_cognitive_account" "service" {
       }
     }
   }
+
 
   outbound_network_access_restricted           = try(var.settings.outbound_network_access_restricted, false)
   public_network_access_enabled                = try(var.settings.public_network_access_enabled, true)
