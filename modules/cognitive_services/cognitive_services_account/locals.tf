@@ -11,4 +11,9 @@ locals {
   location            = coalesce(var.location, var.resource_group.location)
   resource_group_name = coalesce(var.resource_group_name, var.resource_group.name)
 
+  virtual_network_rules = can(var.settings.network_acls) ? (
+    try(var.settings.network_acls.subnets,
+    try(var.settings.network_acls.virtual_network_rules, {}))
+  ) : {}
+
 }
