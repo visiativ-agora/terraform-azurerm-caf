@@ -82,5 +82,5 @@ resource "azurerm_cognitive_account" "service" {
     }
   }
 
-  tags = try(var.settings.tags, {})
+  tags = merge(local.tags, try(var.settings.tags, null))
 }
