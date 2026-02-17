@@ -43,11 +43,18 @@ output "cognitive_account_customer_managed_key" {
   value = module.cognitive_account_customer_managed_key
 }
 
+# module "cognitive_deployment" {
+#   source               = "./modules/cognitive_services/cognitive_deployment"
+#   for_each             = local.cognitive_services.cognitive_deployment
+#   settings             = each.value
+#   cognitive_account_id = can(each.value.cognitive_account_id) || can(each.value.cognitive_account.id) ? try(each.value.cognitive_account_id, each.value.cognitive_account.id) : local.combined_objects_cognitive_services_accounts[try(each.value.cognitive_account.lz_key, local.client_config.landingzone_key)][try(each.value.cognitive_account_key, each.value.cognitive_account_key.key)].id
+# }
+
 module "cognitive_deployment" {
-  source               = "./modules/cognitive_services/cognitive_deployment"
-  for_each             = local.cognitive_services.cognitive_deployment
+  source = "./modules/cognitive_services/cognitive_deployment"
+  for_each = try(local.cognitive_services.cognitive_deployment, {})
+  cognitive_account_id = can(each.value.cognitive_account_id) || can(each.value.cognitive_account.id) ? try(each.value.cognitive_account_id, each.value.cognitive_account.id) : module.cognitive_services_account[try(each.value.cognitive_account_key, each.value.cognitive_account.key)].id
   settings             = each.value
-  cognitive_account_id = can(each.value.cognitive_account_id) || can(each.value.cognitive_account.id) ? try(each.value.cognitive_account_id, each.value.cognitive_account.id) : local.combined_objects_cognitive_services_accounts[try(each.value.cognitive_account.lz_key, local.client_config.landingzone_key)][try(each.value.cognitive_account_key, each.value.cognitive_account_key.key)].id
 }
 
 output "cognitive_deployment" {
