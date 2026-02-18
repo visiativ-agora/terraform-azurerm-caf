@@ -136,7 +136,7 @@ resource "azurerm_linux_web_app" "linux_web_app" {
     }
 
     dynamic "ip_restriction" {
-      for_each = try(var.settings.site_config.ip_restriction, [])
+      for_each = try(var.settings.site_config.ip_restriction, {})
       content {
         action                    = try(ip_restriction.value.action, "Allow")
         ip_address                = try(ip_restriction.value.ip_address, null)
@@ -159,7 +159,7 @@ resource "azurerm_linux_web_app" "linux_web_app" {
     }
 
     dynamic "scm_ip_restriction" {
-      for_each = try(var.settings.site_config.scm_ip_restriction, [])
+      for_each = try(var.settings.site_config.scm_ip_restriction, {})
       content {
         action                    = try(scm_ip_restriction.value.action, "Allow")
         ip_address                = try(scm_ip_restriction.value.ip_address, null)
@@ -476,7 +476,7 @@ resource "azurerm_linux_web_app" "linux_web_app" {
       type         = storage_account.value.type
       account_name = can(storage_account.value.account_name) ? storage_account.value.account_name : var.remote_objects.storage_accounts[try(storage_account.value.lz_key, var.client_config.landingzone_key)][storage_account.value.account_key].name
       share_name   = storage_account.value.share_name
-      access_key   = can(storage_account.value.access_key) ? storage_account.value.access_key : var.remote_objects.storage_accounts[try(storage_account.value.lz_key, var.client_config.landingzone_key)][storage_account.value.key].primary_access_key
+      access_key   = can(storage_account.value.access_key) ? storage_account.value.access_key : var.remote_objects.storage_accounts[try(storage_account.value.lz_key, var.client_config.landingzone_key)][storage_account.value.account_key].primary_access_key
       mount_path   = try(storage_account.value.mount_path, null)
     }
   }
