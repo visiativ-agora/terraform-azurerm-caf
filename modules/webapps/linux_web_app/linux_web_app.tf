@@ -470,7 +470,7 @@ resource "azurerm_linux_web_app" "linux_web_app" {
   }
 
   dynamic "storage_account" {
-    for_each = try(var.settings.storage_account, {}) != {} ? [var.settings.storage_account] : []
+    for_each = try(var.settings.storage_account, {})
     content {
       access_key = try(
         storage_account.value.access_key,
