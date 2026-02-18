@@ -136,7 +136,7 @@ resource "azurerm_linux_web_app" "linux_web_app" {
     }
 
     dynamic "ip_restriction" {
-      for_each = try(var.settings.site_config.ip_restriction, [])
+      for_each = try(var.settings.site_config.ip_restriction, {})
       content {
         action                    = try(ip_restriction.value.action, "Allow")
         ip_address                = try(ip_restriction.value.ip_address, null)
@@ -159,7 +159,7 @@ resource "azurerm_linux_web_app" "linux_web_app" {
     }
 
     dynamic "scm_ip_restriction" {
-      for_each = try(var.settings.site_config.scm_ip_restriction, [])
+      for_each = try(var.settings.site_config.scm_ip_restriction, {})
       content {
         action                    = try(scm_ip_restriction.value.action, "Allow")
         ip_address                = try(scm_ip_restriction.value.ip_address, null)
