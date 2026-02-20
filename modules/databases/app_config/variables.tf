@@ -54,7 +54,7 @@ variable "name" {
 
 variable "combined_objects" {
   description = "Combined objects for the resource."
-  type        = map(any)
+  type        = any
   default     = {}
 }
 
