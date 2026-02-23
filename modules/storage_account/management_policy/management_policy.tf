@@ -16,7 +16,7 @@ resource "azurerm_storage_management_policy" "mgmt_policy" {
           blob_types   = try(filters.value.blob_types, null)
 
           dynamic "match_blob_index_tag" {
-            for_each = try(filters.match_blob_index_tag, {})
+            for_each = try(filters.value.match_blob_index_tag, {})
 
             content {
               name      = try(match_blob_index_tag.value.name, null)
