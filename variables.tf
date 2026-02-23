@@ -145,9 +145,9 @@ variable "cdn" {
   default     = {}
 }
 
-variable "cdn_frontdoor_profiles" {
-  default = {}
-}
+# variable "cdn_frontdoor_profiles" {
+#   default = {}
+# }
 
 ## Cloud variables
 variable "cloud" {

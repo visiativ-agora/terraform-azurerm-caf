@@ -295,9 +295,9 @@ locals {
     logic_app_standard              = try(var.logic_app.logic_app_standard, {})
   }
 
-  cdn_frontdoor_profiles = {
-    cdn_frontdoor_profiles = try(var.cdn_frontdoor_profiles.cdn_frontdoor_profiles, {})
-  }
+  # cdn_frontdoor_profiles = {
+  #   cdn_frontdoor_profiles = try(var.cdn_frontdoor_profiles.cdn_frontdoor_profiles, {})
+  # }
 
   cognitive_services = {
     ai_services                            = try(var.cognitive_services.ai_services, {})
