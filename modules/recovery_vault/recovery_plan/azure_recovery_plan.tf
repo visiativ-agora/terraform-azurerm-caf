@@ -7,7 +7,7 @@ resource "azurerm_site_recovery_replication_recovery_plan" "replication_plan" {
 
 
   dynamic "shutdown_recovery_group" {
-    ffor_each = [try(var.settings.shutdown_recovery_group, {})]
+    for_each = [try(var.settings.shutdown_recovery_group, {})]
     content {
       dynamic "pre_action" {
         for_each = can(var.settings.shutdown_recovery_group.pre_action) ? [var.settings.shutdown_recovery_group.pre_action] : []
