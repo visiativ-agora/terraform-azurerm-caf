@@ -381,21 +381,6 @@ resource "azurerm_linux_function_app" "linux_function_app" {
     null
   )
 
-  # dynamic "storage_account" {
-  #   for_each = try(var.settings.storage_account, {}) != {} ? [1] : []
-  #   content {
-  #     access_key = try(
-  #       var.settings.storage_account.access_key,
-  #       var.remote_objects.storage_accounts[try(var.settings.storage_account.lz_key, var.client_config.landingzone_key)][try(var.settings.storage_account.key, var.settings.storage_account_key)].primary_access_key
-  #     )
-  #     account_name = var.settings.storage_account.account_name
-  #     name         = var.settings.storage_account.name
-  #     share_name   = var.settings.storage_account.share_name
-  #     type         = var.settings.storage_account.type
-  #     mount_path   = try(var.settings.storage_account.mount_path, null)
-  #   }
-  # }
-
   dynamic "storage_account" {
     for_each = try(var.settings.storage_account, {})
     content {
@@ -415,21 +400,6 @@ resource "azurerm_linux_function_app" "linux_function_app" {
       connection_string_names = try(var.settings.sticky_settings.connection_string_names, null)
     }
   }
-
-  storage_account_access_key = try(var.settings.storage_uses_managed_identity, null) != null ? try(
-    var.settings.storage_account_access_key,
-    var.remote_objects.storage_accounts[try(var.settings.storage_account.lz_key, var.client_config.landingzone_key)][try(var.settings.storage_account.key, var.settings.storage_account_key)].primary_access_key,
-    null
-  ) : null
-
-  storage_account_name = try(
-    var.settings.storage_account_name,
-    var.remote_objects.storage_accounts[try(var.settings.storage_account.lz_key, var.client_config.landingzone_key)][try(var.settings.storage_account.key, var.settings.storage_account_key)].name,
-    null
-  )
-
-  storage_uses_managed_identity = try(var.settings.storage_uses_managed_identity, null)
-  storage_key_vault_secret_id   = try(var.settings.storage_key_vault_secret_id, null)
 
   tags = local.tags
 
@@ -453,12 +423,4 @@ resource "azurerm_linux_function_app" "linux_function_app" {
     }
 
   }
-
-
-
-
-
-
-
-
 }
