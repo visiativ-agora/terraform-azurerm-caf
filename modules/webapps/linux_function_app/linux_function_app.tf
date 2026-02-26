@@ -381,18 +381,30 @@ resource "azurerm_linux_function_app" "linux_function_app" {
     null
   )
 
+  # dynamic "storage_account" {
+  #   for_each = try(var.settings.storage_account, {}) != {} ? [1] : []
+  #   content {
+  #     access_key = try(
+  #       var.settings.storage_account.access_key,
+  #       var.remote_objects.storage_accounts[try(var.settings.storage_account.lz_key, var.client_config.landingzone_key)][try(var.settings.storage_account.key, var.settings.storage_account_key)].primary_access_key
+  #     )
+  #     account_name = var.settings.storage_account.account_name
+  #     name         = var.settings.storage_account.name
+  #     share_name   = var.settings.storage_account.share_name
+  #     type         = var.settings.storage_account.type
+  #     mount_path   = try(var.settings.storage_account.mount_path, null)
+  #   }
+  # }
+
   dynamic "storage_account" {
-    for_each = try(var.settings.storage_account, {}) != {} ? [1] : []
+    for_each = try(var.settings.storage_account, {})
     content {
-      access_key = try(
-        var.settings.storage_account.access_key,
-        var.remote_objects.storage_accounts[try(var.settings.storage_account.lz_key, var.client_config.landingzone_key)][try(var.settings.storage_account.key, var.settings.storage_account_key)].primary_access_key
-      )
-      account_name = var.settings.storage_account.account_name
-      name         = var.settings.storage_account.name
-      share_name   = var.settings.storage_account.share_name
-      type         = var.settings.storage_account.type
-      mount_path   = try(var.settings.storage_account.mount_path, null)
+      name         = storage_account.value.name
+      type         = storage_account.value.type
+      account_name = can(storage_account.value.account_name) ? storage_account.value.account_name : var.remote_objects.storage_accounts[try(storage_account.value.lz_key, var.client_config.landingzone_key)][storage_account.value.account_key].name
+      share_name   = storage_account.value.share_name
+      access_key   = can(storage_account.value.access_key) ? storage_account.value.access_key : var.remote_objects.storage_accounts[try(storage_account.value.lz_key, var.client_config.landingzone_key)][storage_account.value.account_key].primary_access_key
+      mount_path   = try(storage_account.value.mount_path, null)
     }
   }
 
