@@ -13,6 +13,7 @@ resource "azurerm_linux_function_app" "linux_function_app" {
   )
   site_config {
     always_on          = try(var.settings.site_config.always_on, null)
+    http2_enabled      = try(var.settings.site_config.http2_enabled, null)
     api_definition_url = try(var.settings.site_config.api_definition_url, null)
     api_management_api_id = try(
       var.settings.site_config.api_management_api_id,
@@ -29,11 +30,11 @@ resource "azurerm_linux_function_app" "linux_function_app" {
         dynamic "docker" {
           for_each = try(var.settings.site_config.application_stack.docker, [])
           content {
-            registry_url      = var.settings.site_config.application_stack.docker.registry_url
-            image_name        = var.settings.site_config.application_stack.docker.image_name
-            image_tag         = var.settings.site_config.application_stack.docker.image_tag
-            registry_username = try(var.settings.site_config.application_stack.docker.registry_username, null)
-            registry_password = try(var.settings.site_config.application_stack.docker.registry_password, null)
+            registry_url      = docker.value.registry_url
+            image_name        = docker.value.image_name
+            image_tag         = docker.value.image_tag
+            registry_username = try(docker.value.registry_username, null)
+            registry_password = try(docker.value.registry_password, null)
           }
         }
         dotnet_version              = try(var.settings.site_config.application_stack.dotnet_version, null)
