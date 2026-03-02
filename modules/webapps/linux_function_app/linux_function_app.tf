@@ -25,10 +25,11 @@ resource "azurerm_linux_function_app" "linux_function_app" {
     application_insights_connection_string = try(var.settings.site_config.application_insights_connection_string, null)
     application_insights_key               = try(var.settings.site_config.application_insigths_key, null)
     dynamic "application_stack" {
-      for_each = try(var.settings.site_config.application_stack, {}) != {} ? [1] : []
+      for_each = try(var.settings.site_config.application_stack, null) != null ? [1] : []
       content {
         dynamic "docker" {
-          for_each = try(var.settings.site_config.application_stack.docker, [])
+          for_each = try(var.settings.site_config.application_stack.docker, null) != null ? [var.settings.site_config.application_stack.docker] : []
+
           content {
             registry_url      = docker.value.registry_url
             image_name        = docker.value.image_name
@@ -37,15 +38,7 @@ resource "azurerm_linux_function_app" "linux_function_app" {
             registry_password = try(docker.value.registry_password, null)
           }
         }
-        dotnet_version              = try(var.settings.site_config.application_stack.dotnet_version, null)
-        use_dotnet_isolated_runtime = try(var.settings.site_config.application_stack.use_dotnet_isolated_runtime, null)
-        java_version                = try(var.settings.site_config.application_stack.java_version, null)
-        node_version                = try(var.settings.site_config.application_stack.node_version, null)
-        python_version              = try(var.settings.site_config.application_stack.python_version, null)
-        powershell_core_version     = try(var.settings.site_config.application_stack.powershell_core_version, null)
-        use_custom_runtime          = try(var.settings.site_config.application_stack.use_custom_runtime, null)
       }
-
     }
     dynamic "app_service_logs" {
       for_each = try(var.settings.site_config.app_service_logs, {}) != {} ? [1] : []
