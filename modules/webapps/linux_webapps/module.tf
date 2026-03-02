@@ -427,48 +427,43 @@ resource "azurerm_linux_web_app" "linux_web_apps" {
   }
 
   dynamic "logs" {
-    for_each = lookup(var.settings, "logs", {}) != {} ? [1] : []
-
+    for_each = try(var.settings.logs, {}) != {} ? [var.settings.logs] : []
     content {
-      detailed_error_messages = try(var.settings.logs.detailed_error_messages, null)
-      failed_request_tracing  = try(var.settings.logs.failed_request_tracing, null)
+      detailed_error_messages = try(logs.value.detailed_error_messages, true)
+      failed_request_tracing  = try(logs.value.failed_request_tracing, true)
 
       dynamic "application_logs" {
-        for_each = lookup(var.settings.logs, "application_logs", {}) != {} ? [1] : []
-
+        for_each = try(logs.value.application_logs, {}) != {} ? [logs.value.application_logs] : []
         content {
-          file_system_level = try(var.settings.logs.application_logs.file_system_level, null)
+          file_system_level = try(application_logs.value.file_system_level, "Error")
 
           dynamic "azure_blob_storage" {
-            for_each = lookup(var.settings.logs.application_logs, "azure_blob_storage", {}) != {} ? [1] : []
-
+            for_each = try(application_logs.value.azure_blob_storage, {}) != {} ? [application_logs.value.azure_blob_storage] : []
             content {
-              level             = var.settings.logs.application_logs.azure_blob_storage.level
-              sas_url           = try(var.settings.logs.application_logs.azure_blob_storage.sas_url, local.logs_sas_url)
-              retention_in_days = var.settings.logs.application_logs.azure_blob_storage.retention_in_days
+              level             = try(azure_blob_storage.value.level, "Error")
+              retention_in_days = try(azure_blob_storage.value.retention_in_days, 7)
+              sas_url           = try(azure_blob_storage.value.sas_url, local.logs_sas_url)
             }
           }
         }
       }
 
       dynamic "http_logs" {
-        for_each = lookup(var.settings.logs, "http_logs", {}) != {} ? [1] : []
-
+        for_each = try(logs.value.http_logs, {}) != {} ? [logs.value.http_logs] : []
         content {
           dynamic "azure_blob_storage" {
-            for_each = lookup(var.settings.logs.http_logs, "azure_blob_storage", {}) != {} ? [1] : []
-
+            for_each = try(http_logs.value.azure_blob_storage, {}) != {} ? [http_logs.value.azure_blob_storage] : []
             content {
-              sas_url           = try(var.settings.logs.http_logs.azure_blob_storage.sas_url, local.http_logs_sas_url)
-              retention_in_days = var.settings.logs.http_logs.azure_blob_storage.retention_in_days
+              retention_in_days = try(azure_blob_storage.value.retention_in_days, 7)
+              sas_url           = try(azure_blob_storage.value.sas_url, local.http_logs_sas_url)
             }
           }
-          dynamic "file_system" {
-            for_each = lookup(var.settings.logs.http_logs, "file_system", {}) != {} ? [1] : []
 
+          dynamic "file_system" {
+            for_each = try(http_logs.value.file_system, {}) != {} ? [http_logs.value.file_system] : []
             content {
-              retention_in_days = var.settings.logs.http_logs.file_system.retention_in_days
-              retention_in_mb   = var.settings.logs.http_logs.file_system.retention_in_mb
+              retention_in_days = try(file_system.value.retention_in_days, 7)
+              retention_in_mb   = try(file_system.value.retention_in_mb, 35)
             }
           }
         }
