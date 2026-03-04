@@ -58,147 +58,147 @@ resource "azurerm_eventgrid_system_topic_event_subscription" "eges" {
   }
 
   dynamic "advanced_filter" {
-    for_each = try(var.settings.advanced_filter, null) != null ? [var.settings.advanced_filter] : []
+    for_each = try(var.settings.advanced_filter, [])
     content {
       dynamic "bool_equals" {
-        for_each = try(var.settings.bool_equals, null) != null ? [var.settings.bool_equals] : []
+        for_each = try(advanced_filter.value.bool_equals, [])
         content {
-          key   = try(bool_equals.value.subject_begins_with, null)
-          value = try(bool_equals.value.subject_ends_with, null)
+          key   = bool_equals.value.key
+          value = bool_equals.value.value
         }
       }
       dynamic "number_greater_than" {
-        for_each = try(var.settings.number_greater_than, null) != null ? [var.settings.number_greater_than] : []
+        for_each = try(advanced_filter.value.number_greater_than, [])
         content {
-          key   = try(number_greater_than.value.subject_begins_with, null)
-          value = try(number_greater_than.value.subject_ends_with, null)
-
+          key   = number_greater_than.value.key
+          value = number_greater_than.value.value
         }
       }
       dynamic "number_greater_than_or_equals" {
-        for_each = try(var.settings.number_greater_than_or_equals, null) != null ? [var.settings.number_greater_than_or_equals] : []
+        for_each = try(advanced_filter.value.number_greater_than_or_equals, [])
         content {
-          key   = try(number_greater_than_or_equals.value.subject_begins_with, null)
-          value = try(number_greater_than_or_equals.value.subject_ends_with, null)
+          key   = number_greater_than_or_equals.value.key
+          value = number_greater_than_or_equals.value.value
         }
       }
       dynamic "number_less_than" {
-        for_each = try(var.settings.number_less_than, null) != null ? [var.settings.number_less_than] : []
+        for_each = try(advanced_filter.value.number_less_than, [])
         content {
-          key   = try(number_less_than.value.subject_begins_with, null)
-          value = try(number_less_than.value.subject_ends_with, null)
+          key   = number_less_than.value.key
+          value = number_less_than.value.value
         }
       }
       dynamic "number_less_than_or_equals" {
-        for_each = try(var.settings.number_less_than_or_equals, null) != null ? [var.settings.number_less_than_or_equals] : []
+        for_each = try(advanced_filter.value.number_less_than_or_equals, [])
         content {
-          key   = try(number_less_than.value.number_less_than_or_equals, null)
-          value = try(number_less_than.value.number_less_than_or_equals, null)
+          key   = number_less_than_or_equals.value.key
+          value = number_less_than_or_equals.value.value
         }
       }
       dynamic "number_in" {
-        for_each = try(var.settings.number_in, null) != null ? [var.settings.number_in] : []
+        for_each = try(advanced_filter.value.number_in, [])
         content {
-          key    = try(number_less_than.value.number_in, null)
-          values = try(number_less_than.value.number_in, null)
+          key    = number_in.value.key
+          values = number_in.value.values
         }
       }
       dynamic "number_not_in" {
-        for_each = try(var.settings.number_not_in, null) != null ? [var.settings.number_not_in] : []
+        for_each = try(advanced_filter.value.number_not_in, [])
         content {
-          key    = try(number_less_than.value.number_not_in, null)
-          values = try(number_less_than.value.number_not_in, null)
+          key    = number_not_in.value.key
+          values = number_not_in.value.values
         }
       }
       dynamic "number_in_range" {
-        for_each = try(var.settings.number_in_range, null) != null ? [var.settings.number_in_range] : []
+        for_each = try(advanced_filter.value.number_in_range, [])
         content {
-          key    = try(number_less_than.value.number_in_range, null)
-          values = try(number_less_than.value.number_in_range, null)
+          key    = number_in_range.value.key
+          values = number_in_range.value.values
         }
       }
       dynamic "number_not_in_range" {
-        for_each = try(var.settings.number_not_in_range, null) != null ? [var.settings.number_not_in_range] : []
+        for_each = try(advanced_filter.value.number_not_in_range, [])
         content {
-          key    = try(number_less_than.value.number_not_in_range, null)
-          values = try(number_less_than.value.number_not_in_range, null)
+          key    = number_not_in_range.value.key
+          values = number_not_in_range.value.values
         }
       }
       dynamic "string_begins_with" {
-        for_each = try(var.settings.string_begins_with, null) != null ? [var.settings.string_begins_with] : []
+        for_each = try(advanced_filter.value.string_begins_with, [])
         content {
-          key    = try(number_less_than.value.string_begins_with, null)
-          values = try(number_less_than.value.string_begins_with, null)
+          key    = string_begins_with.value.key
+          values = string_begins_with.value.values
         }
       }
       dynamic "string_not_begins_with" {
-        for_each = try(var.settings.string_not_begins_with, null) != null ? [var.settings.string_not_begins_with] : []
+        for_each = try(advanced_filter.value.string_not_begins_with, [])
         content {
-          key    = try(number_less_than.value.string_not_begins_with, null)
-          values = try(number_less_than.value.string_not_begins_with, null)
+          key    = string_not_begins_with.value.key
+          values = string_not_begins_with.value.values
         }
       }
       dynamic "string_ends_with" {
-        for_each = try(var.settings.string_ends_with, null) != null ? [var.settings.string_ends_with] : []
+        for_each = try(advanced_filter.value.string_ends_with, [])
         content {
-          key    = try(number_less_than.value.string_ends_with, null)
-          values = try(number_less_than.value.string_ends_with, null)
+          key    = string_ends_with.value.key
+          values = string_ends_with.value.values
         }
       }
       dynamic "string_not_ends_with" {
-        for_each = try(var.settings.string_not_ends_with, null) != null ? [var.settings.string_not_ends_with] : []
+        for_each = try(advanced_filter.value.string_not_ends_with, [])
         content {
-          key    = try(number_less_than.value.string_not_ends_with, null)
-          values = try(number_less_than.value.string_not_ends_with, null)
+          key    = string_not_ends_with.value.key
+          values = string_not_ends_with.value.values
         }
       }
       dynamic "string_contains" {
-        for_each = try(var.settings.string_contains, null) != null ? [var.settings.string_contains] : []
+        for_each = try(advanced_filter.value.string_contains, [])
         content {
-          key    = try(number_less_than.value.string_contains, null)
-          values = try(number_less_than.value.string_contains, null)
+          key    = string_contains.value.key
+          values = string_contains.value.values
         }
       }
       dynamic "string_not_contains" {
-        for_each = try(var.settings.string_not_contains, null) != null ? [var.settings.string_not_contains] : []
+        for_each = try(advanced_filter.value.string_not_contains, [])
         content {
-          key    = try(number_less_than.value.string_not_contains, null)
-          values = try(number_less_than.value.string_not_contains, null)
+          key    = string_not_contains.value.key
+          values = string_not_contains.value.values
         }
       }
       dynamic "string_in" {
-        for_each = try(var.settings.string_in, null) != null ? [var.settings.string_in] : []
+        for_each = try(advanced_filter.value.string_in, [])
         content {
-          key    = try(number_less_than.value.string_in, null)
-          values = try(number_less_than.value.string_in, null)
+          key    = string_in.value.key
+          values = string_in.value.values
         }
       }
       dynamic "string_not_in" {
-        for_each = try(var.settings.string_not_in, null) != null ? [var.settings.string_not_in] : []
+        for_each = try(advanced_filter.value.string_not_in, [])
         content {
-          key    = try(number_less_than.value.string_not_in, null)
-          values = try(number_less_than.value.string_not_in, null)
+          key    = string_not_in.value.key
+          values = string_not_in.value.values
         }
       }
       dynamic "is_not_null" {
-        for_each = try(var.settings.is_not_null, null) != null ? [var.settings.is_not_null] : []
+        for_each = try(advanced_filter.value.is_not_null, [])
         content {
-          key = try(number_less_than.value.is_not_null, null)
+          key = is_not_null.value.key
         }
       }
       dynamic "is_null_or_undefined" {
-        for_each = try(var.settings.is_null_or_undefined, null) != null ? [var.settings.is_null_or_undefined] : []
+        for_each = try(advanced_filter.value.is_null_or_undefined, [])
         content {
-          key = try(number_less_than.value.is_null_or_undefined, null)
+          key = is_null_or_undefined.value.key
         }
       }
     }
   }
+
   dynamic "delivery_identity" {
-    for_each = try(var.settings.delivery_identity, null) != null ? [var.settings.delivery_identity] : []
+    for_each = can(var.settings.delivery_identity) ? [var.settings.delivery_identity] : []
     content {
-      type                   = try(delivery_identity.value.type, null)
-      user_assigned_identity = try(delivery_identity.value.user_assigned_identity, null)
+      type                   = var.settings.delivery_identity.type
+      user_assigned_identity = can(delivery_identity.value.user_assigned_identity_id) ? delivery_identity.value.user_assigned_identity_id : var.managed_identities[try(var.settings.delivery_identity.lz_key, var.client_config.landingzone_key)][var.settings.delivery_identity.managed_identity_key].id
     }
   }
 
