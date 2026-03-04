@@ -38,6 +38,13 @@ resource "azurerm_linux_function_app" "linux_function_app" {
             registry_password = try(docker.value.registry_password, null)
           }
         }
+        dotnet_version              = try(var.settings.site_config.application_stack.dotnet_version, null)
+        use_dotnet_isolated_runtime = try(var.settings.site_config.application_stack.use_dotnet_isolated_runtime, null)
+        java_version                = try(var.settings.site_config.application_stack.java_version, null)
+        node_version                = try(var.settings.site_config.application_stack.node_version, null)
+        python_version              = try(var.settings.site_config.application_stack.python_version, null)
+        powershell_core_version     = try(var.settings.site_config.application_stack.powershell_core_version, null)
+        use_custom_runtime          = try(var.settings.site_config.application_stack.use_custom_runtime, null)
       }
     }
     dynamic "app_service_logs" {
