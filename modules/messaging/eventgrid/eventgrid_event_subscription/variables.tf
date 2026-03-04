@@ -11,7 +11,7 @@ variable "settings" {
 }
 variable "remote_objects" {
   description = "Remote objects configuration."
-  type        = any
+  type        = map(any)
   default     = {}
 }
 variable "base_tags" {
