@@ -10,15 +10,15 @@ resource "azurecaf_name" "eges" {
 }
 
 locals {
-  fn_lz_key = try(azure_function_endpoint.value.function_app.lz_key, var.client_config.landingzone_key)
-  fn_key    = azure_function_endpoint.value.function_app.key
+  fn_lz_key = try(var.settings.azure_function_endpoint.function_app.lz_key, var.client_config.landingzone_key)
+  fn_key    = var.settings.azure_function_endpoint.function_app.key
 
   function_app_id = try(
-    azure_function_endpoint.value.function_app.id,
+    var.settings.azure_function_endpoint.function_app.id,
     var.remote_objects.functions[local.fn_lz_key][local.fn_key].id
   )
 
-  function_id = format("%s/functions/%s", local.function_app_id, azure_function_endpoint.value.function_name)
+  function_id = format("%s/functions/%s", local.function_app_id, var.settings.azure_function_endpoint.function_name)
 }
 
 
