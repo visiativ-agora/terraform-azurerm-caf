@@ -121,6 +121,7 @@ locals {
     app_service_plans                          = local.combined_objects_service_plans
     linux_web_apps                             = local.combined_objects_linux_web_apps
     windows_web_apps                           = local.combined_objects_windows_web_apps
+    function_apps                              = local.combined_objects_function_apps
     linux_function_apps                        = local.combined_objects_linux_function_apps
     windows_function_apps                      = local.combined_objects_windows_function_apps
     application_gateway_platforms              = local.combined_objects_application_gateway_platforms
