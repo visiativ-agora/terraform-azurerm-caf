@@ -39,20 +39,18 @@ output "eventgrid_topic" {
 }
 
 locals {
-  linux_fa_by_lz   = local.combined_objects_linux_function_apps
-  windows_fa_by_lz = local.combined_objects_windows_function_apps
-
   combined_objects_function_apps = {
     for lz in toset(concat(
-      keys(local.linux_fa_by_lz),
-      keys(local.windows_fa_by_lz)
+      keys(local.combined_objects_linux_function_apps),
+      keys(local.combined_objects_windows_function_apps)
     )) :
     lz => merge(
-      lookup(local.linux_fa_by_lz, lz, {}),
-      lookup(local.windows_fa_by_lz, lz, {})
+      lookup(local.combined_objects_linux_function_apps, lz, {}),
+      lookup(local.combined_objects_windows_function_apps, lz, {})
     )
   }
 }
+
 module "eventgrid_event_subscription" {
   source   = "./modules/messaging/eventgrid/eventgrid_event_subscription"
   for_each = local.messaging.eventgrid_event_subscription
