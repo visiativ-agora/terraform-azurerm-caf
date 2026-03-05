@@ -8,6 +8,20 @@ resource "azurecaf_name" "eges" {
   passthrough   = var.global_settings.passthrough
   use_slug      = var.global_settings.use_slug
 }
+
+locals {
+  fn_lz_key = try(azure_function_endpoint.value.function_app.lz_key, var.client_config.landingzone_key)
+  fn_key    = azure_function_endpoint.value.function_app.key
+
+  function_app_id = try(
+    azure_function_endpoint.value.function_app.id,
+    var.remote_objects.functions[local.fn_lz_key][local.fn_key].id
+  )
+
+  function_id = format("%s/functions/%s", local.function_app_id, azure_function_endpoint.value.function_name)
+}
+
+
 resource "azurerm_eventgrid_system_topic_event_subscription" "eges" {
   name                          = azurecaf_name.eges.result
   resource_group_name           = can(var.settings.resource_group.name) ? var.settings.resource_group.name : var.remote_objects.resource_groups[try(var.settings.resource_group.lz_key, var.client_config.landingzone_key)][var.settings.resource_group.key].name
@@ -22,7 +36,8 @@ resource "azurerm_eventgrid_system_topic_event_subscription" "eges" {
   dynamic "azure_function_endpoint" {
     for_each = try(var.settings.azure_function_endpoint, null) != null ? [var.settings.azure_function_endpoint] : []
     content {
-      function_id                       = can(azure_function_endpoint.value.function_app.id) ? azure_function_endpoint.value.function_app.id : can(var.remote_objects.functions[try(azure_function_endpoint.value.function_app.lz_key, var.client_config.landingzone_key)][azure_function_endpoint.value.function_app.key].id) ? "${var.remote_objects.functions[try(azure_function_endpoint.value.function_app.lz_key, var.client_config.landingzone_key)][azure_function_endpoint.value.function_app.key].id}/functions/${azure_function_endpoint.value.function_name}" : null
+      # function_id                       = can(azure_function_endpoint.value.function_app.id) ? azure_function_endpoint.value.function_app.id : can(var.remote_objects.functions[try(azure_function_endpoint.value.function_app.lz_key, var.client_config.landingzone_key)][azure_function_endpoint.value.function_app.key].id) ? "${var.remote_objects.functions[try(azure_function_endpoint.value.function_app.lz_key, var.client_config.landingzone_key)][azure_function_endpoint.value.function_app.key].id}/functions/${azure_function_endpoint.value.function_name}" : null
+      function_id                       = local.function_id
       max_events_per_batch              = try(azure_function_endpoint.value.max_events_per_batch, null)
       preferred_batch_size_in_kilobytes = try(azure_function_endpoint.value.preferred_batch_size_in_kilobytes, null)
     }
