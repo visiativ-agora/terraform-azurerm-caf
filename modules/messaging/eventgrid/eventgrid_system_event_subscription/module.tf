@@ -8,6 +8,7 @@ resource "azurecaf_name" "eges" {
   passthrough   = var.global_settings.passthrough
   use_slug      = var.global_settings.use_slug
 }
+
 resource "azurerm_eventgrid_system_topic_event_subscription" "eges" {
   name                          = azurecaf_name.eges.result
   resource_group_name           = can(var.settings.resource_group.name) ? var.settings.resource_group.name : var.remote_objects.resource_groups[try(var.settings.resource_group.lz_key, var.client_config.landingzone_key)][var.settings.resource_group.key].name
