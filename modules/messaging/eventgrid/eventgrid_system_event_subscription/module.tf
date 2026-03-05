@@ -260,9 +260,3 @@ resource "azurecaf_name" "eges" {
 #   advanced_filtering_on_arrays_enabled = try(var.settings.advanced_filtering_on_arrays_enabled, null)
 # }
 
-output "dbg_functions_core_keys" {
-  value = keys(var.remote_objects.functions["core_dev_fileshare"])
-}
-output "dbg_functions_core_f1" {
-  value = try(var.remote_objects.functions["core_dev_fileshare"]["f1"], null)
-}
