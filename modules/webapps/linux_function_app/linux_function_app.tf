@@ -402,11 +402,11 @@ resource "azurerm_linux_function_app" "linux_function_app" {
     }
   }
 
-  storage_account_access_key = try(var.settings.storage_uses_managed_identity, null) != null ? try(
+  storage_account_access_key = try(var.settings.storage_uses_managed_identity, false) ? null : try(
     var.settings.storage_account_access_key,
     var.remote_objects.storage_accounts[try(var.settings.storage_account.lz_key, var.client_config.landingzone_key)][try(var.settings.storage_account.key, var.settings.storage_account_key)].primary_access_key,
     null
-  ) : null
+  )
 
   storage_account_name = try(
     var.settings.storage_account_name,
@@ -414,7 +414,7 @@ resource "azurerm_linux_function_app" "linux_function_app" {
     null
   )
 
-  storage_uses_managed_identity = try(var.settings.storage_uses_managed_identity, null)
+  storage_uses_managed_identity = try(var.settings.storage_uses_managed_identity, false) ? true : null
   storage_key_vault_secret_id   = try(var.settings.storage_key_vault_secret_id, null)
 
 
