@@ -476,6 +476,15 @@ node_os_upgrade_channel must be set to NodeImage if automatic_upgrade_channel ha
     }
   }
 
+  dynamic "upgrade_override" {
+    for_each = try(var.settings.upgrade_override[*], {})
+
+    content {
+      force_upgrade_enabled = try(upgrade_override.value.force_upgrade_enabled, null)
+      effective_until       = try(upgrade_override.value.effective_until, null)
+    }
+  }
+
   dynamic "web_app_routing" {
     for_each = try(var.settings.web_app_routing[*], {})
 
