@@ -21,6 +21,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "nodepools" {
   name                          = each.value.name
   kubernetes_cluster_id         = azurerm_kubernetes_cluster.aks.id
   vm_size                       = each.value.vm_size
+  gpu_driver                    = try(each.value.gpu_driver, null)
   capacity_reservation_group_id = try(each.value.capacity_reservation_group_id, null)
   zones                         = try(each.value.zones, each.value.availability_zones, null)
   auto_scaling_enabled          = try(each.value.auto_scaling_enabled, false)
