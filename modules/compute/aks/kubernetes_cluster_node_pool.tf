@@ -119,14 +119,25 @@ resource "azurerm_kubernetes_cluster_node_pool" "nodepools" {
 
 
   dynamic "upgrade_settings" {
-    for_each = try(var.settings.default_node_pool.upgrade_settings, null) == null ? [] : [var.settings.default_node_pool.upgrade_settings]
+    for_each = try(each.value.upgrade_settings, null) == null ? [] : [each.value.upgrade_settings]
     content {
       drain_timeout_in_minutes      = try(upgrade_settings.value.drain_timeout_in_minutes, null)
       node_soak_duration_in_minutes = try(upgrade_settings.value.node_soak_duration_in_minutes, null)
       max_surge                     = try(upgrade_settings.value.max_surge, null)
       max_unavailable               = try(upgrade_settings.value.max_unavailable, null)
+      undrainable_node_behavior     = try(upgrade_settings.value.undrainable_node_behavior, null)
     }
   }
+
+  # dynamic "upgrade_settings" {
+  #   for_each = try(var.settings.default_node_pool.upgrade_settings, null) == null ? [] : [var.settings.default_node_pool.upgrade_settings]
+  #   content {
+  #     drain_timeout_in_minutes      = try(upgrade_settings.value.drain_timeout_in_minutes, null)
+  #     node_soak_duration_in_minutes = try(upgrade_settings.value.node_soak_duration_in_minutes, null)
+  #     max_surge                     = try(upgrade_settings.value.max_surge, null)
+  #     max_unavailable               = try(upgrade_settings.value.max_unavailable, null)
+  #   }
+  # }
 
   vnet_subnet_id = can(each.value.subnet.resource_id) || can(each.value.vnet_subnet_id) ? try(each.value.subnet.resource_id, each.value.vnet_subnet_id) : var.remote_objects.vnets[try(var.settings.vnet.lz_key, var.settings.lz_key, var.client_config.landingzone_key)][try(var.settings.vnet.key, var.settings.vnet_key)].subnets[try(each.value.subnet.key, each.value.subnet_key)].id
 
