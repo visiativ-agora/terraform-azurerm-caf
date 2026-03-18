@@ -51,7 +51,7 @@ resource "azurerm_cognitive_account" "service" {
     content {
       default_action = network_acls.value.default_action
       ip_rules       = try(network_acls.value.ip_rules, [])
-      bypass         = try(network_acls.value.bypass, "None") 
+      bypass         = try(network_acls.value.bypass, null) 
 
       dynamic "virtual_network_rules" {
         for_each = try(network_acls.value.subnets, try(network_acls.value.virtual_network_rules, {}))
