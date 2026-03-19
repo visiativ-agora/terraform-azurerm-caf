@@ -451,17 +451,17 @@ resource "azurerm_windows_web_app" "windows_web_app" {
         for_each = try(var.settings.logs.http_logs, {}) != {} ? [1] : []
         content {
           dynamic "azure_blob_storage" {
-            for_each = try(http_logs.value.azure_blob_storage, {}) != {} ? [1] : []
+            for_each = try(var.settings.logs.http_logs.azure_blob_storage, {}) != {} ? [1] : []
             content {
-              retention_in_days = try(http_logs.value.azure_blob_storage.retention_in_days, 7)
-              sas_url           = try(http_logs.value.azure_blob_storage.sas_url, local.http_logs_sas_url)
+              retention_in_days = try(var.settings.logs.http_logs.azure_blob_storage.retention_in_days, 7)
+              sas_url           = try(var.settings.logs.http_logs.azure_blob_storage.sas_url, local.http_logs_sas_url)
             }
           }
           dynamic "file_system" {
-            for_each = try(http_logs.value.file_system, {}) != {} ? [1] : []
+            for_each = try(var.settings.logs.http_logs.file_system, {}) != {} ? [1] : []
             content {
-              retention_in_days = try(http_logs.value.file_system.retention_in_days, 7)
-              retention_in_mb   = try(http_logs.value.file_system.retention_in_mb, 35)
+              retention_in_days = try(var.settings.logs.http_logs.file_system.retention_in_days, null)
+              retention_in_mb   = try(var.settings.logs.http_logs.file_system.retention_in_mb, null)
             }
           }
         }
