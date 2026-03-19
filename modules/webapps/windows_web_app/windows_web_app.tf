@@ -33,6 +33,52 @@ resource "azurerm_windows_web_app" "windows_web_app" {
     websockets_enabled                            = try(var.settings.site_config.websockets_enabled, false)
     worker_count                                  = try(var.settings.site_config.worker_count, null)
 
+    dynamic "ip_restriction" {
+      for_each = try(var.settings.site_config.ip_restriction, {})
+      content {
+        action                    = try(ip_restriction.value.action, "Allow")
+        ip_address                = try(ip_restriction.value.ip_address, null)
+        name                      = try(ip_restriction.value.name, null)
+        priority                  = try(ip_restriction.value.priority, 65000)
+        service_tag               = try(ip_restriction.value.service_tag, null)
+        virtual_network_subnet_id = can(ip_restriction.value.virtual_network_subnet_id) || can(ip_restriction.value.virtual_network_subnet.id) || can(ip_restriction.value.virtual_network_subnet.subnet_key) == false ? try(ip_restriction.value.virtual_network_subnet_id, ip_restriction.value.virtual_network_subnet.id, null) : var.remote_objects.vnets[try(ip_restriction.value.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][ip_restriction.value.virtual_network_subnet.vnet_key].subnets[ip_restriction.value.virtual_network_subnet.subnet_key].id
+        description               = try(ip_restriction.value.description, null)
+
+        dynamic "headers" {
+          for_each = try(ip_restriction.value.headers, null) == null ? [] : [ip_restriction.value.headers]
+          content {
+            x_azure_fdid      = try(headers.value.x_azure_fdid, null)
+            x_fd_health_probe = try(headers.value.x_fd_health_probe, null)
+            x_forwarded_for   = try(headers.value.x_forwarded_for, null)
+            x_forwarded_host  = try(headers.value.x_forwarded_host, null)
+          }
+        }
+      }
+    }
+
+    dynamic "scm_ip_restriction" {
+      for_each = try(var.settings.site_config.scm_ip_restriction, {})
+      content {
+        action                    = try(scm_ip_restriction.value.action, "Allow")
+        ip_address                = try(scm_ip_restriction.value.ip_address, null)
+        name                      = try(scm_ip_restriction.value.name, null)
+        priority                  = try(scm_ip_restriction.value.priority, 65000)
+        service_tag               = try(scm_ip_restriction.value.service_tag, null)
+        virtual_network_subnet_id = can(scm_ip_restriction.value.virtual_network_subnet_id) || can(scm_ip_restriction.value.virtual_network_subnet.id) || can(scm_ip_restriction.value.virtual_network_subnet.subnet_key) == false ? try(scm_ip_restriction.value.virtual_network_subnet_id, scm_ip_restriction.value.virtual_network_subnet.id, null) : var.remote_objects.vnets[try(scm_ip_restriction.value.virtual_network_subnet.lz_key, var.client_config.landingzone_key)][scm_ip_restriction.value.virtual_network_subnet.vnet_key].subnets[scm_ip_restriction.value.virtual_network_subnet.subnet_key].id
+        description               = try(scm_ip_restriction.value.description, null)
+
+        dynamic "headers" {
+          for_each = try(scm_ip_restriction.value.headers, null) == null ? [] : [scm_ip_restriction.value.headers]
+          content {
+            x_azure_fdid      = try(headers.value.x_azure_fdid, null)
+            x_fd_health_probe = try(headers.value.x_fd_health_probe, null)
+            x_forwarded_for   = try(headers.value.x_forwarded_for, null)
+            x_forwarded_host  = try(headers.value.x_forwarded_host, null)
+          }
+        }
+      }
+    }
+
     dynamic "application_stack" {
       for_each = try(var.settings.site_config.application_stack, null) == null ? [] : [var.settings.site_config.application_stack]
       content {
@@ -114,7 +160,6 @@ resource "azurerm_windows_web_app" "windows_web_app" {
     }
   }
   app_settings = try(local.app_settings, null)
-
 
   dynamic "auth_settings" {
     for_each = try(local.auth_settings, null) == null ? [] : [local.auth_settings]
@@ -436,23 +481,16 @@ resource "azurerm_windows_web_app" "windows_web_app" {
 
 
   dynamic "storage_account" {
-    for_each = try(var.settings.storage_account, {}) != {} ? [1] : []
+    for_each = try(var.settings.storage_account, {})
     content {
-      access_key = try(
-        var.settings.storage_account.access_key,
-        var.remote_objects.storage_accounts[try(var.settings.storage_account.lz_key, var.client_config.landingzone_key)][try(var.settings.storage_account.key, var.settings.storage_account_key)].primary_access_key
-      )
-      account_name = var.settings.storage_account.account_name
-      name         = var.settings.storage_account.name
-      share_name   = var.settings.storage_account.share_name
-      type         = var.settings.storage_account.type
-      mount_path   = try(var.settings.storage_account.mount_path, null)
+      name         = storage_account.value.name
+      type         = storage_account.value.type
+      account_name = can(storage_account.value.account_name) ? storage_account.value.account_name : var.remote_objects.storage_accounts[try(storage_account.value.lz_key, var.client_config.landingzone_key)][storage_account.value.account_key].name
+      share_name   = storage_account.value.share_name
+      access_key   = can(storage_account.value.access_key) ? storage_account.value.access_key : var.remote_objects.storage_accounts[try(storage_account.value.lz_key, var.client_config.landingzone_key)][storage_account.value.account_key].primary_access_key
+      mount_path   = try(storage_account.value.mount_path, null)
     }
   }
-
-
-
-
 
   tags = local.tags
 
