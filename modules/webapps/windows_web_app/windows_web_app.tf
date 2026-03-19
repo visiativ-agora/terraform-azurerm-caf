@@ -514,3 +514,12 @@ resource "azurerm_windows_web_app" "windows_web_app" {
     }
   }
 }
+
+resource "azurerm_app_service_custom_hostname_binding" "app_service_custom_hostname_binding" {
+  for_each            = try(var.settings.custom_hostname_binding, {})
+  app_service_name    = azurerm_windows_web_app.windows_web_app.name
+  resource_group_name = local.resource_group_name
+  hostname            = each.value.hostname
+  ssl_state           = try(each.value.ssl_state, null)
+  thumbprint          = try(each.value.thumbprint, null)
+}
