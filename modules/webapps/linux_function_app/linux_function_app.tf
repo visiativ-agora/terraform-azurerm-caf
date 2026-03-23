@@ -383,7 +383,7 @@ resource "azurerm_linux_function_app" "linux_function_app" {
   )
 
   dynamic "storage_account" {
-    for_each = try(var.settings.settings.storage_account, {})
+    for_each = try(var.settings.site_config.storage_account, {})
     content {
       name         = storage_account.value.name
       type         = storage_account.value.type
