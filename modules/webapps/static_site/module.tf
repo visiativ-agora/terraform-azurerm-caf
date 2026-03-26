@@ -25,4 +25,13 @@ resource "azurerm_static_web_app" "static_site" {
       identity_ids = lower(var.identity.type) == "userassigned" ? local.managed_identities : null
     }
   }
+
+  lifecycle {
+    ignore_changes = [
+      repository_branch,
+      repository_url,
+      repository_token,
+      validation_type,
+    ]
+  }
 }
