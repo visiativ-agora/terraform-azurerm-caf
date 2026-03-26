@@ -31,7 +31,6 @@ resource "azurerm_static_web_app" "static_site" {
       repository_branch,
       repository_url,
       repository_token,
-      validation_type,
     ]
   }
 }
